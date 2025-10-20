@@ -560,7 +560,7 @@ body {
 @media (max-width: 768px) {
     body {
         align-items: flex-start;
-        padding-top: 80px;
+        padding-top: 60px;
         background: linear-gradient(135deg, #ff0000 0%, #000000 50%);
     }
 
