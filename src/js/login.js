@@ -11,7 +11,7 @@ class LoginForm1 {
         this.isSubmitting = false;
         
         this.validators = {
-            email: FormUtils.validateEmail,
+            user: (value) => ({ isValid: value && value.length > 0, message: value && value.length > 0 ? '' : 'Introduce un usuario' }),
             password: FormUtils.validatePassword
         };
         
@@ -23,7 +23,6 @@ class LoginForm1 {
         FormUtils.setupFloatingLabels(this.form);
         this.addInputAnimations();
         FormUtils.setupPasswordToggle(this.passwordInput, this.passwordToggle);
-        this.setupSocialButtons();
         FormUtils.addSharedAnimations();
     }
     
@@ -80,12 +79,7 @@ class LoginForm1 {
         });
     }
     
-    setupSocialButtons() {
-        const socialButtons = document.querySelectorAll('.social-btn');
-        socialButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => this.handleSocialLogin(e));
-        });
-    }
+
     
     handleFocus(e) {
         const wrapper = e.target.closest('.input-wrapper');
@@ -118,9 +112,7 @@ class LoginForm1 {
         link.style.transform = 'scale(0.95)';
         setTimeout(() => {
             link.style.transform = 'scale(1)';
-        }, 150);
-        
-        FormUtils.showNotification('Password reset link would be sent to your email', 'info', this.form);
+        }, 150);        
     }
     
     handleSignupLink(e) {
@@ -132,23 +124,6 @@ class LoginForm1 {
             link.style.transform = 'scale(1)';
         }, 150);
         
-        FormUtils.showNotification('Redirecting to sign up page...', 'info', this.form);
-    }
-    
-    handleSocialLogin(e) {
-        const btn = e.currentTarget;
-        const provider = btn.classList.contains('google-btn') ? 'Google' : 'GitHub';
-        
-        // Add loading state
-        btn.style.transform = 'scale(0.95)';
-        btn.style.opacity = '0.8';
-        
-        setTimeout(() => {
-            btn.style.transform = 'scale(1)';
-            btn.style.opacity = '1';
-        }, 200);
-        
-        FormUtils.showNotification(`Connecting to ${provider}...`, 'info', this.form);
     }
     
     async handleSubmit(e) {
@@ -157,12 +132,12 @@ class LoginForm1 {
         if (this.isSubmitting) return;
         
         const isValid = this.validateForm();
-        
-        if (isValid) {
-            await this.submitForm();
-        } else {
-            this.shakeForm();
-        }
+        await this.submitForm();
+        // if (isValid) {
+        //     await this.submitForm();
+        // } else {
+        //     this.shakeForm();
+        // }
     }
     
     validateForm() {
@@ -187,7 +162,6 @@ class LoginForm1 {
         
         if (result.isValid) {
             FormUtils.clearError(fieldName);
-            FormUtils.showSuccess(fieldName);
         } else {
             FormUtils.showError(fieldName, result.message);
         }
@@ -203,18 +177,25 @@ class LoginForm1 {
     }
     
     async submitForm() {
+        this.showLoginError("Login failed. Please try again.");
+
         this.isSubmitting = true;
         this.submitBtn.classList.add('loading');
         
         try {
-            const email = document.getElementById('email').value;
+            const user = document.getElementById('user').value;
             const password = document.getElementById('password').value;
-            
+
             // Use shared login simulation
-            await FormUtils.simulateLogin(email, password);
-            
-            // Show success state
-            this.showSuccessMessage();
+            // try simulate with user and password; fallback to email if needed
+            try {
+                await FormUtils.simulateLogin(user, password);
+            } catch (err) {
+                // If FormUtils expects an email param or user wasn't provided, try email field
+                const emailField = document.getElementById('email');
+                if (emailField && emailField.value) await FormUtils.simulateLogin(emailField.value, password);
+                else throw err;
+            }
             
         } catch (error) {
             console.error('Login error:', error);
@@ -224,37 +205,7 @@ class LoginForm1 {
             this.submitBtn.classList.remove('loading');
         }
     }
-    
-    showSuccessMessage() {
-        // Hide form with smooth animation
-        this.form.style.opacity = '0';
-        this.form.style.transform = 'translateY(-20px)';
-        
-        // Hide social login and other elements
-        const elementsToHide = ['.divider', '.social-login', '.signup-link'];
-        elementsToHide.forEach(selector => {
-            const element = document.querySelector(selector);
-            if (element) {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(-20px)';
-            }
-        });
-        
-        setTimeout(() => {
-            this.form.style.display = 'none';
-            elementsToHide.forEach(selector => {
-                const element = document.querySelector(selector);
-                if (element) element.style.display = 'none';
-            });
-            
-            this.successMessage.classList.add('show');
-            
-            // Simulate redirect after success
-            setTimeout(() => {
-                this.simulateRedirect();
-            }, 3000);
-        }, 300);
-    }
+
     
     simulateRedirect() {
         // For demo, reset the form after 2 seconds
@@ -264,8 +215,9 @@ class LoginForm1 {
     }
     
     showLoginError(message) {
-        FormUtils.showNotification(message || 'Login failed. Please try again.', 'error', this.form);
+        console.log(234);
         
+        FormUtils.showNotification(message || 'Login failed. Please try again.', 'error', this.form);
         // Shake the entire card
         const card = document.querySelector('.login-card');
         card.style.animation = 'shake 0.5s ease-in-out';
@@ -279,7 +231,7 @@ class LoginForm1 {
         
         setTimeout(() => {
             // Show form elements again
-            const elementsToShow = ['.divider', '.social-login', '.signup-link'];
+            const elementsToShow = ['.signup-link'];
             this.form.style.display = 'block';
             elementsToShow.forEach(selector => {
                 const element = document.querySelector(selector);
