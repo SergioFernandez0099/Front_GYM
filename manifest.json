@@ -1,0 +1,23 @@
+{
+  "name": "GYM",
+  "short_name": "GYM",
+   "description": "App para registrar entrenamientos",
+  "icons": [
+    {
+      "src": "/assets/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/public/login.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#1e0505",
+  "scope": "/",
+  "lang": "es-ES"
+}

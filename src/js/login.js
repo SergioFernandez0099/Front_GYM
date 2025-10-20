@@ -215,8 +215,6 @@ class LoginForm1 {
     }
     
     showLoginError(message) {
-        console.log(234);
-        
         FormUtils.showNotification(message || 'Login failed. Please try again.', 'error', this.form);
         // Shake the entire card
         const card = document.querySelector('.login-card');
