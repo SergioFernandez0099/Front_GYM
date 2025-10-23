@@ -1,336 +1,503 @@
-// Login Form 1 - Glassmorphism Style JavaScript
-// This file extends form-utils.js with form-specific functionality
-import  {FormUtils}  from '../components/form-utils.js';
+// Shared Form Utilities
+// This file contains common functionality used across all login forms
 
-export class LoginForm1 {
-    constructor() {
-        this.form = document.getElementById('loginForm');
-        this.submitBtn = this.form.querySelector('.login-btn');
-        this.passwordToggle = document.getElementById('passwordToggle');
-        this.passwordInput = document.getElementById('password');
-        this.successMessage = document.getElementById('successMessage');
-        this.isSubmitting = false;
-        
-        this.validators = {
-            user: (value) => ({ isValid: value && value.length > 0, message: value && value.length > 0 ? '' : 'Introduce un usuario' }),
-            password: FormUtils.validatePassword
-        };
-        
-        this.init();
+class FormUtils {
+  static validateEmail(value) {
+    if (!value) {
+      return { isValid: false, message: "Email address is required" };
     }
-    
-    init() {
-        this.addEventListeners();
-        // FormUtils.setupFloatingLabels(this.form);
-        // this.addInputAnimations();
-        // FormUtils.setupPasswordToggle(this.passwordInput, this.passwordToggle);
-        FormUtils.addSharedAnimations();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return { isValid: false, message: "Please enter a valid email address" };
     }
-    
-    addEventListeners() {
-        // Form submission
-        // this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-        
-        // Real-time validation
-        Object.keys(this.validators).forEach(fieldName => {
-            const field = document.getElementById(fieldName);
-            if (field) {
-                field.addEventListener('blur', () => this.validateField(fieldName));
-                field.addEventListener('input', () => FormUtils.clearError(fieldName));
-            }
-        });
-        
-        // Enhanced focus effects
-        // const inputs = this.form.querySelectorAll('input');
-        
-        // inputs.forEach(input => {
-        //     input.addEventListener('focus', (e) => this.handleFocus(e));
-        //     input.addEventListener('blur', (e) => this.handleBlur(e));
-        // });
-        
-        // // Remember me checkbox animation
-        // const checkbox = document.getElementById('remember');
-        // if (checkbox) {
-        //     checkbox.addEventListener('change', () => this.animateCheckbox());
-        // }
-        
-        // // Forgot password link
-        // const forgotLink = document.querySelector('.forgot-password');
-        // if (forgotLink) {
-        //     forgotLink.addEventListener('click', (e) => this.handleForgotPassword(e));
-        // }
-        
-        // Sign up link
-        // const signupLink = document.querySelector('.signup-link a');
-        // if (signupLink) {
-        //     signupLink.addEventListener('click', (e) => this.handleSignupLink(e));
-        // }
-        
-        // Keyboard shortcuts
-        this.setupKeyboardShortcuts();
+    return { isValid: true };
+  }
+
+  static validatePassword(value) {
+    if (!value) {
+      return { isValid: false, message: "Password is required" };
     }
-    
-    // addInputAnimations() {
-    //     const inputs = this.form.querySelectorAll('input');
-    //     inputs.forEach((input, index) => {
-    //         // Stagger animation on page load
-    //         setTimeout(() => {
-    //             input.style.opacity = '1';
-    //             input.style.transform = 'translateY(0)';
-    //         }, index * 150);
-    //     });
-    // }
-    
+    if (value.length < 8) {
+      return {
+        isValid: false,
+        message: "Password must be at least 8 characters long",
+      };
+    }
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
+      return {
+        isValid: false,
+        message: "Password must contain uppercase, lowercase, and number",
+      };
+    }
+    return { isValid: true };
+  }
 
-    
-    // handleFocus(e) {
-    //     const wrapper = e.target.closest('.input-wrapper');
-    //     if (wrapper) {
-    //         wrapper.classList.add('focused');
-    //     }
-    // }
-    
-    // handleBlur(e) {
-    //     const wrapper = e.target.closest('.input-wrapper');
-    //     if (wrapper) {
-    //         wrapper.classList.remove('focused');
-    //     }
-    // }
-    
-    // animateCheckbox() {
-    //     const checkmark = document.querySelector('.checkmark');
-    //     if (checkmark) {
-    //         checkmark.style.transform = 'scale(0.8)';
-    //         setTimeout(() => {
-    //             checkmark.style.transform = 'scale(1)';
-    //         }, 150);
-    //     }
-    // }
-    
-    // handleForgotPassword(e) {
-    //     e.preventDefault();
-    //     // Add subtle animation
-    //     const link = e.target;
-    //     link.style.transform = 'scale(0.95)';
-    //     setTimeout(() => {
-    //         link.style.transform = 'scale(1)';
-    //     }, 150);        
-    // }
-    
-    // handleSignupLink(e) {
-    //     e.preventDefault();
-    //     // Add subtle animation
-    //     const link = e.target;
-    //     link.style.transform = 'scale(0.95)';
-    //     setTimeout(() => {
-    //         link.style.transform = 'scale(1)';
-    //     }, 150);
-        
-    // }
-    
-    // async handleSubmit(e) {
-    //     e.preventDefault();
-        
-    //     if (this.isSubmitting) return;
-        
-    //     const isValid = this.validateForm();
-    //     await this.submitForm();
-    //     // if (isValid) {
-    //     //     await this.submitForm();
-    //     // } else {
-    //     //     this.shakeForm();
-    //     // }
-    // }
-    
-    // validateForm() {
-    //     let isValid = true;
-        
-    //     Object.keys(this.validators).forEach(fieldName => {
-    //         if (!this.validateField(fieldName)) {
-    //             isValid = false;
-    //         }
-    //     });
-        
-    //     return isValid;
-    // }
-    
-    // validateField(fieldName) {
-    //     const field = document.getElementById(fieldName);
-    //     const validator = this.validators[fieldName];
-        
-    //     if (!field || !validator) return true;
-        
-    //     const result = validator(field.value.trim(), field);
-        
-    //     if (result.isValid) {
-    //         FormUtils.clearError(fieldName);
-    //     } else {
-    //         FormUtils.showError(fieldName, result.message);
-    //     }
-        
-    //     return result.isValid;
-    // }
-    
-    // shakeForm() {
-    //     this.form.style.animation = 'shake 0.5s ease-in-out';
-    //     setTimeout(() => {
-    //         this.form.style.animation = '';
-    //     }, 500);
-    // }
-    
-    // async submitForm() {
-    //     this.showLoginError("Login failed. Please try again.");
+  static clearError(fieldName) {
+    const formGroup = document.getElementById(fieldName).closest(".form-group");
+    const errorElement = document.getElementById(fieldName + "Error");
 
-    //     this.isSubmitting = true;
-    //     this.submitBtn.classList.add('loading');
-        
-    //     try {
-    //         const user = document.getElementById('user').value;
-    //         const password = document.getElementById('password').value;
+    if (formGroup && errorElement) {
+      formGroup.classList.remove("error");
+      errorElement.classList.remove("show");
+      setTimeout(() => {
+        errorElement.textContent = "";
+      }, 300);
+    }
+  }
 
-    //         // Use shared login simulation
-    //         // try simulate with user and password; fallback to email if needed
-    //         try {
-    //             await FormUtils.simulateLogin(user, password);
-    //         } catch (err) {
-    //             // If FormUtils expects an email param or user wasn't provided, try email field
-    //             const emailField = document.getElementById('email');
-    //             if (emailField && emailField.value) await FormUtils.simulateLogin(emailField.value, password);
-    //             else throw err;
-    //         }
-            
-    //     } catch (error) {
-    //         console.error('Login error:', error);
-    //         this.showLoginError(error.message);
-    //     } finally {
-    //         this.isSubmitting = false;
-    //         this.submitBtn.classList.remove('loading');
-    //     }
-    // }
+  static showSuccess(fieldName) {
+    const field = document.getElementById(fieldName);
+    const wrapper = field?.closest(".input-wrapper");
 
-    
-    // simulateRedirect() {
+    if (wrapper) {
+      // Add subtle success indication
+      wrapper.style.borderColor = "#22c55e";
+      setTimeout(() => {
+        wrapper.style.borderColor = "";
+      }, 2000);
+    }
+  }
+
+  static simulateLogin(email, password) {
+    return new Promise((resolve, reject) => {
+      // Simulate network delay
+      setTimeout(() => {
+        // Demo: reject if email is 'admin@demo.com' and password is 'wrongpassword'
+        if (email === "admin@demo.com" && password === "wrongpassword") {
+          reject(new Error("Invalid email or password"));
+        } else {
+          resolve({ success: true, user: { email } });
+        }
+      }, 200000);
+    });
+  }
+
+  static showNotification(message, type = "info", container = null) {
+    const targetContainer = container || document.querySelector("form");
+    if (!targetContainer) return;
+
+    // Create notification element
+    const notification = document.createElement("div");
+    notification.className = `notification ${type}`;
+
+    let backgroundColor, borderColor, textColor;
+    switch (type) {
+      case "error":
+        backgroundColor = "rgba(239, 68, 68, 0.1)";
+        borderColor = "rgba(239, 68, 68, 0.3)";
+        textColor = "#ef4444";
+        break;
+      case "success":
+        backgroundColor = "rgba(34, 197, 94, 0.1)";
+        borderColor = "rgba(34, 197, 94, 0.3)";
+        textColor = "#22c55e";
+        break;
+      default:
+        backgroundColor = "rgba(6, 182, 212, 0.1)";
+        borderColor = "rgba(6, 182, 212, 0.3)";
+        textColor = "#06b6d4";
+    }
+
+    notification.innerHTML = `
+            <div style="
+                background: ${backgroundColor}; 
+                backdrop-filter: blur(10px); 
+                border: 1px solid ${borderColor}; 
+                border-radius: 12px; 
+                padding: 12px 16px; 
+                margin-top: 2px; 
+                margin-bottom: 16px; 
+                color: ${textColor}; 
+                text-align: center;
+                font-size: 14px;
+                animation: slideIn 0.3s ease;
+            ">
+                ${message}
+            </div>
+        `;
+
+    targetContainer.appendChild(notification);
+
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+      notification.style.animation = "slideOut 0.3s ease";
+      setTimeout(() => {
+        notification.remove();
+      }, 300);
+    }, 300000);
+  }
+
+  static setupFloatingLabels(form) {
+    const inputs = form.querySelectorAll("input");
+    inputs.forEach((input) => {
+      // Check if field has value on page load
+      if (input.value.trim() !== "") {
+        input.classList.add("has-value");
+      }
+
+      input.addEventListener("input", () => {
+        if (input.value.trim() !== "") {
+          input.classList.add("has-value");
+        } else {
+          input.classList.remove("has-value");
+        }
+      });
+    });
+  }
+
+  static setupPasswordToggle(passwordInput, toggleButton) {
+    if (toggleButton && passwordInput) {
+      toggleButton.addEventListener("click", () => {
+        const isPassword = passwordInput.type === "password";
+        const eyeIcon = toggleButton.querySelector(".eye-icon");
+
+        passwordInput.type = isPassword ? "text" : "password";
+        if (eyeIcon) {
+          eyeIcon.classList.toggle("show-password", isPassword);
+        }
+
+        // Add smooth transition effect
+        toggleButton.style.transform = "scale(0.9)";
+        setTimeout(() => {
+          toggleButton.style.transform = "scale(1)";
+        }, 150);
+
+        // Keep focus on password input
+        passwordInput.focus();
+      });
+    }
+  }
+
+  static addSharedAnimations() {
+    // Add CSS animations to document head if not already present
+    if (!document.getElementById("shared-animations")) {
+      const style = document.createElement("style");
+      style.id = "shared-animations";
+      style.textContent = `
+                @keyframes slideIn {
+                    from { opacity: 0; transform: translateY(-10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                
+                @keyframes slideOut {
+                    from { opacity: 1; transform: translateY(0); }
+                    to { opacity: 0; transform: translateY(-10px); }
+                }
+                
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+                
+                @keyframes checkmarkPop {
+                    0% { transform: scale(0); }
+                    50% { transform: scale(1.3); }
+                    100% { transform: scale(1); }
+                }
+                
+                @keyframes successPulse {
+                    0% { transform: scale(0); }
+                    50% { transform: scale(1.1); }
+                    100% { transform: scale(1); }
+                }
+                
+                @keyframes spin {
+                    0% { transform: translate(-50%, -50%) rotate(0deg); }
+                    100% { transform: translate(-50%, -50%) rotate(360deg); }
+                }
+            `;
+      document.head.appendChild(style);
+    }
+  }
+}
+
+let isSubmitting = false;
+const validators = {
+  user: (value) => ({
+    isValid: value && value.length > 0,
+    message: value && value.length > 0 ? "" : "Introduce un usuario",
+  }),
+  password: FormUtils.validatePassword,
+};
+
+export function Login({ onLogin }) {
+  if (!document.getElementById("login-css")) {
+    // evitar cargar varias veces
+    const link = document.createElement("link");
+    link.id = "login-css";
+    link.rel = "stylesheet";
+    link.href = "/src/styles/login.css"; // ruta de tu CSS
+    document.head.appendChild(link);
+  }
+
+  const container = document.createElement("div");
+  container.innerHTML = `
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h2 class="border">G Y M</h2>
+                <h2 class="wave">G Y M</h2>
+                <p>Inicio de sesión</p>
+            </div>
+
+            <form class="login-form" id="loginForm" novalidate>
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="text" id="user" name="user" required autocomplete="given-name">
+                        <label for="user">Usuario</label>
+                        <span class="focus-border"></span>
+                    </div>
+                    <span class="error-message" id="emailError"></span>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-wrapper password-wrapper">
+                        <input type="password" id="password" name="password" required autocomplete="current-password">
+                        <label for="password">Contraseña</label>
+                        <button type="button" class="password-toggle" id="passwordToggle"
+                            aria-label="Toggle password visibility">
+                            <span class="eye-icon"></span>
+                        </button>
+                        <span class="focus-border"></span>
+                    </div>
+                    <span class="error-message" id="passwordError"></span>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-wrapper">
+                        <input type="checkbox" id="remember" name="remember">
+                        <span class="checkbox-label">
+                            <span class="checkmark"></span>
+                            Recuérdame
+                        </span>
+                    </label>
+                    <a href="#" class="forgot-password">¿Has olvidado la contraseña?</a>
+                </div>
+
+                <button type="submit" class="login-btn btn">
+                    <span class="btn-text">Iniciar sesión</span>
+                    <span class="btn-loader">
+                        <img src="favicon.png" class="btn-loader" alt="loader">
+                    </span>
+                </button>
+            </form>
+
+            <div class="signup-link">
+                <p>¿No tienes una cuenta? <a href="#">Regístrate</a></p>
+            </div>
+        </div>
+    </div>
+  `;
+
+  // Capturar el formulario
+  const form = container.querySelector("#loginForm");
+  const passwordToggle = form.querySelector("#passwordToggle");
+  const passwordInput = form.querySelector("#password");
+  const inputs = form.querySelectorAll("input");
+  const forgotLink = form.querySelector(".forgot-password");
+  const signupLink = container.querySelector(".signup-link");
+  const checkbox = form.querySelector("#remember");
+  const checkmark = form.querySelector(".checkmark");
+
+  FormUtils.setupPasswordToggle(passwordInput, passwordToggle);
+  FormUtils.setupFloatingLabels(form);
+  FormUtils.addSharedAnimations();
+
+  form.addEventListener("submit", (e) => handleSubmit(e, onLogin, form));
+
+  Object.keys(validators).forEach(fieldName => {
+              const field = form.querySelector("#"+fieldName);
+              if (field) {
+                  field.addEventListener('blur', () => validateField(fieldName));
+                  field.addEventListener('input', () => FormUtils.clearError(fieldName));
+              }
+          });
+
+  inputs.forEach((input) => {
+    input.addEventListener("focus", (e) => handleFocus(e));
+    input.addEventListener("blur", (e) => handleBlur(e));
+  });
+  forgotLink.addEventListener("click", (e) => handleForgotPassword(e));
+  signupLink.addEventListener("click", (e) => handleSignupLink(e));
+  checkbox.addEventListener("change", () => animateCheckbox(checkmark));
+
+  setupKeyboardShortcuts(onLogin, form);
+  requestAnimationFrame(() => {
+    //new LoginForm1(); // inicializa validaciones, animaciones, etc.
+  });
+
+  return container;
+}
+
+function handleForgotPassword(e) {
+  e.preventDefault();
+  // TODO
+}
+function handleSignupLink(e) {
+  e.preventDefault();
+  // TODO
+}
+
+function handleFocus(e) {
+  const wrapper = e.target.closest(".input-wrapper");
+  if (wrapper) {
+    wrapper.classList.add("focused");
+  }
+}
+
+function handleBlur(e) {
+  const wrapper = e.target.closest(".input-wrapper");
+  if (wrapper) {
+    wrapper.classList.remove("focused");
+  }
+}
+
+async function handleSubmit(e, onLogin, form) {
+  e.preventDefault();
+
+  if (isSubmitting) return;
+
+  const isValid = validateForm();
+  if (isValid) {
+      await submitForm(onLogin);
+  } else {
+      shakeForm(form);
+  }
+}
+
+function validateField(fieldName) {
+  const field = document.getElementById(fieldName);
+  const validator = validators[fieldName];
+
+  if (!field || !validator) return true;
+
+  const result = validator(field.value.trim(), field);
+
+  if (result.isValid) {
+    FormUtils.clearError(fieldName);
+  } else {
+    showError(fieldName, result.message);
+  }
+
+  return result.isValid;
+}
+
+function validateForm() {
+  let isValid = true;
+
+  Object.keys(validators).forEach((fieldName) => {
+    if (!validateField(fieldName)) {
+      isValid = false;
+    }
+  });
+
+  return isValid;
+}
+
+async function submitForm(onLogin) {
+  showLoginError("Login failed. Please try again.");
+
+  isSubmitting = true;
+  const submitBtn = document.querySelector(".login-btn");
+
+  submitBtn.classList.add("loading");
+
+  try {
+    const user = document.getElementById("user").value;
+    const password = document.getElementById("password").value;
+    // Use shared login simulation
+    // try simulate with user and password; fallback to email if needed
+    try {
+      setTimeout(() => onLogin(), 1000);
+      // TODO
+      await FormUtils.simulateLogin(user, password);
+    } catch (err) {
+      // If FormUtils expects an email param or user wasn't provided, try email field
+      const emailField = document.getElementById("email");
+      if (emailField && emailField.value)
+        await FormUtils.simulateLogin(emailField.value, password);
+      else throw err;
+    }
+  } catch (error) {
+    showLoginError(error.message);
+  } finally {
+    isSubmitting = false;
+    this.submitBtn.classList.remove("loading");
+  }
+}
+
+  // simulateRedirect() {
     //     // For demo, reset the form after 2 seconds
     //     setTimeout(() => {
     //         this.resetForm();
     //     }, 2000);
     // }
-    
-    // showLoginError(message) {
-    //     FormUtils.showNotification(message || 'Login failed. Please try again.', 'error', this.form);
-    //     // Shake the entire card
-    //     const card = document.querySelector('.login-card');
-    //     card.style.animation = 'shake 0.5s ease-in-out';
-    //     setTimeout(() => {
-    //         card.style.animation = '';
-    //     }, 500);
-    // }
-    
-    resetForm() {
-        this.successMessage.classList.remove('show');
-        
-        setTimeout(() => {
-            // Show form elements again
-            const elementsToShow = ['.signup-link'];
-            this.form.style.display = 'block';
-            elementsToShow.forEach(selector => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    element.style.display = 'block';
-                }
-            });
-            
-            this.form.reset();
-            
-            // Clear all validation states
-            Object.keys(this.validators).forEach(fieldName => {
-                FormUtils.clearError(fieldName);
-            });
-            
-            // Reset form appearance
-            this.form.style.opacity = '1';
-            this.form.style.transform = 'translateY(0)';
-            
-            // Reset other elements
-            elementsToShow.forEach(selector => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
-                }
-            });
-            
-            // Reset floating labels
-            const inputs = this.form.querySelectorAll('input');
-            inputs.forEach(input => {
-                input.classList.remove('has-value');
-            });
-            
-            // Reset password visibility
-            if (this.passwordInput) {
-                this.passwordInput.type = 'password';
-                const eyeIcon = this.passwordToggle?.querySelector('.eye-icon');
-                if (eyeIcon) {
-                    eyeIcon.classList.remove('show-password');
-                }
-            }
-        }, 300);
-    }
-    
-    setupKeyboardShortcuts() {
-        document.addEventListener('keydown', (e) => {
-            // Enter key submits form if focus is on form elements
-            if (e.key === 'Enter' && e.target.closest('#loginForm')) {
-                e.preventDefault();
-                this.handleSubmit(e);
-            }
-            
-            // Escape key clears errors
-            if (e.key === 'Escape') {
-                Object.keys(this.validators).forEach(fieldName => {
-                    FormUtils.clearError(fieldName);
-                });
-            }
-        });
-    }
-    
-    // Public methods
-    validate() {
-        return this.validateForm();
-    }
-    
-    getFormData() {
-        const formData = new FormData(this.form);
-        const data = {};
-        
-        for (let [key, value] of formData.entries()) {
-            data[key] = value;
-        }
-        
-        return data;
-    }
+
+function showLoginError(message) {
+  // const form = document.getElementById("login-form");
+
+  FormUtils.showNotification(
+    message || "Login failed. Please try again.",
+    "error"
+  );
+  // Shake the entire card
+  const card = document.querySelector(".login-card");
+  card.style.animation = "shake 0.5s ease-in-out";
+  setTimeout(() => {
+    card.style.animation = "";
+  }, 500);
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Add entrance animation to login card
-    const loginCard = document.querySelector('.login-card');
-    FormUtils.addEntranceAnimation(loginCard);
-    
-    // Initialize the login form
-    new LoginForm1();
-});
+function animateCheckbox(checkmark) {
+  if (checkmark) {
+    checkmark.style.transform = "scale(0.8)";
+    setTimeout(() => {
+      checkmark.style.transform = "scale(1)";
+    }, 150);
+  }
+}
 
-// Handle page visibility changes for better UX
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-        // Re-focus on email field if user returns to page
-        const activeElement = document.activeElement;
-        if (activeElement && activeElement.tagName !== 'INPUT') {
-            const emailInput = document.querySelector('#email');
-            if (emailInput && !emailInput.value) {
-                setTimeout(() => emailInput.focus(), 100);
-            }
-        }
+function shakeForm(form) {
+  form.style.animation = "shake 0.5s ease-in-out";
+  setTimeout(() => {
+    form.style.animation = "";
+  }, 500);
+}
+
+function showError(fieldName, message) {
+  const formGroup = document.getElementById(fieldName).closest(".form-group");
+  const errorElement = document.getElementById(fieldName + "Error");
+
+  if (formGroup && errorElement) {
+    formGroup.classList.add("error");
+    errorElement.textContent = message;
+    errorElement.classList.add("show");
+
+    // Add shake animation to the field
+    const field = document.getElementById(fieldName);
+    if (field) {
+      field.style.animation = "shake 0.5s ease-in-out";
+      setTimeout(() => {
+        field.style.animation = "";
+      }, 500);
     }
-});
+  }
+}
+
+function setupKeyboardShortcuts(onLogin, form) {
+  document.addEventListener("keydown", (e) => {
+    // Enter key submits form if focus is on form elements
+    if (e.key === "Enter" && e.target.closest("#loginForm")) {
+      e.preventDefault();
+      handleSubmit(e, onLogin, form);
+    }
+
+    // Escape key clears errors
+    if (e.key === "Escape") {
+      Object.keys(validators).forEach((fieldName) => {
+        FormUtils.clearError(fieldName);
+      });
+    }
+  });
+}

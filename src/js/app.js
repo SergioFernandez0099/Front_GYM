@@ -1,6 +1,6 @@
 import { Navbar } from './components/navbar.js';
 import { router, setLoginStatus } from './router.js';
-import { Login } from './pages/login2.js';
+import { Login } from './pages/login.js';
 
 let isLoggedIn = false;
 
