@@ -1,7 +1,7 @@
 // Shared Form Utilities
 // This file contains common functionality used across all login forms
 
-class FormUtils {
+export class FormUtils {
     static validateEmail(value) {
         if (!value) {
             return { isValid: false, message: 'Email address is required' };
@@ -160,10 +160,12 @@ class FormUtils {
     }
     
     static setupPasswordToggle(passwordInput, toggleButton) {
+        console.log('');
         if (toggleButton && passwordInput) {
             toggleButton.addEventListener('click', () => {
                 const isPassword = passwordInput.type === 'password';
                 const eyeIcon = toggleButton.querySelector('.eye-icon');
+                console.log(isPassword);
                 
                 passwordInput.type = isPassword ? 'text' : 'password';
                 if (eyeIcon) {
