@@ -1,18 +1,6 @@
-// Shared Form Utilities
-// This file contains common functionality used across all login forms
-
 class FormUtils {
-  static validateEmail(value) {
-    if (!value) {
-      return { isValid: false, message: "Email address is required" };
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) {
-      return { isValid: false, message: "Please enter a valid email address" };
-    }
-    return { isValid: true };
-  }
-
+  
+  // Validación de contraseña
   static validatePassword(value) {
     if (!value) {
       return { isValid: false, message: "Password is required" };
@@ -32,51 +20,24 @@ class FormUtils {
     return { isValid: true };
   }
 
-  static clearError(fieldName) {
-    const formGroup = document.getElementById(fieldName).closest(".form-group");
-    const errorElement = document.getElementById(fieldName + "Error");
-
-    if (formGroup && errorElement) {
-      formGroup.classList.remove("error");
-      errorElement.classList.remove("show");
-      setTimeout(() => {
-        errorElement.textContent = "";
-      }, 300);
-    }
-  }
-
-  static showSuccess(fieldName) {
-    const field = document.getElementById(fieldName);
-    const wrapper = field?.closest(".input-wrapper");
-
-    if (wrapper) {
-      // Add subtle success indication
-      wrapper.style.borderColor = "#22c55e";
-      setTimeout(() => {
-        wrapper.style.borderColor = "";
-      }, 2000);
-    }
-  }
-
+  // Simula el login con retardo (demo)
   static simulateLogin(email, password) {
     return new Promise((resolve, reject) => {
-      // Simulate network delay
       setTimeout(() => {
-        // Demo: reject if email is 'admin@demo.com' and password is 'wrongpassword'
         if (email === "admin@demo.com" && password === "wrongpassword") {
           reject(new Error("Invalid email or password"));
         } else {
           resolve({ success: true, user: { email } });
         }
-      }, 200000);
+      }, 2000); // Retardo reducido para demo
     });
   }
 
+  // Muestra una notificación temporal dentro del formulario o contenedor dado
   static showNotification(message, type = "info", container = null) {
-    const targetContainer = container || document.querySelector("form");
-    if (!targetContainer) return;
+    const target = container || document.querySelector("form");
+    if (!target) return;
 
-    // Create notification element
     const notification = document.createElement("div");
     notification.className = `notification ${type}`;
 
@@ -99,405 +60,318 @@ class FormUtils {
     }
 
     notification.innerHTML = `
-            <div style="
-                background: ${backgroundColor}; 
-                backdrop-filter: blur(10px); 
-                border: 1px solid ${borderColor}; 
-                border-radius: 12px; 
-                padding: 12px 16px; 
-                margin-top: 2px; 
-                margin-bottom: 16px; 
-                color: ${textColor}; 
-                text-align: center;
-                font-size: 14px;
-                animation: slideIn 0.3s ease;
-            ">
-                ${message}
-            </div>
-        `;
+      <div style="
+        background: ${backgroundColor}; 
+        backdrop-filter: blur(10px); 
+        border: 1px solid ${borderColor}; 
+        border-radius: 12px; 
+        padding: 12px 16px; 
+        margin-top: 2px; 
+        margin-bottom: 16px; 
+        color: ${textColor}; 
+        text-align: center;
+        font-size: 14px;
+        animation: slideIn 0.3s ease;
+      ">
+        ${message}
+      </div>
+    `;
+    target.appendChild(notification);
 
-    targetContainer.appendChild(notification);
-
-    // Remove notification after 3 seconds
+    // Elimina la notificación después de 3 segundos
     setTimeout(() => {
-      notification.style.animation = "slideOut 0.3s ease";
-      setTimeout(() => {
-        notification.remove();
-      }, 300);
-    }, 300000);
+      // Aplica animación de salida al contenedor interno
+      notification.firstElementChild.style.animation = "slideOut 0.3s ease";
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
   }
 
-  static setupFloatingLabels(form) {
-    const inputs = form.querySelectorAll("input");
-    inputs.forEach((input) => {
-      // Check if field has value on page load
-      if (input.value.trim() !== "") {
-        input.classList.add("has-value");
-      }
-
-      input.addEventListener("input", () => {
-        if (input.value.trim() !== "") {
-          input.classList.add("has-value");
-        } else {
-          input.classList.remove("has-value");
+  // Inyecta animaciones compartidas en <head> (solo una vez)
+  static addSharedAnimations() {
+    if (!document.getElementById("shared-animations")) {
+      const style = document.createElement("style");
+      style.id = "shared-animations";
+      style.textContent = `
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes slideOut {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-10px); }
+        }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+        @keyframes checkmarkPop {
+          0% { transform: scale(0); }
+          50% { transform: scale(1.3); }
+          100% { transform: scale(1); }
+        }
+        @keyframes successPulse {
+          0% { transform: scale(0); }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); }
+        }
+        @keyframes spin {
+          0% { transform: translate(-50%, -50%) rotate(0deg); }
+          100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  // Configura las etiquetas flotantes (label) para que cambien con el valor
+  static setupFloatingLabels(form) {
+    form.querySelectorAll("input").forEach((input) => {
+      if (input.value.trim()) input.classList.add("has-value");
+      input.addEventListener("input", () => {
+        input.classList.toggle("has-value", input.value.trim() !== "");
       });
     });
   }
 
+  // Configura el botón de mostrar/ocultar contraseña
   static setupPasswordToggle(passwordInput, toggleButton) {
     if (toggleButton && passwordInput) {
       toggleButton.addEventListener("click", () => {
         const isPassword = passwordInput.type === "password";
         const eyeIcon = toggleButton.querySelector(".eye-icon");
-
         passwordInput.type = isPassword ? "text" : "password";
-        if (eyeIcon) {
-          eyeIcon.classList.toggle("show-password", isPassword);
-        }
-
-        // Add smooth transition effect
+        eyeIcon?.classList.toggle("show-password", isPassword);
         toggleButton.style.transform = "scale(0.9)";
-        setTimeout(() => {
-          toggleButton.style.transform = "scale(1)";
-        }, 150);
-
-        // Keep focus on password input
+        setTimeout(() => toggleButton.style.transform = "", 150);
         passwordInput.focus();
       });
     }
   }
+}
 
-  static addSharedAnimations() {
-    // Add CSS animations to document head if not already present
-    if (!document.getElementById("shared-animations")) {
-      const style = document.createElement("style");
-      style.id = "shared-animations";
-      style.textContent = `
-                @keyframes slideIn {
-                    from { opacity: 0; transform: translateY(-10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                
-                @keyframes slideOut {
-                    from { opacity: 1; transform: translateY(0); }
-                    to { opacity: 0; transform: translateY(-10px); }
-                }
-                
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    25% { transform: translateX(-5px); }
-                    75% { transform: translateX(5px); }
-                }
-                
-                @keyframes checkmarkPop {
-                    0% { transform: scale(0); }
-                    50% { transform: scale(1.3); }
-                    100% { transform: scale(1); }
-                }
-                
-                @keyframes successPulse {
-                    0% { transform: scale(0); }
-                    50% { transform: scale(1.1); }
-                    100% { transform: scale(1); }
-                }
-                
-                @keyframes spin {
-                    0% { transform: translate(-50%, -50%) rotate(0deg); }
-                    100% { transform: translate(-50%, -50%) rotate(360deg); }
-                }
-            `;
-      document.head.appendChild(style);
+class LoginForm {
+  constructor(onLogin) {
+    this.onLogin = onLogin;
+    this.isSubmitting = false;
+
+    // Crea la estructura HTML del formulario
+    this.container = document.createElement("div");
+    this.container.innerHTML = `
+      <div class="login-container">
+        <div class="login-card">
+          <div class="login-header">
+            <h2 class="border">G Y M</h2>
+            <h2 class="wave">G Y M</h2>
+            <p>Inicio de sesión</p>
+          </div>
+          <form class="login-form" id="loginForm" novalidate>
+            <div class="form-group">
+              <div class="input-wrapper">
+                <input type="text" id="user" name="user" required autocomplete="given-name">
+                <label for="user">Usuario</label>
+                <span class="focus-border"></span>
+              </div>
+              <span class="error-message" id="userError"></span>
+            </div>
+            <div class="form-group">
+              <div class="input-wrapper password-wrapper">
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <label for="password">Contraseña</label>
+                <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
+                  <span class="eye-icon"></span>
+                </button>
+                <span class="focus-border"></span>
+              </div>
+              <span class="error-message" id="passwordError"></span>
+            </div>
+            <div class="form-options">
+              <label class="remember-wrapper">
+                <input type="checkbox" id="remember" name="remember">
+                <span class="checkbox-label">
+                  <span class="checkmark"></span>
+                  Recuérdame
+                </span>
+              </label>
+              <a href="#" class="forgot-password">¿Has olvidado la contraseña?</a>
+            </div>
+            <button type="submit" class="login-btn btn">
+              <span class="btn-text">Iniciar sesión</span>
+              <span class="btn-loader"><img src="favicon.png" class="btn-loader" alt="loader"></span>
+            </button>
+          </form>
+          <div class="signup-link">
+            <p>¿No tienes una cuenta? <a href="#">Regístrate</a></p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Obtener referencias a elementos clave (se hace una sola vez)
+    const form = this.container.querySelector("#loginForm");
+    this.userField = form.querySelector("#user");
+    this.passwordField = form.querySelector("#password");
+    this.submitBtn = form.querySelector(".login-btn");
+    this.errorElements = {
+      user: form.querySelector("#userError"),
+      password: form.querySelector("#passwordError")
+    };
+    this.rememberCheckbox = form.querySelector("#remember");
+    this.checkmark = form.querySelector(".checkmark");
+    this.forgotLink = form.querySelector(".forgot-password");
+    this.signupLink = this.container.querySelector(".signup-link a");
+    const passwordToggle = form.querySelector("#passwordToggle");
+
+    // Inicializar utilidades compartidas
+    FormUtils.setupPasswordToggle(this.passwordField, passwordToggle);
+    FormUtils.setupFloatingLabels(form);
+    FormUtils.addSharedAnimations();
+
+    // Validadores para cada campo
+    this.validators = {
+      user: (value) => ({
+        isValid: !!value,
+        message: value ? "" : "Introduce un usuario"
+      }),
+      password: FormUtils.validatePassword
+    };
+
+    // Eventos del formulario
+    form.addEventListener("submit", (e) => this.handleSubmit(e));
+    this.userField.addEventListener("blur", () => this.validateField("user"));
+    this.userField.addEventListener("input", () => this.clearError("user"));
+    this.passwordField.addEventListener("blur", () => this.validateField("password"));
+    this.passwordField.addEventListener("input", () => this.clearError("password"));
+
+    // Efectos de foco en los wrappers de input
+    form.querySelectorAll("input").forEach((input) => {
+      input.addEventListener("focus", (e) => e.target.closest(".input-wrapper")?.classList.add("focused"));
+      input.addEventListener("blur", (e) => e.target.closest(".input-wrapper")?.classList.remove("focused"));
+    });
+
+    // Enlaces de "olvidó contraseña" y "registro" (aún sin implementación de navegación)
+    this.forgotLink.addEventListener("click", (e) => e.preventDefault());
+    this.signupLink.addEventListener("click", (e) => e.preventDefault());
+
+    // Animación del checkbox "Recuérdame"
+    this.rememberCheckbox.addEventListener("change", () => this.animateCheckbox());
+
+    // Atajos de teclado: Enter para enviar, Escape para borrar errores
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && e.target.closest("#loginForm")) {
+        e.preventDefault();
+        this.handleSubmit(e);
+      }
+      if (e.key === "Escape") {
+        Object.keys(this.validators).forEach((field) => this.clearError(field));
+      }
+    });
+
+    return this.container;  // Devuelve el nodo contenedor completo
+  }
+
+  // Valida un campo específico
+  validateField(fieldName) {
+    const field = this[fieldName + "Field"];
+    const validator = this.validators[fieldName];
+    if (!field || !validator) return true;
+
+    const result = validator(field.value.trim());
+    if (result.isValid) {
+      this.clearError(fieldName);
+    } else {
+      this.showError(fieldName, result.message);
+    }
+    return result.isValid;
+  }
+
+  // Valida todo el formulario; retorna false si hay errores
+  validateForm() {
+    return Object.keys(this.validators).every((field) => this.validateField(field));
+  }
+
+  // Manejador de envío del formulario
+  async handleSubmit(e) {
+    e.preventDefault();
+    if (this.isSubmitting) return;
+
+    if (!this.validateForm()) {
+      this.shakeForm();  // Agita si hay errores
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.submitBtn.classList.add("loading");  // Muestra loader
+    const user = this.userField.value;
+    const password = this.passwordField.value;
+
+    try {
+      await FormUtils.simulateLogin(user, password);
+      this.onLogin();  // Llama al callback de éxito
+    } catch (error) {
+      // Muestra mensaje de error y agita
+      FormUtils.showNotification(error.message, "error");
+      this.shakeForm();
+    } finally {
+      this.isSubmitting = false;
+      this.submitBtn.classList.remove("loading");
+    }
+  }
+
+  // Aplica la animación de sacudida al formulario
+  shakeForm() {
+    const form = this.container.querySelector(".login-form");
+    if (form) {
+      form.style.animation = "shake 0.5s ease-in-out";
+      setTimeout(() => form.style.animation = "", 500);
+    }
+  }
+
+  // Muestra un mensaje de error junto al campo
+  showError(fieldName, message) {
+    const field = this[fieldName + "Field"];
+    const errorEl = this.errorElements[fieldName];
+    if (field && errorEl) {
+      const formGroup = field.closest(".form-group");
+      formGroup?.classList.add("error");
+      errorEl.textContent = message;
+      errorEl.classList.add("show");
+      field.style.animation = "shake 0.5s ease-in-out";
+      setTimeout(() => field.style.animation = "", 500);
+    }
+  }
+
+  // Limpia el estado de error del campo
+  clearError(fieldName) {
+    const field = this[fieldName + "Field"];
+    const errorEl = this.errorElements[fieldName];
+    if (field && errorEl) {
+      const formGroup = field.closest(".form-group");
+      formGroup?.classList.remove("error");
+      errorEl.classList.remove("show");
+      setTimeout(() => { errorEl.textContent = ""; }, 300);
+    }
+  }
+
+  // Efecto visual al pulsar el checkbox "Recuérdame"
+  animateCheckbox() {
+    if (this.checkmark) {
+      this.checkmark.style.transform = "scale(0.8)";
+      setTimeout(() => this.checkmark.style.transform = "", 150);
     }
   }
 }
 
-let isSubmitting = false;
-const validators = {
-  user: (value) => ({
-    isValid: value && value.length > 0,
-    message: value && value.length > 0 ? "" : "Introduce un usuario",
-  }),
-  password: FormUtils.validatePassword,
-};
-
+// Función exportada que crea la instancia del formulario de login
 export function Login({ onLogin }) {
+  // Cargar el CSS solo una vez
   if (!document.getElementById("login-css")) {
-    // evitar cargar varias veces
     const link = document.createElement("link");
     link.id = "login-css";
     link.rel = "stylesheet";
-    link.href = "/src/styles/login.css"; // ruta de tu CSS
+    link.href = "/src/styles/login.css";
     document.head.appendChild(link);
   }
-
-  const container = document.createElement("div");
-  container.innerHTML = `
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <h2 class="border">G Y M</h2>
-                <h2 class="wave">G Y M</h2>
-                <p>Inicio de sesión</p>
-            </div>
-
-            <form class="login-form" id="loginForm" novalidate>
-                <div class="form-group">
-                    <div class="input-wrapper">
-                        <input type="text" id="user" name="user" required autocomplete="given-name">
-                        <label for="user">Usuario</label>
-                        <span class="focus-border"></span>
-                    </div>
-                    <span class="error-message" id="emailError"></span>
-                </div>
-
-                <div class="form-group">
-                    <div class="input-wrapper password-wrapper">
-                        <input type="password" id="password" name="password" required autocomplete="current-password">
-                        <label for="password">Contraseña</label>
-                        <button type="button" class="password-toggle" id="passwordToggle"
-                            aria-label="Toggle password visibility">
-                            <span class="eye-icon"></span>
-                        </button>
-                        <span class="focus-border"></span>
-                    </div>
-                    <span class="error-message" id="passwordError"></span>
-                </div>
-
-                <div class="form-options">
-                    <label class="remember-wrapper">
-                        <input type="checkbox" id="remember" name="remember">
-                        <span class="checkbox-label">
-                            <span class="checkmark"></span>
-                            Recuérdame
-                        </span>
-                    </label>
-                    <a href="#" class="forgot-password">¿Has olvidado la contraseña?</a>
-                </div>
-
-                <button type="submit" class="login-btn btn">
-                    <span class="btn-text">Iniciar sesión</span>
-                    <span class="btn-loader">
-                        <img src="favicon.png" class="btn-loader" alt="loader">
-                    </span>
-                </button>
-            </form>
-
-            <div class="signup-link">
-                <p>¿No tienes una cuenta? <a href="#">Regístrate</a></p>
-            </div>
-        </div>
-    </div>
-  `;
-
-  // Capturar el formulario
-  const form = container.querySelector("#loginForm");
-  const passwordToggle = form.querySelector("#passwordToggle");
-  const passwordInput = form.querySelector("#password");
-  const inputs = form.querySelectorAll("input");
-  const forgotLink = form.querySelector(".forgot-password");
-  const signupLink = container.querySelector(".signup-link");
-  const checkbox = form.querySelector("#remember");
-  const checkmark = form.querySelector(".checkmark");
-
-  FormUtils.setupPasswordToggle(passwordInput, passwordToggle);
-  FormUtils.setupFloatingLabels(form);
-  FormUtils.addSharedAnimations();
-
-  form.addEventListener("submit", (e) => handleSubmit(e, onLogin, form));
-
-  Object.keys(validators).forEach(fieldName => {
-              const field = form.querySelector("#"+fieldName);
-              if (field) {
-                  field.addEventListener('blur', () => validateField(fieldName));
-                  field.addEventListener('input', () => FormUtils.clearError(fieldName));
-              }
-          });
-
-  inputs.forEach((input) => {
-    input.addEventListener("focus", (e) => handleFocus(e));
-    input.addEventListener("blur", (e) => handleBlur(e));
-  });
-  forgotLink.addEventListener("click", (e) => handleForgotPassword(e));
-  signupLink.addEventListener("click", (e) => handleSignupLink(e));
-  checkbox.addEventListener("change", () => animateCheckbox(checkmark));
-
-  setupKeyboardShortcuts(onLogin, form);
-  requestAnimationFrame(() => {
-    //new LoginForm1(); // inicializa validaciones, animaciones, etc.
-  });
-
-  return container;
-}
-
-function handleForgotPassword(e) {
-  e.preventDefault();
-  // TODO
-}
-function handleSignupLink(e) {
-  e.preventDefault();
-  // TODO
-}
-
-function handleFocus(e) {
-  const wrapper = e.target.closest(".input-wrapper");
-  if (wrapper) {
-    wrapper.classList.add("focused");
-  }
-}
-
-function handleBlur(e) {
-  const wrapper = e.target.closest(".input-wrapper");
-  if (wrapper) {
-    wrapper.classList.remove("focused");
-  }
-}
-
-async function handleSubmit(e, onLogin, form) {
-  e.preventDefault();
-
-  if (isSubmitting) return;
-
-  const isValid = validateForm();
-  if (isValid) {
-      await submitForm(onLogin);
-  } else {
-      shakeForm(form);
-  }
-}
-
-function validateField(fieldName) {
-  const field = document.getElementById(fieldName);
-  const validator = validators[fieldName];
-
-  if (!field || !validator) return true;
-
-  const result = validator(field.value.trim(), field);
-
-  if (result.isValid) {
-    FormUtils.clearError(fieldName);
-  } else {
-    showError(fieldName, result.message);
-  }
-
-  return result.isValid;
-}
-
-function validateForm() {
-  let isValid = true;
-
-  Object.keys(validators).forEach((fieldName) => {
-    if (!validateField(fieldName)) {
-      isValid = false;
-    }
-  });
-
-  return isValid;
-}
-
-async function submitForm(onLogin) {
-  showLoginError("Login failed. Please try again.");
-
-  isSubmitting = true;
-  const submitBtn = document.querySelector(".login-btn");
-
-  submitBtn.classList.add("loading");
-
-  try {
-    const user = document.getElementById("user").value;
-    const password = document.getElementById("password").value;
-    // Use shared login simulation
-    // try simulate with user and password; fallback to email if needed
-    try {
-      setTimeout(() => onLogin(), 1000);
-      // TODO
-      await FormUtils.simulateLogin(user, password);
-    } catch (err) {
-      // If FormUtils expects an email param or user wasn't provided, try email field
-      const emailField = document.getElementById("email");
-      if (emailField && emailField.value)
-        await FormUtils.simulateLogin(emailField.value, password);
-      else throw err;
-    }
-  } catch (error) {
-    showLoginError(error.message);
-  } finally {
-    isSubmitting = false;
-    this.submitBtn.classList.remove("loading");
-  }
-}
-
-  // simulateRedirect() {
-    //     // For demo, reset the form after 2 seconds
-    //     setTimeout(() => {
-    //         this.resetForm();
-    //     }, 2000);
-    // }
-
-function showLoginError(message) {
-  // const form = document.getElementById("login-form");
-
-  FormUtils.showNotification(
-    message || "Login failed. Please try again.",
-    "error"
-  );
-  // Shake the entire card
-  const card = document.querySelector(".login-card");
-  card.style.animation = "shake 0.5s ease-in-out";
-  setTimeout(() => {
-    card.style.animation = "";
-  }, 500);
-}
-
-function animateCheckbox(checkmark) {
-  if (checkmark) {
-    checkmark.style.transform = "scale(0.8)";
-    setTimeout(() => {
-      checkmark.style.transform = "scale(1)";
-    }, 150);
-  }
-}
-
-function shakeForm(form) {
-  form.style.animation = "shake 0.5s ease-in-out";
-  setTimeout(() => {
-    form.style.animation = "";
-  }, 500);
-}
-
-function showError(fieldName, message) {
-  const formGroup = document.getElementById(fieldName).closest(".form-group");
-  const errorElement = document.getElementById(fieldName + "Error");
-
-  if (formGroup && errorElement) {
-    formGroup.classList.add("error");
-    errorElement.textContent = message;
-    errorElement.classList.add("show");
-
-    // Add shake animation to the field
-    const field = document.getElementById(fieldName);
-    if (field) {
-      field.style.animation = "shake 0.5s ease-in-out";
-      setTimeout(() => {
-        field.style.animation = "";
-      }, 500);
-    }
-  }
-}
-
-function setupKeyboardShortcuts(onLogin, form) {
-  document.addEventListener("keydown", (e) => {
-    // Enter key submits form if focus is on form elements
-    if (e.key === "Enter" && e.target.closest("#loginForm")) {
-      e.preventDefault();
-      handleSubmit(e, onLogin, form);
-    }
-
-    // Escape key clears errors
-    if (e.key === "Escape") {
-      Object.keys(validators).forEach((fieldName) => {
-        FormUtils.clearError(fieldName);
-      });
-    }
-  });
+  // Devuelve el contenedor generado por LoginForm
+  return new LoginForm(onLogin);
 }
