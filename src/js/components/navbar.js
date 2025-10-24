@@ -1,6 +1,10 @@
+
+import "../../styles/components/navbar.css";
+
 export function Navbar() {
-  const nav = document.createElement('nav');
-  nav.className = 'navbar';
+
+  const nav = document.createElement("nav");
+  nav.className = "navbar";
 
   nav.innerHTML = `
     <div class="navbar-container">

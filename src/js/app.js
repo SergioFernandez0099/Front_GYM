@@ -17,13 +17,15 @@ function renderApp() {
       })
     );
   } else {
-    initSPA();
+    //initSPA();
   }
 }
 
 function initSPA() {
-  document.getElementById("navbar").innerHTML = Navbar();
+  const navbarContainer = document.getElementById("navbar");
 
+  navbarContainer.innerHTML = "";
+  navbarContainer.appendChild(Navbar());
   initRouter();
 }
 
