@@ -1,3 +1,12 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
     height: 100vh;
     width: 100vw;
@@ -155,7 +164,7 @@ body {
         display: block;
         height: 22px;
         width: 20px;
-        top: 18px;
+        top: 27px;
         left: 22px;
         z-index: 5;
         opacity: 0;
@@ -174,13 +183,12 @@ body {
     .navbar .menu-items-container .menu-items {
         padding-top: 63px;
         background: #fff;
-        height: 300px;
         max-width: 200px;
         transform: translateX(-150%);
         border-top-right-radius: 20px;
         border-bottom-right-radius: 20px;
         display: flex;
-        height: 14.5rem;
+        height: 18rem;
         flex-direction: column;
         margin-left: -40px;
         padding-left: 50px;
@@ -212,7 +220,7 @@ body {
     }
 
     .menu-btn {
-        top: 0.4rem;
+        top: 0.8rem;
         margin-left: 0.4rem;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
             0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -229,7 +237,7 @@ body {
         width: 50px;
         height: 50px;
         z-index: 4;
-        position: fixed;
+        position: absolute;
         transition: background-color 0.3s ease-in-out, transform 0.6s ease-in-out, box-shadow 0.3s ease-in-out;
         transform: translateX(0);
     }
@@ -242,11 +250,11 @@ body {
     input[type="checkbox"]:checked+.menu-btn {
         box-shadow: none;
         background-color: transparent;
-        transform: translateX(33px) scale(1.05);
+        transform: translateX(41px) scale(1.05);
     }
 
     .navbar-container input[type="checkbox"]:checked {
-        transform: translateX(38px);
+        transform: translateX(40px);
     }
 
     #top-line,
