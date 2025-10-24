@@ -1,33 +1,30 @@
-import { Navbar } from './components/navbar.js';
-import { router, setLoginStatus } from './router.js';
-import { Login } from './pages/login.js';
-
-let isLoggedIn = false;
+import { Navbar } from "./components/navbar.js";
+import { Login } from "./pages/login.js";
+import { initRouter } from "./router.js";
+import { setLoginStatus, getLoginStatus } from "./store.js";
 
 function renderApp() {
-  if (!isLoggedIn) {
+  if (!getLoginStatus()) {
     // Mostrar login primero
-    const app = document.getElementById('app');
-    app.innerHTML = '';
-    app.appendChild(Login({
-      onLogin: () => {
-        isLoggedIn = true;
-        setLoginStatus(true);
-        initSPA(); // Una vez logueado, inicializamos la SPA normal
-      }
-    }));
+    const app = document.getElementById("app");
+    app.innerHTML = "";
+    app.appendChild(
+      Login({
+        onLogin: () => {
+          setLoginStatus(true);
+          initSPA(); 
+        },
+      })
+    );
   } else {
     initSPA();
   }
 }
 
 function initSPA() {
-  // Cargar navbar
-  document.getElementById('navbar').innerHTML = Navbar();
+  document.getElementById("navbar").innerHTML = Navbar();
 
-  // Escuchar rutas
-  window.addEventListener('hashchange', router);
-  router(); // renderizar la ruta inicial
+  initRouter();
 }
 
 // Iniciar aplicación

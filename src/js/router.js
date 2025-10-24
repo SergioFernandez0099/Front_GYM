@@ -1,40 +1,39 @@
+import Navigo from 'navigo';
+
 import { Home } from './pages/home.js';
 import { About } from './pages/about.js';
 import { Contact } from './pages/contact.js';
+import { getLoginStatus } from './store.js';
 
-// Las rutas disponibles
-const routes = {
-  '/': Home,
-  '/about': About,
-  '/contact': Contact
-};
+const router = new Navigo('/');
 
-// Variable global para comprobar login
-// Esta variable debe venir de app.js o de un store global
-let isLoggedIn = false;
-
-// Función para actualizar el estado de login desde app.js
-export function setLoginStatus(status) {
-  isLoggedIn = status;
+export function initRouter() {
+  router
+    .on('/', () => {
+      if (!getLoginStatus()) return redirectToLogin();
+      render(Home());
+    })
+    .on('/about', () => {
+      if (!getLoginStatus()) return redirectToLogin();
+      render(About());
+    })
+    .on('/contact', () => {
+      if (!getLoginStatus()) return redirectToLogin();
+      render(Contact());
+    })
+    .notFound(() => {
+      render(`<h2>404 - Página no encontrada</h2>`);
+    })
+    .resolve(); // inicializa la ruta actual
 }
 
-// Router principal
-export function router() {
-  const path = location.hash.slice(1) || '/';
-console.log("Router ejecutado para ruta:", path, "Usuario logueado:", isLoggedIn);
-  // Si no está logueado, redirigir a login (podría ser opcional si login está en app.js)
-  if (!isLoggedIn) {
-    // En este ejemplo, app.js se encarga de mostrar Login, así que podemos salir
-    return;
-  }
-
-  const render = routes[path] || (() => {
-    const div = document.createElement('div');
-    div.innerHTML = '<h2>404 - Página no encontrada</h2>';
-    return div;
-  });
-
+function render(content) {
   const app = document.getElementById('app');
   app.innerHTML = '';
-  app.appendChild(render());
+  app.append(content);
+}
+
+function redirectToLogin() {
+  const app = document.getElementById('app');
+  app.innerHTML = '<h2>Por favor, inicia sesión</h2>';
 }
