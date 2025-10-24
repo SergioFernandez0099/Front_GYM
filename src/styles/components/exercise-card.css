@@ -1,0 +1,67 @@
+.exercise-card {
+    height: 10rem;
+    /* h-40 */
+    width: 18.25rem;
+    /* w-73 (Tailwind personalizada) */
+    margin: 0.25rem;
+    /* m-1 */
+    background-color: rgba(30, 5, 5, 0.6);
+    /* bg-[rgba(...)] */
+    padding: 0.75rem;
+    /* p-3 */
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    box-shadow: 0 4px 6px rgba(127, 29, 29, 0.8);
+    /* shadow-md + shadow-red-800 */
+    display: flex;
+    gap: 0.5rem;
+    /* gap-2 */
+}
+
+.exercise-image-container {
+    margin-left: 0.5rem;
+    /* ml-2 */
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.exercise-image {
+    object-fit: cover;
+    height: 8.75rem;
+    /* h-35 */
+}
+
+.exercise-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    /* gap-4 */
+}
+
+.exercise-title {
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.25rem;
+    /* text-xl */
+}
+
+@media (min-width: 768px) {
+    .exercise-title {
+        font-size: 1.5rem;
+        /* md:text-2xl */
+    }
+}
+
+.exercise-details {
+    /* No estilos específicos en el original, puedes añadir si quieres */
+}
+
+.exercise-text {
+    color: white;
+    font-size: 1.125rem;
+    /* text-lg */
+}

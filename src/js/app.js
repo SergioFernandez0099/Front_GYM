@@ -17,7 +17,7 @@ function renderApp() {
       })
     );
   } else {
-    //initSPA();
+    initSPA();
   }
 }
 
@@ -26,6 +26,8 @@ function initSPA() {
 
   navbarContainer.innerHTML = "";
   navbarContainer.appendChild(Navbar());
+
+  // footer
   initRouter();
 }
 

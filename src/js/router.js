@@ -1,39 +1,57 @@
-import Navigo from 'navigo';
+import Navigo from "navigo";
 
-import { Home } from './pages/home.js';
-import { About } from './pages/about.js';
-import { Contact } from './pages/contact.js';
-import { getLoginStatus } from './store.js';
+import { Home } from "./pages/home.js";
+import { About } from "./pages/about.js";
+import { Contact } from "./pages/contact.js";
+import { Exercises } from "./pages/exercises.js";
+import { getLoginStatus } from "./store.js";
 
-const router = new Navigo('/');
+export const router = new Navigo("/");
 
+// Inicializa el router después de que el DOM cargue
 export function initRouter() {
-  router
-    .on('/', () => {
-      if (!getLoginStatus()) return redirectToLogin();
-      render(Home());
-    })
-    .on('/about', () => {
-      if (!getLoginStatus()) return redirectToLogin();
-      render(About());
-    })
-    .on('/contact', () => {
-      if (!getLoginStatus()) return redirectToLogin();
-      render(Contact());
-    })
-    .notFound(() => {
-      render(`<h2>404 - Página no encontrada</h2>`);
-    })
-    .resolve(); // inicializa la ruta actual
+  document.addEventListener("DOMContentLoaded", () => {
+    router
+      .on(
+        "/",
+        requireLogin(() => render(Home()))
+      )
+      .on("/login", () => render(`<h2>Por favor, inicia sesión</h2>`))
+      .on(
+        "/about",
+        requireLogin(() => render(About()))
+      )
+      .on(
+        "/contact",
+        requireLogin(() => render(Contact()))
+      )
+      .on(
+        "/exercises",
+        requireLogin(() => render(Exercises()))
+      )
+      .notFound(() => render(`<h2>404 - Página no encontrada</h2>`))
+      .resolve();
+  });
+}
+
+function requireLogin(callback) {
+  return () => {
+    if (!getLoginStatus()) return redirectToLogin();
+    callback();
+  };
 }
 
 function render(content) {
-  const app = document.getElementById('app');
-  app.innerHTML = '';
-  app.append(content);
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  if (typeof content === "string") {
+    app.innerHTML = content;
+  } else {
+    app.appendChild(content);
+  }
 }
 
 function redirectToLogin() {
-  const app = document.getElementById('app');
-  app.innerHTML = '<h2>Por favor, inicia sesión</h2>';
+  router.navigate("/login");
 }

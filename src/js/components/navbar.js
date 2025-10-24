@@ -1,8 +1,7 @@
-
 import "../../styles/components/navbar.css";
+import { router } from "../router.js"; 
 
 export function Navbar() {
-
   const nav = document.createElement("nav");
   nav.className = "navbar";
 
@@ -21,10 +20,11 @@ export function Navbar() {
 
       <div class="menu-items-container">
         <ul class="menu-items">
-          <li><a href="#home">Archivo</a></li>
-          <li><a href="#about">Rutina</a></li>
-          <li><a href="#food">Registro</a></li>
-          <li><a href="#food-menu">Ejercicios</a></li>
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/home">Archivo</a></li>
+          <li><a href="/routine">Rutina</a></li>
+          <li><a href="/sheets">Registro</a></li>
+          <li><a href="/exercises">Ejercicios</a></li>
         </ul>
       </div>
 
@@ -34,6 +34,29 @@ export function Navbar() {
       </div>
     </div>
   `;
+
+  const inputMenu = nav.querySelector("#menu-toggle");
+  const mainContainer = document.querySelector("main");
+
+  inputMenu.addEventListener("click", () => {
+    if (inputMenu.checked) {
+      mainContainer.style.filter = "blur(2px)";
+    } else {
+      mainContainer.style.filter = "none";
+    }
+  });
+
+  // Intercepta los clicks en los enlaces para SPA
+  const menuLinks = nav.querySelectorAll("a");
+  menuLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // evita recarga de página
+      const href = link.getAttribute("href");
+      router.navigate(href); // le dice a Navigo que cambie de ruta
+      inputMenu.checked = false; // opcional: cierra el menú al hacer click
+      mainContainer.style.filter = "none";
+    });
+  });
 
   return nav;
 }

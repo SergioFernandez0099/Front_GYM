@@ -1,12 +1,3 @@
-*,
-*::after,
-*::before {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-    -webkit-tap-highlight-color: transparent;
-}
-
 body {
     height: 100vh;
     width: 100vw;
@@ -188,7 +179,7 @@ body {
         border-top-right-radius: 20px;
         border-bottom-right-radius: 20px;
         display: flex;
-        height: 18rem;
+        height: 20rem;
         flex-direction: column;
         margin-left: -40px;
         padding-left: 50px;
@@ -250,7 +241,7 @@ body {
     input[type="checkbox"]:checked+.menu-btn {
         box-shadow: none;
         background-color: transparent;
-        transform: translateX(41px) scale(1.05);
+        transform: translateX(38px) scale(1.05);
     }
 
     .navbar-container input[type="checkbox"]:checked {
