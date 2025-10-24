@@ -1,11 +1,4 @@
-body {
-    height: 100vh;
-    width: 100vw;
-    padding: 7px;
-    background: linear-gradient(135deg, #ff0000 0%, #000000 80%);
-     background-attachment: fixed; 
-     background-size: cover;
-}
+
 
 .navbar {
     position: fixed;
@@ -179,7 +172,7 @@ body {
         border-top-right-radius: 20px;
         border-bottom-right-radius: 20px;
         display: flex;
-        height: 20rem;
+        height: 23rem;
         flex-direction: column;
         margin-left: -40px;
         padding-left: 50px;

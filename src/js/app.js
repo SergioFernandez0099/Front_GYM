@@ -1,6 +1,6 @@
 import { Navbar } from "./components/navbar.js";
 import { Login } from "./pages/login.js";
-import { initRouter } from "./router.js";
+import { initRouter, router } from "./router.js";
 import { setLoginStatus, getLoginStatus } from "./store.js";
 
 function renderApp() {
@@ -13,6 +13,7 @@ function renderApp() {
         onLogin: () => {
           setLoginStatus(true);
           initSPA(); 
+          router.navigate("/");
         },
       })
     );
@@ -23,11 +24,11 @@ function renderApp() {
 
 function initSPA() {
   const navbarContainer = document.getElementById("navbar");
-
   navbarContainer.innerHTML = "";
   navbarContainer.appendChild(Navbar());
 
   // footer
+  
   initRouter();
 }
 

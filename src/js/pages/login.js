@@ -5,18 +5,18 @@ class FormUtils {
     if (!value) {
       return { isValid: false, message: "Password is required" };
     }
-    if (value.length < 8) {
+    if (value.length < 4) {
       return {
         isValid: false,
         message: "Password must be at least 8 characters long",
       };
     }
-    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
-      return {
-        isValid: false,
-        message: "Password must contain uppercase, lowercase, and number",
-      };
-    }
+    // if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
+    //   return {
+    //     isValid: false,
+    //     message: "Password must contain uppercase, lowercase, and number",
+    //   };
+    // }
     return { isValid: true };
   }
 
@@ -24,12 +24,12 @@ class FormUtils {
   static simulateLogin(email, password) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        if (email === "admin@demo.com" && password === "wrongpassword") {
-          reject(new Error("Invalid email or password"));
-        } else {
+        if (email === "admin" && password === "1234") {
           resolve({ success: true, user: { email } });
+        } else {
+          reject(new Error("Invalid email or password"));
         }
-      }, 2000); // Retardo reducido para demo
+      }, 1000); // Retardo reducido para demo
     });
   }
 

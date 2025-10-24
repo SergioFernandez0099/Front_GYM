@@ -10,28 +10,26 @@ export const router = new Navigo("/");
 
 // Inicializa el router después de que el DOM cargue
 export function initRouter() {
-  document.addEventListener("DOMContentLoaded", () => {
-    router
-      .on(
-        "/",
-        requireLogin(() => render(Home()))
-      )
-      .on("/login", () => render(`<h2>Por favor, inicia sesión</h2>`))
-      .on(
-        "/about",
-        requireLogin(() => render(About()))
-      )
-      .on(
-        "/contact",
-        requireLogin(() => render(Contact()))
-      )
-      .on(
-        "/exercises",
-        requireLogin(() => render(Exercises()))
-      )
-      .notFound(() => render(`<h2>404 - Página no encontrada</h2>`))
-      .resolve();
-  });
+  router
+    .on(
+      "/",
+      requireLogin(() => render(Home()))
+    )
+    .on("/login", () => render(`<h2>Por favor, inicia sesión</h2>`))
+    .on(
+      "/about",
+      requireLogin(() => render(About()))
+    )
+    .on(
+      "/contact",
+      requireLogin(() => render(Contact()))
+    )
+    .on(
+      "/exercises",
+      requireLogin(() => render(Exercises()))
+    )
+    .notFound(() => render(`<h2>404 - Página no encontrada</h2>`))
+    .resolve();
 }
 
 function requireLogin(callback) {
