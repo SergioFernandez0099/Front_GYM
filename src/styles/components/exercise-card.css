@@ -38,7 +38,6 @@
     align-items: center;
     justify-content: flex-start;
     gap: 1rem;
-    /* gap-4 */
 }
 
 .exercise-title {
@@ -46,13 +45,11 @@
     text-align: center;
     font-weight: bold;
     font-size: 1.25rem;
-    /* text-xl */
 }
 
 @media (min-width: 768px) {
     .exercise-title {
         font-size: 1.5rem;
-        /* md:text-2xl */
     }
 }
 

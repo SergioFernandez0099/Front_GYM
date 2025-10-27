@@ -1,3 +1,5 @@
+import { router } from "../router";
+
 export function RoutineDayCard(day, series = 3, reps = 10) {
   const article = document.createElement("article");
 
@@ -11,7 +13,7 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
     </div>
   `;
   } else {
-  article.className = "routine-day-card";
+    article.className = "routine-day-card";
     article.innerHTML = `
     <div class="exercise-info ">
         <h2 class="routine-day-title">${day}</h2>
@@ -21,5 +23,9 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
     </div>
   `;
   }
+
+  article.addEventListener("click", () => {
+    router.navigate(`/routine/set/${day}`);
+  });
   return article;
 }

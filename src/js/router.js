@@ -6,6 +6,7 @@ import { Contact } from "./pages/contact.js";
 import { Exercises } from "./pages/exercises.js";
 import { getLoginStatus } from "./store.js";
 import { Routine } from "./pages/routine.js";
+import { RoutineSet } from "./pages/routine-set.js";
 
 export const router = new Navigo("/");
 
@@ -21,9 +22,15 @@ export function initRouter() {
       "/about",
       requireLogin(() => render(About()))
     )
-      .on("/routine",
+    .on(
+      "/routine/set/:id",
+      requireLogin(({ data }) => render(RoutineSet())) //data.id
+    )
+    .on(
+      "/routine",
       requireLogin(() => render(Routine()))
     )
+
     .on(
       "/contact",
       requireLogin(() => render(Contact()))
