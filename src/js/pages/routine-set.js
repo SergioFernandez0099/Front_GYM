@@ -11,13 +11,9 @@ const defaultSet = [
 ];
 
 export function RoutineSet(set = defaultSet) {
-  applyCSS(
-    "/src/styles/exercises.css",
-    "/src/styles/components/exercises-card.css"
-  );
 
   const routineSetContainer = document.createElement("div");
-  routineSetContainer.className = "routine-set-container";
+  routineSetContainer.className = "routine-container";
 
   // const filtersContainer = document.createElement("div");
   // filtersContainer.className = "filters-container";
@@ -57,7 +53,7 @@ export function RoutineSet(set = defaultSet) {
     exerciseList.appendChild(RoutineSetCard(exercise));
   });
 
-  exercisesContainer.appendChild(section);
+  routineSetContainer.appendChild(section);
 
-  return exercisesContainer;
+  return routineSetContainer;
 }

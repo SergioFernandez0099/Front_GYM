@@ -1,27 +1,68 @@
 .routine-set-card {
     height: 10rem;
     /* h-40 */
-    width: 18.25rem;
+    width: 19rem;
     /* w-73 (Tailwind personalizada) */
     margin: 0.25rem;
     /* m-1 */
     background-color: rgba(30, 5, 5, 0.6);
     /* bg-[rgba(...)] */
-    padding: 0.75rem;
+    padding: 0.6rem;
     /* p-3 */
     border-radius: 0.75rem;
     /* rounded-xl */
     box-shadow: 0 4px 6px rgba(127, 29, 29, 0.8);
     /* shadow-md + shadow-red-800 */
     display: flex;
-    gap: 0.5rem;
+    gap: 0.8rem;
     /* gap-2 */
 }
 
-.routine-set-title {
+.routine-set-image-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
 
+.routine-set-image {
+    object-fit: cover;
+    height: 8rem;
+}
+
+.routine-set-title {
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.routine-set-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    /* gap: 2rem; */
 }
 
 .routine-details {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
 
+.routine-set-text {
+    color: white;
+    font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+    .routine-set-title {
+        font-size: 1.5rem;
+    }
+
+    .routine-set-text {
+    color: white;
+    font-size: 1.1rem;
+}
 }

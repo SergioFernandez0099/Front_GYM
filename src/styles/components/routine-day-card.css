@@ -1,21 +1,30 @@
 .routine-day-card {
-    height: 12rem;
+    height: 10rem;
     /* h-40 */
-    width: 18.25rem;
+    width: 15rem;
     /* w-73 (Tailwind personalizada) */
     margin: 0.25rem;
     /* m-1 */
     background-color: rgba(30, 5, 5, 0.6);
     /* p-3 */
     border-radius: 0.75rem;
-    /* rounded-xl */
     box-shadow: 0 4px 6px rgba(127, 29, 29, 0.8);
     /* shadow-md + shadow-red-800 */
     display: flex;
     gap: 0.5rem;
     flex-direction: column;
     position: relative;
+    overflow: hidden;
     /* gap-2 */
+}
+
+.routine-day-add-card {
+    position: relative;
+    height: 10rem;
+    width: 15rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    display: flex;
 }
 
 .routine-day-image-container {
@@ -26,7 +35,7 @@
     height: 100%;
 }
 
-.exercise-image {
+.routine-image {
     object-fit: cover;
     width: 100%;
     border-radius: 0.75rem;
@@ -34,13 +43,14 @@
     /* h-35 */
 }
 
-.exercise-info {
+.routine-info {
     height: 100%;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* gap-4 */
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .routine-day-title {
@@ -53,8 +63,9 @@
 }
 
 .button-container {
+    cursor: pointer;
     position: relative;
-    height: 12rem;
+    height: 10rem;
     width: 18.25rem;
     display: flex;
     justify-content: center;
@@ -62,19 +73,43 @@
     background-color: transparent;
     box-shadow: none;
     border: none;
+    transition: transform 0.2s ease;
+}
+
+.button-container:hover {
+    transform: scale(1.1);
 }
 
 .addButton {
-   cursor: pointer;
-    border-radius: 100%;
-    background-color: orange;
-    height: 100%;   
-    width: 65%;
+    cursor: pointer;
+    background-color: rgba(255, 0, 0, 0.7);
+    border-radius: 50%;
+    width: 6rem;
+    height: 6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 8px 5px rgba(255, 255, 255, 0.8);
+    transition: box-shadow 0.2s ease;
+}
+
+.addButton:hover {
+    box-shadow: 0 0 15px 10px rgba(255, 255, 255, 0.8);
+}
+
+.addButton svg {
+    width: 40%;
+    height: 40%;
+    color: rgba(255, 255, 255, 1);
 }
 
 @media (min-width: 768px) {
     .routine-day-title {
-                font-size: 1.9rem;
+        font-size: 1.9rem;
+    }
 
+    .addButton svg {
+        width: 80%;
+        height: 80%;
     }
 }

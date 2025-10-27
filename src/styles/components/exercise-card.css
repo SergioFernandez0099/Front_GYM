@@ -1,26 +1,17 @@
 .exercise-card {
     height: 10rem;
-    /* h-40 */
     width: 18.25rem;
-    /* w-73 (Tailwind personalizada) */
     margin: 0.25rem;
-    /* m-1 */
     background-color: rgba(30, 5, 5, 0.6);
-    /* bg-[rgba(...)] */
-    padding: 0.75rem;
-    /* p-3 */
+    padding: 0.5rem;
     border-radius: 0.75rem;
-    /* rounded-xl */
     box-shadow: 0 4px 6px rgba(127, 29, 29, 0.8);
-    /* shadow-md + shadow-red-800 */
     display: flex;
-    gap: 0.5rem;
-    /* gap-2 */
+    gap: 0.6rem;
 }
 
 .exercise-image-container {
     margin-left: 0.5rem;
-    /* ml-2 */
     display: flex;
     align-items: center;
     height: 100%;
@@ -36,7 +27,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 1rem;
 }
 
@@ -46,15 +37,18 @@
     font-weight: bold;
     font-size: 1.25rem;
 }
-
-@media (min-width: 768px) {
-    .exercise-title {
-        font-size: 1.5rem;
-    }
-}
-
 .exercise-text {
     color: white;
     font-size: 1.125rem;
     /* text-lg */
 }
+
+@media (min-width: 768px) {
+    .exercise-card {
+    padding: 0.75rem;
+    }
+    .exercise-title {
+        font-size: 1.5rem;
+    }
+}
+

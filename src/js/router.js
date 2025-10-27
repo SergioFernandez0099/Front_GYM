@@ -44,9 +44,9 @@ export function initRouter() {
 }
 
 function requireLogin(callback) {
-  return () => {
+  return (params) => {
     if (!getLoginStatus()) return redirectToLogin();
-    callback();
+    callback(params);
   };
 }
 

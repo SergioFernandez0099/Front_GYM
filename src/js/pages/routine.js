@@ -6,7 +6,8 @@ const routine = ["Pecho", "Espalda", "Cuádriceps", "Isquios"];
 export function Routine() {
   applyCSS(
     "/src/styles/routine.css",
-    "/src/styles/components/routine-day-card.css"
+    "/src/styles/components/routine-day-card.css",
+    "/src/styles/components/routine-set-card.css"
   );
 
   const routineContainer = document.createElement("div");
