@@ -1,5 +1,5 @@
 
-let isLoggedIn = false;
+let isLoggedIn = true;
 let token = null;
 
 export function setLoginStatus(status, newToken = null) {

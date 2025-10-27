@@ -1,19 +1,13 @@
-import "../../styles/components/exercise-card.css";
-
 export function ExerciseCard() {
   const article = document.createElement("article");
   article.className = "exercise-card";
 
   article.innerHTML = `
     <div class="exercise-image-container">
-        <img src="../assets/legs/hack-squat-800_rd.png" alt="" class="exercise-image" />
+        <img src="/assets/images/exercises/legs/hack-squat-800_rd.png" alt="" class="exercise-image" />
     </div>
     <div class="exercise-info">
         <h2 class="exercise-title">Hack Squat</h2>
-        <div class="exercise-details">
-            <p class="exercise-text">Series: 3</p>
-            <p class="exercise-text">Reps: 10</p>
-        </div>
     </div>
   `;
 

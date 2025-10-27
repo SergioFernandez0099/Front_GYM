@@ -1,10 +1,8 @@
 import { defineConfig } from 'vite'
-import { resolve } from 'path'
 
 export default defineConfig({
-  build: {
-    rollupOptions: {
-      input: resolve(__dirname, 'public/index.html') // ✅ ruta absoluta
-    }
-  }
+ server: {
+    host: true, // permite acceder desde la LAN
+    port: 5173, // puedes cambiar el puerto si quieres
+  },
 })

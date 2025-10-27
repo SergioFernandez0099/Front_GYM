@@ -1,8 +1,11 @@
 // import { Navbar } from '../components/Navbar.js';
 
-export function Home() {
-  const container = document.createElement('div');
+import { applyCSS } from "../../utils/helpers";
 
+export function Home() {
+  applyCSS('/src/styles/variables.css');
+
+  const container = document.createElement('div');
   // Insertar la navbar
   // container.appendChild(Navbar());
 

@@ -1,23 +1,76 @@
+import { applyCSS } from "../../utils/helpers";
 import { ExerciseCard } from "../components/exercise-card";
-import "../../styles/exercises.css";
+
+const filters = [
+  { name: "Pecho", value: "pecho" },
+  { name: "Espalda", value: "espalda" },
+  { name: "Hombro", value: "hombro" },
+  { name: "Bíceps", value: "biceps" },
+  { name: "Tríceps", value: "triceps" },
+  { name: "Cuádriceps", value: "cuadriceps" },
+  { name: "Isquios", value: "isquios" },
+  { name: "Glúteo", value: "gluteo" },
+  { name: "Gemelo", value: "gemelo" },
+  { name: "Adductor", value: "adductor" },
+  { name: "Abductor", value: "abductor" },
+  { name: "Abdomen", value: "abdomen" },
+];
 
 export function Exercises() {
+  applyCSS(
+    "/src/styles/exercises.css",
+    "/src/styles/components/exercise-card.css"
+  );
+
+  const exercisesContainer = document.createElement("div");
+  exercisesContainer.className = "exercises-container";
+
+  const filtersContainer = document.createElement("div");
+  filtersContainer.className = "filters-container";
+
+  filters.forEach((f) => {
+    const p = document.createElement("p");
+    p.className = "filter";
+    p.textContent = f.name;
+    p.dataset.muscle = f.value;
+
+    p.addEventListener("click", () => {
+      // quitar active de todos
+      filtersContainer
+        .querySelectorAll(".filter")
+        .forEach((f2) => f2.classList.remove("active"));
+      // añadir active al pulsado
+      p.classList.add("active");
+
+      // Acción específica
+      handleFilter(f.value);
+    });
+
+    filtersContainer.appendChild(p);
+  });
+
+exercisesContainer.appendChild(filtersContainer);
+
   const section = document.createElement("section");
-  section.className = "exercise-list";
+  section.className = "exercise-list-container";
 
-  section.appendChild(ExerciseCard());
-//   section.innerHTML = ExerciseCard();
+  const exerciseList = document.createElement("div");
+  exerciseList.className = "exercise-list";
 
-  //   const inputMenu = nav.querySelector("#menu-toggle");
-  //   const mainContainer = document.querySelector("main");
+  section.appendChild(exerciseList);
 
-  //   inputMenu.addEventListener("click", () => {
-  //     if (inputMenu.checked) {
-  //       mainContainer.style.filter = "blur(2px)";
-  //     } else {
-  //       mainContainer.style.filter = "none";
-  //     }
-  //   });
+  exerciseList.appendChild(ExerciseCard());
+  exerciseList.appendChild(ExerciseCard());
+  exerciseList.appendChild(ExerciseCard());
+  exerciseList.appendChild(ExerciseCard());
+  exerciseList.appendChild(ExerciseCard());
+  exerciseList.appendChild(ExerciseCard());
+  exerciseList.appendChild(ExerciseCard());
+  exerciseList.appendChild(ExerciseCard());
+  exerciseList.appendChild(ExerciseCard());
+  exerciseList.appendChild(ExerciseCard());
 
-  return section;
+  exercisesContainer.appendChild(section);
+
+  return exercisesContainer;
 }

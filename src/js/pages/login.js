@@ -1,5 +1,6 @@
+import { applyCSS } from "../../utils/helpers";
+
 class FormUtils {
-  
   // Validación de contraseña
   static validatePassword(value) {
     if (!value) {
@@ -143,7 +144,7 @@ class FormUtils {
         passwordInput.type = isPassword ? "text" : "password";
         eyeIcon?.classList.toggle("show-password", isPassword);
         toggleButton.style.transform = "scale(0.9)";
-        setTimeout(() => toggleButton.style.transform = "", 150);
+        setTimeout(() => (toggleButton.style.transform = ""), 150);
         passwordInput.focus();
       });
     }
@@ -214,7 +215,7 @@ class LoginForm {
     this.submitBtn = form.querySelector(".login-btn");
     this.errorElements = {
       user: form.querySelector("#userError"),
-      password: form.querySelector("#passwordError")
+      password: form.querySelector("#passwordError"),
     };
     this.rememberCheckbox = form.querySelector("#remember");
     this.checkmark = form.querySelector(".checkmark");
@@ -231,22 +232,30 @@ class LoginForm {
     this.validators = {
       user: (value) => ({
         isValid: !!value,
-        message: value ? "" : "Introduce un usuario"
+        message: value ? "" : "Introduce un usuario",
       }),
-      password: FormUtils.validatePassword
+      password: FormUtils.validatePassword,
     };
 
     // Eventos del formulario
     form.addEventListener("submit", (e) => this.handleSubmit(e));
     this.userField.addEventListener("blur", () => this.validateField("user"));
     this.userField.addEventListener("input", () => this.clearError("user"));
-    this.passwordField.addEventListener("blur", () => this.validateField("password"));
-    this.passwordField.addEventListener("input", () => this.clearError("password"));
+    this.passwordField.addEventListener("blur", () =>
+      this.validateField("password")
+    );
+    this.passwordField.addEventListener("input", () =>
+      this.clearError("password")
+    );
 
     // Efectos de foco en los wrappers de input
     form.querySelectorAll("input").forEach((input) => {
-      input.addEventListener("focus", (e) => e.target.closest(".input-wrapper")?.classList.add("focused"));
-      input.addEventListener("blur", (e) => e.target.closest(".input-wrapper")?.classList.remove("focused"));
+      input.addEventListener("focus", (e) =>
+        e.target.closest(".input-wrapper")?.classList.add("focused")
+      );
+      input.addEventListener("blur", (e) =>
+        e.target.closest(".input-wrapper")?.classList.remove("focused")
+      );
     });
 
     // Enlaces de "olvidó contraseña" y "registro" (aún sin implementación de navegación)
@@ -254,7 +263,9 @@ class LoginForm {
     this.signupLink.addEventListener("click", (e) => e.preventDefault());
 
     // Animación del checkbox "Recuérdame"
-    this.rememberCheckbox.addEventListener("change", () => this.animateCheckbox());
+    this.rememberCheckbox.addEventListener("change", () =>
+      this.animateCheckbox()
+    );
 
     // Atajos de teclado: Enter para enviar, Escape para borrar errores
     document.addEventListener("keydown", (e) => {
@@ -267,7 +278,7 @@ class LoginForm {
       }
     });
 
-    return this.container;  // Devuelve el nodo contenedor completo
+    return this.container; // Devuelve el nodo contenedor completo
   }
 
   // Valida un campo específico
@@ -287,7 +298,9 @@ class LoginForm {
 
   // Valida todo el formulario; retorna false si hay errores
   validateForm() {
-    return Object.keys(this.validators).every((field) => this.validateField(field));
+    return Object.keys(this.validators).every((field) =>
+      this.validateField(field)
+    );
   }
 
   // Manejador de envío del formulario
@@ -296,18 +309,18 @@ class LoginForm {
     if (this.isSubmitting) return;
 
     if (!this.validateForm()) {
-      this.shakeForm();  // Agita si hay errores
+      this.shakeForm(); // Agita si hay errores
       return;
     }
 
     this.isSubmitting = true;
-    this.submitBtn.classList.add("loading");  // Muestra loader
+    this.submitBtn.classList.add("loading"); // Muestra loader
     const user = this.userField.value;
     const password = this.passwordField.value;
 
     try {
       await FormUtils.simulateLogin(user, password);
-      this.onLogin();  // Llama al callback de éxito
+      this.onLogin(); // Llama al callback de éxito
     } catch (error) {
       // Muestra mensaje de error y agita
       FormUtils.showNotification(error.message, "error");
@@ -323,7 +336,7 @@ class LoginForm {
     const form = this.container.querySelector(".login-form");
     if (form) {
       form.style.animation = "shake 0.5s ease-in-out";
-      setTimeout(() => form.style.animation = "", 500);
+      setTimeout(() => (form.style.animation = ""), 500);
     }
   }
 
@@ -337,7 +350,7 @@ class LoginForm {
       errorEl.textContent = message;
       errorEl.classList.add("show");
       field.style.animation = "shake 0.5s ease-in-out";
-      setTimeout(() => field.style.animation = "", 500);
+      setTimeout(() => (field.style.animation = ""), 500);
     }
   }
 
@@ -349,7 +362,9 @@ class LoginForm {
       const formGroup = field.closest(".form-group");
       formGroup?.classList.remove("error");
       errorEl.classList.remove("show");
-      setTimeout(() => { errorEl.textContent = ""; }, 300);
+      setTimeout(() => {
+        errorEl.textContent = "";
+      }, 300);
     }
   }
 
@@ -357,7 +372,7 @@ class LoginForm {
   animateCheckbox() {
     if (this.checkmark) {
       this.checkmark.style.transform = "scale(0.8)";
-      setTimeout(() => this.checkmark.style.transform = "", 150);
+      setTimeout(() => (this.checkmark.style.transform = ""), 150);
     }
   }
 }
@@ -365,13 +380,8 @@ class LoginForm {
 // Función exportada que crea la instancia del formulario de login
 export function Login({ onLogin }) {
   // Cargar el CSS solo una vez
-  if (!document.getElementById("login-css")) {
-    const link = document.createElement("link");
-    link.id = "login-css";
-    link.rel = "stylesheet";
-    link.href = "/src/styles/login.css";
-    document.head.appendChild(link);
-  }
+  applyCSS("/src/styles/login.css");
+
   // Devuelve el contenedor generado por LoginForm
   return new LoginForm(onLogin);
 }
