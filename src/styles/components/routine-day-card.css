@@ -15,12 +15,13 @@
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
     /* gap-2 */
 }
 
 .routine-day-add-card {
     position: relative;
-    height: 10rem;
+    height: 8rem;
     width: 15rem;
     border-radius: 0.75rem;
     overflow: hidden;
@@ -39,8 +40,6 @@
     object-fit: cover;
     width: 100%;
     border-radius: 0.75rem;
-
-    /* h-35 */
 }
 
 .routine-info {
@@ -65,7 +64,7 @@
 .button-container {
     cursor: pointer;
     position: relative;
-    height: 10rem;
+    height: 8rem;
     width: 18.25rem;
     display: flex;
     justify-content: center;
@@ -76,25 +75,27 @@
     transition: transform 0.2s ease;
 }
 
-.button-container:hover {
-    transform: scale(1.1);
-}
-
 .addButton {
     cursor: pointer;
-    background-color: rgba(255, 0, 0, 0.7);
+    background-color: rgba(173, 2, 2,0.8);
     border-radius: 50%;
-    width: 6rem;
-    height: 6rem;
+    width: 5rem;
+    height: 5rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 0 8px 5px rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 8px 3px rgba(255, 255, 255, 0.8);
     transition: box-shadow 0.2s ease;
 }
 
 .addButton:hover {
-    box-shadow: 0 0 15px 10px rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+}
+
+.addButton svg:hover {
+    width: 70%;
+    height: 70%;
 }
 
 .addButton svg {

@@ -52,6 +52,8 @@ export function RoutineSet(set = defaultSet) {
   set.forEach((exercise) => {
     exerciseList.appendChild(RoutineSetCard(exercise));
   });
+    exerciseList.appendChild(RoutineSetCard("add"));
+  
 
   routineSetContainer.appendChild(section);
 

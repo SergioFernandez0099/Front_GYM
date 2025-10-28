@@ -5,6 +5,10 @@
     box-sizing: border-box;
 }
 
+body {
+       background: linear-gradient(135deg, #ff0000 0%, #000000 70%);
+    background-attachment: fixed;
+}
 
 .login-container {
     width: 100%;
