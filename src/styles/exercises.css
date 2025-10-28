@@ -64,8 +64,9 @@
     padding-bottom: 3rem;
 }
 
-section {
-    height: 100vh;
+.filters-container.no-scroll {
+    justify-content: center;
+    overflow: hidden;
 }
 
 @media (max-width: 768px) {

@@ -49,7 +49,7 @@ export function Exercises() {
     filtersContainer.appendChild(p);
   });
 
-exercisesContainer.appendChild(filtersContainer);
+  exercisesContainer.appendChild(filtersContainer);
 
   const section = document.createElement("section");
   section.className = "exercise-list-container";
@@ -72,5 +72,19 @@ exercisesContainer.appendChild(filtersContainer);
 
   exercisesContainer.appendChild(section);
 
+  function checkScroll() {
+    if (filtersContainer.scrollWidth <= filtersContainer.clientWidth) {
+      filtersContainer.classList.add("no-scroll");
+    } else {
+      filtersContainer.classList.remove("no-scroll");
+    }
+  }
+
+  // ✅ Espera al siguiente frame para medir correctamente
+  requestAnimationFrame(checkScroll);
+  window.addEventListener("resize", checkScroll);
+
   return exercisesContainer;
 }
+
+
