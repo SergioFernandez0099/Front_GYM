@@ -30,7 +30,6 @@ export function initRouter() {
       "/routine",
       requireLogin(() => render(Routine()))
     )
-
     .on(
       "/contact",
       requireLogin(() => render(Contact()))

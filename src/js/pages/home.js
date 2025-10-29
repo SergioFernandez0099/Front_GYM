@@ -6,10 +6,7 @@ export function Home() {
   applyCSS('/src/styles/variables.css');
 
   const container = document.createElement('div');
-  // Insertar la navbar
-  // container.appendChild(Navbar());
 
-  // Insertar el contenido principal
   const content = document.createElement('div');
   content.innerHTML = `
     <h1 style="color: white;">Bienvenido a Home</h1>

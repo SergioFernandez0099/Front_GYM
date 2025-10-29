@@ -7,7 +7,8 @@ export function Routine() {
   applyCSS(
     "/src/styles/routine.css",
     "/src/styles/components/routine-day-card.css",
-    "/src/styles/components/routine-set-card.css"
+    "/src/styles/components/routine-set-card.css",
+    "/src/styles/components/routine-form.css"
   );
 
   const routineContainer = document.createElement("div");
@@ -16,8 +17,7 @@ export function Routine() {
   const filtersContainer = document.createElement("div");
   filtersContainer.className = "filters-container";
 
-
-    routineContainer.appendChild(filtersContainer);
+  routineContainer.appendChild(filtersContainer);
 
   const section = document.createElement("section");
   section.className = "routine-list-container";
@@ -31,7 +31,6 @@ export function Routine() {
     routineList.appendChild(RoutineDayCard(day));
   });
   routineList.appendChild(RoutineDayCard("add"));
-
 
   routineContainer.appendChild(section);
 

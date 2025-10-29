@@ -15,7 +15,6 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
       </div>
     </div>
   `;
-
   } else {
     article.className = "routine-day-card";
     article.innerHTML = `
@@ -26,11 +25,10 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
         <img src="/assets/images/routine_card.jpg" alt="Imagen de fondo en un gimnasio" class="routine-image" />
     </div>
   `;
-     article.addEventListener("click", () => {
-    router.navigate(`/routine/set/${day}`);
-  });
+    article.addEventListener("click", () => {
+      router.navigate(`/routine/set/${day}`);
+    });
   }
 
- 
   return article;
 }

@@ -1,4 +1,3 @@
-import { applyCSS } from "../../utils/helpers";
 import { RoutineSetCard } from "../components/routine-set-card";
 
 const defaultSet = [
@@ -11,35 +10,8 @@ const defaultSet = [
 ];
 
 export function RoutineSet(set = defaultSet) {
-
   const routineSetContainer = document.createElement("div");
   routineSetContainer.className = "routine-container";
-
-  // const filtersContainer = document.createElement("div");
-  // filtersContainer.className = "filters-container";
-
-  // filters.forEach((f) => {
-  //   const p = document.createElement("p");
-  //   p.className = "filter";
-  //   p.textContent = f.name;
-  //   p.dataset.muscle = f.value;
-
-  //   p.addEventListener("click", () => {
-  //     // quitar active de todos
-  //     filtersContainer
-  //       .querySelectorAll(".filter")
-  //       .forEach((f2) => f2.classList.remove("active"));
-  //     // añadir active al pulsado
-  //     p.classList.add("active");
-
-  //     // Acción específica
-  //     handleFilter(f.value);
-  //   });
-
-  //   filtersContainer.appendChild(p);
-  // });
-
-  // exercisesContainer.appendChild(filtersContainer);
 
   const section = document.createElement("section");
   section.className = "routine-list-container";
@@ -52,8 +24,7 @@ export function RoutineSet(set = defaultSet) {
   set.forEach((exercise) => {
     exerciseList.appendChild(RoutineSetCard(exercise));
   });
-    exerciseList.appendChild(RoutineSetCard("add"));
-  
+  exerciseList.appendChild(RoutineSetCard("add"));
 
   routineSetContainer.appendChild(section);
 

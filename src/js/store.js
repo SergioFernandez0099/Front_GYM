@@ -1,4 +1,3 @@
-
 let isLoggedIn = true;
 let token = null;
 

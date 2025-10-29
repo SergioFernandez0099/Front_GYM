@@ -11,16 +11,5 @@ export function ExerciseCard() {
     </div>
   `;
 
-  //   const inputMenu = nav.querySelector("#menu-toggle");
-  //   const mainContainer = document.querySelector("main");
-
-  //   inputMenu.addEventListener("click", () => {
-  //     if (inputMenu.checked) {
-  //       mainContainer.style.filter = "blur(2px)";
-  //     } else {
-  //       mainContainer.style.filter = "none";
-  //     }
-  //   });
-
   return article;
 }
