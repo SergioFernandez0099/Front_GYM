@@ -9,7 +9,7 @@ export function RoutineSetCard(exercise) {
 
   const article = document.createElement("article");
   if (exercise === "add") {
-    article.className = "routine-day-add-card";
+    article.className = "routine-set-add-card";
     article.innerHTML = `
     <div class="button-container">
       <div class="addButton">

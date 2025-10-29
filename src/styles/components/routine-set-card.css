@@ -19,6 +19,16 @@
     /* gap-2 */
 }
 
+.routine-set-add-card {
+    margin: 0.25rem;
+    position: relative;
+    height: 10rem;
+    width: 19rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    display: flex;
+}
+
 .routine-set-options {
     position: absolute;
     display: flex;
