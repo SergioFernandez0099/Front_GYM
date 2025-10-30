@@ -6,7 +6,7 @@
 }
 
 body {
-       background: linear-gradient(135deg, #ff0000 0%, #000000 70%);
+    background: linear-gradient(135deg, #ff0000 0%, #000000 70%);
     background-attachment: fixed;
 }
 

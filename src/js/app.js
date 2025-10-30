@@ -1,3 +1,4 @@
+import { removeLoginCss } from "../utils/helpers.js";
 import { Navbar } from "./components/navbar.js";
 import { Login } from "./pages/login.js";
 import { initRouter, router } from "./router.js";
@@ -23,6 +24,7 @@ function renderApp() {
 }
 
 function initSPA() {
+  removeLoginCss();
   const navbarContainer = document.getElementById("navbar");
   navbarContainer.innerHTML = "";
   navbarContainer.appendChild(Navbar());

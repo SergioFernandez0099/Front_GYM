@@ -83,6 +83,7 @@ export function Exercises() {
   // ✅ Espera al siguiente frame para medir correctamente
   requestAnimationFrame(checkScroll);
   window.addEventListener("resize", checkScroll);
+  window.addEventListener("load", checkScroll);
 
   return exercisesContainer;
 }

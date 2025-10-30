@@ -22,7 +22,7 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
         <h2 class="routine-day-title">${day}</h2>
     </div>
     <div class="routine-day-image-container">
-        <img src="/assets/images/routine_card.jpg" alt="Imagen de fondo en un gimnasio" class="routine-image" />
+        <img src="/assets/images/routine_card2.jpg" alt="Imagen de fondo en un gimnasio" class="routine-image" />
     </div>
   `;
     article.addEventListener("click", () => {

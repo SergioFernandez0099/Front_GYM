@@ -21,18 +21,60 @@ export function RoutineSetCard(exercise) {
       </div>
     </div>
   `;
+  } else if (exercise === "new") {
+    article.className = "routine-set-card";
+    article.innerHTML = `
+    <div class="routine-set-options">
+      <div class="icon-container icon-container-edit fade-toggle" data-editable="false">
+        <img src="/assets/icons/edit.svg" alt="Icono de edición" class="editIcon">
+      </div>
+      <div class="icon-container icon-container-trash fade-toggle">
+        <img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
+      </div>
+      <div class="icon-container icon-container-arrow ">
+        <img src="/assets/icons/arrow_down.svg" alt="Icono de desplegable" class="arrowIcon">
+      </div>
+    </div>
+    <div id="suggestionBox">Press Banca</div>
+    <div class="default-card">
+      <div class="routine-set-image-container">
+          <img src="/assets/images/snorlax.png" alt="" class="routine-set-image" />
+      </div>
+      <div class="routine-set-info">
+          <input id="titleInput" type="text" placeholder="Escribe..." class="routine-set-tittle">
+                <div class="routine-details">
+              <p class="routine-set-text">Series: 
+              <input id="series" type="number" min="1" max="99" readonly value="0"></p>
+              <p class="routine-set-text">Reps:
+              <input id="reps" type="number" min="1" max="99" readonly value="0"></p>
+          </div>
+      </div>
+    </div>
+    <div class="description">
+  <label for="description-text" class="routine-set-text">Descripción:</label>
+  <textarea 
+    id="description-text"
+    name="descripcion"
+    rows="4"
+    cols="50"
+    maxlength="148"
+    readonly
+    placeholder="Descripción del ejercicio"
+    oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')"></textarea>
+</div>
+  `;
   } else {
     article.className = "routine-set-card";
     article.innerHTML = `
     <div class="routine-set-options">
-      <div class="icon-container icon-container-edit fade-toggle">
-        <img src="/assets/icons/edit.svg" alt="Añadir" class="editIcon">
+      <div class="icon-container icon-container-edit fade-toggle" data-editable="false">
+        <img src="/assets/icons/edit.svg" alt="Icono de edición" class="editIcon">
       </div>
       <div class="icon-container icon-container-trash fade-toggle">
-        <img src="/assets/icons/trash.svg" alt="Cerrar" class="trashIcon">
+        <img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
       </div>
       <div class="icon-container icon-container-arrow ">
-        <img src="/assets/icons/arrow_down.svg" alt="Añadir" class="arrowIcon">
+        <img src="/assets/icons/arrow_down.svg" alt="Icono de desplegable" class="arrowIcon">
       </div>
     </div>
     <div class="default-card">
@@ -42,19 +84,25 @@ export function RoutineSetCard(exercise) {
       <div class="routine-set-info">
           <h2 class="routine-set-title">${exercise.name}</h2>
                 <div class="routine-details">
-              <p class="routine-set-text">Series: ${exercise.series}3</p>
-              <p class="routine-set-text">Reps: ${exercise.reps}</p>
+              <p class="routine-set-text">Series: 
+              <input id="series" type="number" min="1" max="99" readonly value="${exercise.series}"></p>
+              <p class="routine-set-text">Reps:
+              <input id="reps" type="number" min="1" max="99" readonly value="${exercise.reps}"></p>
           </div>
       </div>
     </div>
     <div class="description">
-      <label for="description-text" class="routine-set-text">Descripción:</label>
-        <textarea id="description-text" name="descripcion" rows="4" cols="50"
-          placeholder="Escribe solo texto plano aquí"
-          oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')"
-          >
-        </textarea>
-    </div>
+  <label for="description-text" class="routine-set-text">Descripción:</label>
+  <textarea 
+    id="description-text"
+    name="descripcion"
+    rows="4"
+    cols="50"
+    maxlength="148"
+    readonly
+    placeholder="Descripción del ejercicio"
+    oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')"></textarea>
+</div>
   `;
   }
 
@@ -63,36 +111,139 @@ export function RoutineSetCard(exercise) {
   const arrowButton = article.querySelector(".icon-container-arrow");
   const arrowIcon = article.querySelector(".arrowIcon");
   const description = article.querySelector(".description");
-
+  const seriesInput = article.querySelector("#series");
+  const repsInput = article.querySelector("#reps");
+  const textarea = article.querySelector("#description-text");
+  const editIcon = article.querySelector(".editIcon");
 
   if (arrowButton) {
     arrowButton.addEventListener("click", () => {
-      trashButton.classList.toggle("visible");
-      editButton.classList.toggle("visible");
+      // Cerramos todas las demás cards
+      const allCards =
+        article.parentElement.querySelectorAll(".routine-set-card");
+      allCards.forEach((card) => {
+        if (card !== article) {
+          const desc = card.querySelector(".description");
+          const arrow = card.querySelector(".arrowIcon");
+          const edit = card.querySelector(".icon-container-edit");
+          const trash = card.querySelector(".icon-container-trash");
+          const seriesInput = card.querySelector("#series");
+          const repsInput = card.querySelector("#reps");
+          const textarea = card.querySelector("#description-text");
+          const editIcon = card.querySelector(".editIcon");
+          const editButton = card.querySelector(".icon-container-edit");
+
+          if (editButton.dataset.editable === "true") {
+            closeEditableCard(textarea, seriesInput, repsInput);
+            toogleEditIcon("edit", editIcon, editButton);
+          }
+          closeAccordion(card, desc, arrow, trash, edit);
+        }
+      });
+
       if (article.classList.contains("accordion")) {
-        article.classList.remove("accordion");
-        arrowIcon.classList.remove("rotate-180");
-        description.style.height = "0rem";
+        if (editButton.dataset.editable === "true") {
+          closeEditableCard(textarea, seriesInput, repsInput);
+          toogleEditIcon("edit", editIcon, editButton);
+        }
+        closeAccordion(
+          article,
+          description,
+          arrowIcon,
+          trashButton,
+          editButton
+        );
       } else {
-        article.classList.add("accordion");
-        description.style.height = "100%";
-        arrowIcon.classList.add("rotate-180");
-        description.style.display = "block";
+        openAccordion(article, description, arrowIcon, trashButton, editButton);
       }
     });
   }
 
   if (editButton) {
     editButton.addEventListener("click", () => {
-      
+      if (editButton.dataset.editable === "false") {
+        showEditableCard(textarea, seriesInput, repsInput);
+        toogleEditIcon("tick", editIcon, editButton);
+      } else {
+        closeEditableCard(textarea, seriesInput, repsInput);
+        toogleEditIcon("edit", editIcon, editButton);
+      }
     });
   }
 
   if (trashButton) {
-    trashButton.addEventListener("click", () => {
-      
-    });
+    trashButton.addEventListener("click", () => {});
   }
 
   return article;
+}
+
+function closeEditableCard(textarea, seriesInput, repsInput) {
+  if (seriesInput) {
+    seriesInput.setAttribute("readonly", true);
+    seriesInput.classList.remove("editable");
+  }
+  if (repsInput) {
+    repsInput.setAttribute("readonly", true);
+    repsInput.classList.remove("editable");
+  }
+  if (textarea) textarea.setAttribute("readonly", true);
+}
+
+function showEditableCard(textarea, seriesInput, repsInput) {
+  if (seriesInput) {
+    seriesInput.removeAttribute("readonly");
+    seriesInput.classList.add("editable");
+  }
+  if (repsInput) {
+    repsInput.removeAttribute("readonly");
+    repsInput.classList.add("editable");
+  }
+  if (textarea) textarea.removeAttribute("readonly");
+}
+
+function openAccordion(
+  article,
+  description,
+  arrowIcon,
+  trashButton,
+  editButton
+) {
+  article.classList.add("accordion");
+  description.style.height = "100%";
+  description.style.display = "flex";
+  arrowIcon.classList.add("rotate-180");
+  trashButton.classList.add("visible");
+  editButton.classList.add("visible");
+}
+
+function closeAccordion(
+  article,
+  description,
+  arrowIcon,
+  trashButton,
+  editButton
+) {
+  article.classList.add("accordion");
+  article.classList.remove("accordion");
+  arrowIcon.classList.remove("rotate-180");
+  description.style.height = "0rem";
+  trashButton.classList.remove("visible");
+  editButton.classList.remove("visible");
+}
+
+function toogleEditIcon(icon, editIcon, editButton) {
+  if (icon === "edit") {
+    editIcon.src = "/assets/icons/edit.svg";
+    editIcon.alt = "Icono de edición";
+    editIcon.style.width = "1.65rem";
+    editIcon.style.height = "1.65rem";
+    editButton.dataset.editable = false;
+  } else {
+    editIcon.src = "/assets/icons/tick.svg";
+    editIcon.alt = "Icono de guardado";
+       editIcon.style.width = "2rem";
+    editIcon.style.height = "2rem";
+    editButton.dataset.editable = true;
+  }
 }
