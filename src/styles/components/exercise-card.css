@@ -8,6 +8,9 @@
     box-shadow: 0 4px 6px rgba(127, 29, 29, 0.8);
     display: flex;
     gap: 0.6rem;
+    transition: transform 0.3s ease, width 0.3s ease;
+    animation: fadeInUp 0.4s ease;
+
 }
 
 .exercise-image-container {
@@ -37,6 +40,7 @@
     font-weight: bold;
     font-size: 1.25rem;
 }
+
 .exercise-text {
     color: white;
     font-size: 1.125rem;
@@ -45,10 +49,10 @@
 
 @media (min-width: 768px) {
     .exercise-card {
-    padding: 0.75rem;
+        padding: 0.75rem;
     }
+
     .exercise-title {
         font-size: 1.5rem;
     }
 }
-

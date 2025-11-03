@@ -14,11 +14,6 @@ export function Routine() {
   const routineContainer = document.createElement("div");
   routineContainer.className = "routine-container";
 
-  const filtersContainer = document.createElement("div");
-  filtersContainer.className = "filters-container";
-
-  routineContainer.appendChild(filtersContainer);
-
   const section = document.createElement("section");
   section.className = "routine-list-container";
 

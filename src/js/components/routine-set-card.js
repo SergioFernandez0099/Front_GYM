@@ -25,6 +25,9 @@ export function RoutineSetCard(exercise) {
     article.className = "routine-set-card";
     article.innerHTML = `
     <div class="routine-set-options">
+      <div class="icon-container icon-container-save fade-toggle">
+        <img src="/assets/icons/tick.svg" alt="Icono de guardado" class="saveIcon">
+      </div>
       <div class="icon-container icon-container-edit fade-toggle" data-editable="false">
         <img src="/assets/icons/edit.svg" alt="Icono de edición" class="editIcon">
       </div>
@@ -41,7 +44,7 @@ export function RoutineSetCard(exercise) {
           <img src="/assets/images/snorlax.png" alt="" class="routine-set-image" />
       </div>
       <div class="routine-set-info">
-          <input id="titleInput" type="text" placeholder="Escribe..." class="routine-set-tittle">
+          <input id="titleInput" type="text" autocomplete="off" placeholder="Escribe..." class="routine-set-tittle">
                 <div class="routine-details">
               <p class="routine-set-text">Series: 
               <input id="series" type="number" min="1" max="99" readonly value="0"></p>
@@ -65,6 +68,7 @@ export function RoutineSetCard(exercise) {
   `;
   } else {
     article.className = "routine-set-card";
+    article.setAttribute("data-completa", "true");
     article.innerHTML = `
     <div class="routine-set-options">
       <div class="icon-container icon-container-edit fade-toggle" data-editable="false">
@@ -135,7 +139,6 @@ export function RoutineSetCard(exercise) {
 
           if (editButton.dataset.editable === "true") {
             closeEditableCard(textarea, seriesInput, repsInput);
-            toogleEditIcon("edit", editIcon, editButton);
           }
           closeAccordion(card, desc, arrow, trash, edit);
         }
@@ -178,7 +181,7 @@ export function RoutineSetCard(exercise) {
   return article;
 }
 
-function closeEditableCard(textarea, seriesInput, repsInput) {
+export function closeEditableCard(textarea, seriesInput, repsInput) {
   if (seriesInput) {
     seriesInput.setAttribute("readonly", true);
     seriesInput.classList.remove("editable");
@@ -190,7 +193,7 @@ function closeEditableCard(textarea, seriesInput, repsInput) {
   if (textarea) textarea.setAttribute("readonly", true);
 }
 
-function showEditableCard(textarea, seriesInput, repsInput) {
+export function showEditableCard(textarea, seriesInput, repsInput) {
   if (seriesInput) {
     seriesInput.removeAttribute("readonly");
     seriesInput.classList.add("editable");
@@ -202,7 +205,7 @@ function showEditableCard(textarea, seriesInput, repsInput) {
   if (textarea) textarea.removeAttribute("readonly");
 }
 
-function openAccordion(
+export function openAccordion(
   article,
   description,
   arrowIcon,
@@ -217,7 +220,7 @@ function openAccordion(
   editButton.classList.add("visible");
 }
 
-function closeAccordion(
+export function closeAccordion(
   article,
   description,
   arrowIcon,
@@ -232,7 +235,7 @@ function closeAccordion(
   editButton.classList.remove("visible");
 }
 
-function toogleEditIcon(icon, editIcon, editButton) {
+export function toogleEditIcon(icon, editIcon, editButton) {
   if (icon === "edit") {
     editIcon.src = "/assets/icons/edit.svg";
     editIcon.alt = "Icono de edición";
@@ -242,7 +245,7 @@ function toogleEditIcon(icon, editIcon, editButton) {
   } else {
     editIcon.src = "/assets/icons/tick.svg";
     editIcon.alt = "Icono de guardado";
-       editIcon.style.width = "2rem";
+    editIcon.style.width = "2rem";
     editIcon.style.height = "2rem";
     editButton.dataset.editable = true;
   }

@@ -1,12 +1,8 @@
 .routine-day-card {
     height: 10rem;
-    /* h-40 */
     width: 15rem;
-    /* w-73 (Tailwind personalizada) */
     margin: 0.25rem;
-    /* m-1 */
     background-color: rgba(30, 5, 5, 0.6);
-    /* p-3 */
     border-radius: 0.75rem;
     box-shadow: 0 4px 6px rgba(127, 29, 29, 0.8);
     /* shadow-md + shadow-red-800 */
@@ -16,7 +12,6 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    /* gap-2 */
 }
 
 .routine-day-add-card {
