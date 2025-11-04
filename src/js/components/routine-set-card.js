@@ -272,10 +272,6 @@ function setUpSetNewCard(article) {
   toggleEditIcon("tick", editIcon, editButton, "1.65rem", "2rem");
   showEditableCard(textarea, seriesInput, repsInput);
 
-  setTimeout(() => {
-    titleInput.focus();
-  }, 100);
-
   titleInput.addEventListener("input", () => {
     const query = titleInput.value.toLowerCase();
     suggestionBox.classList.add("visible");
@@ -334,6 +330,10 @@ function setUpSetNewCard(article) {
   });
 
   article.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  setTimeout(() => {
+    titleInput.focus();
+  }, 300);
 }
 
 export function closeEditableCard(textarea, seriesInput, repsInput) {
@@ -496,7 +496,7 @@ function guardarSet(article) {
 }
 
 function showErrorBorder(element) {
-  element.style.border = "2px solid red";
+  element.style.border = "1.5px solid red";
   element.style.outline = "none";
 }
 
