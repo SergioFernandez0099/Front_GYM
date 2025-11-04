@@ -311,7 +311,7 @@ function setUpSetNewCard(article) {
   });
 
   article.scrollIntoView({ behavior: "smooth", block: "center" });
-   setTimeout(() => {
+  setTimeout(() => {
     closeAllOpenedCards(article);
   }, 100);
 
@@ -320,8 +320,13 @@ function setUpSetNewCard(article) {
   }, 300);
 }
 
-export function closeEditableCard(textarea, seriesInput, repsInput, editButton) {
-    if (editButton) editButton.dataset.editable = "false";
+export function closeEditableCard(
+  textarea,
+  seriesInput,
+  repsInput,
+  editButton
+) {
+  if (editButton) editButton.dataset.editable = "false";
 
   if (seriesInput) {
     seriesInput.setAttribute("readonly", true);
@@ -463,6 +468,7 @@ export function guardarSet(article) {
     // Cambiar vista
     if (!validarSet(article)) {
       shakeEffect(article);
+      article.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
 
@@ -530,27 +536,26 @@ function shakeEffect(article) {
 }
 
 function closeAllOpenedCards(article) {
-      const allCards =
-        article.parentElement.querySelectorAll(".routine-set-card");
-      allCards.forEach((card) => {
-        if (card !== article) {
-          const desc = card.querySelector(".description");
-          const arrow = card.querySelector(".arrowIcon");
-          const edit = card.querySelector(".icon-container-edit");
-          const trash = card.querySelector(".icon-container-trash");
-          const seriesInput = card.querySelector("#series");
-          const repsInput = card.querySelector("#reps");
-          const textarea = card.querySelector("#description-text");
-          const editButton = card.querySelector(".icon-container-edit");
-          const editIcon = card.querySelector(".editIcon");
+  const allCards = article.parentElement.querySelectorAll(".routine-set-card");
+  allCards.forEach((card) => {
+    if (card !== article) {
+      const desc = card.querySelector(".description");
+      const arrow = card.querySelector(".arrowIcon");
+      const edit = card.querySelector(".icon-container-edit");
+      const trash = card.querySelector(".icon-container-trash");
+      const seriesInput = card.querySelector("#series");
+      const repsInput = card.querySelector("#reps");
+      const textarea = card.querySelector("#description-text");
+      const editButton = card.querySelector(".icon-container-edit");
+      const editIcon = card.querySelector(".editIcon");
 
-          if (card.classList.contains("accordion")) {
-            if (editButton.dataset.editable === "true") {
-              closeEditableCard(textarea, seriesInput, repsInput, editButton);
-              toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
-            }
-            closeAccordion(card, desc, arrow, trash, edit);
-          }
+      if (card.classList.contains("accordion")) {
+        if (editButton.dataset.editable === "true") {
+          closeEditableCard(textarea, seriesInput, repsInput, editButton);
+          toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
         }
-      });
+        closeAccordion(card, desc, arrow, trash, edit);
+      }
+    }
+  });
 }
