@@ -1,7 +1,4 @@
-import {
-  guardarSet,
-  RoutineSetCard,
-} from "../components/routine-set-card";
+import { guardarSet, RoutineSetCard } from "../components/routine-set-card";
 
 const defaultSet = [
   { name: "Press Banca", series: 3, reps: 12 },
@@ -41,8 +38,10 @@ export function RoutineSet(set = defaultSet) {
     const existingNewSet = routineList.querySelector("[data-new-set]");
 
     if (existingNewSet) {
-      guardarSet(existingNewSet);
-
+      existingNewSet.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       return;
     }
 

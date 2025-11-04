@@ -1,5 +1,6 @@
 import { router } from "../router";
-import { toggleEditIcon } from "../../utils/helpers";
+import { clearErrorBorder, shakeEffect, showErrorBorder, toggleEditIcon } from "../../utils/helpers";
+import { validaYSanitiza } from "../../utils/validators";
 
 export function RoutineDayCard(day, series = 3, reps = 10) {
   const article = document.createElement("article");
@@ -34,19 +35,21 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
         <img src="/assets/images/routine_card2.jpg" alt="Imagen de fondo en un gimnasio" class="routine-image" />
     </div>
   `;
-    setUpDayCard(article);
+    setUpDayCard(article, day);
   }
   return article;
 }
 
-function setUpDayCard(article,day="3") {
-  article.addEventListener("click", () => {
-    router.navigate(`/routine/set/${day}`);
-  });
-
+function setUpDayCard(article, day = "3") {
   const inputTitle = article.querySelector("#titleDayInput");
   const editButton = article.querySelector(".icon-container-edit");
   const trashButton = article.querySelector(".icon-container-trash");
+
+  article.classList.add("fade-in-up");
+
+  article.addEventListener("click", () => {
+    router.navigate(`/routine/set/${day}`);
+  });
 
   inputTitle.addEventListener("click", (event) => {
     if (editButton.dataset.editable === "true") {
@@ -57,14 +60,49 @@ function setUpDayCard(article,day="3") {
   inputTitle.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      inputTitle.blur();
-      inputTitle.setAttribute("contenteditable", "false");
+
+        if (!guardarDay(article)) {
+          shakeEffect(article);
+          article.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          // TODO En caso de ser nuevo redirigir 
+          inputTitle.blur();
+          inputTitle.setAttribute("contenteditable", "false");
+        }
+
     }
   });
 
+  inputTitle.addEventListener("input", (e) => {
+     const currentText = inputTitle.textContent;
+    const { valid, sanitized, errors } = validaYSanitiza(currentText);
+    if (!valid) {
+      showErrorBorder(inputTitle);  
+    } else {
+      clearErrorBorder(inputTitle);
+    }
+  
+  })
+
   editButton.addEventListener("click", (event) => {
     event.stopPropagation();
+
+    const existe = document.querySelector("[data-new-day]") !== null;
+    if (existe) {
+      const newArticle = document.querySelector("[data-new-day]");
+
+      if (!guardarDay(newArticle)) {
+        shakeEffect(newArticle);
+        newArticle.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      return;
+    }
+
+    closeAllEditingCards(article);
+
     if (editButton.dataset.editable === "true") {
+      guardarDay(article);
       closeEditableRoutineCard(article);
     } else {
       openEditableRoutineCard(article);
@@ -74,6 +112,19 @@ function setUpDayCard(article,day="3") {
   trashButton.addEventListener("click", (event) => {
     event.stopPropagation();
   });
+
+  if (day === "new") {
+    article.setAttribute("data-new-day", "true");
+
+    article.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => {
+      closeAllEditingCards(article);
+    }, 100);
+
+    setTimeout(() => {
+      inputTitle.focus();
+    }, 300);
+  }
 }
 
 export function closeEditableRoutineCard(article) {
@@ -83,6 +134,7 @@ export function closeEditableRoutineCard(article) {
   const trashButton = article.querySelector(".icon-container-trash");
 
   inputTitle.setAttribute("contenteditable", "false");
+  editButton.dataset.editable === "false";
   toggleEditIcon("edit", editIcon, editButton, "1.45rem", "1.85rem");
   trashButton.classList.remove("visible");
 }
@@ -93,8 +145,41 @@ export function openEditableRoutineCard(article) {
   const inputTitle = article.querySelector("#titleDayInput");
   const trashButton = article.querySelector(".icon-container-trash");
 
+  editButton.dataset.editable === "true";
   trashButton.classList.add("visible");
   toggleEditIcon("tick", editIcon, editButton, "1.45rem", "1.85rem");
   inputTitle.setAttribute("contenteditable", "true");
   inputTitle.focus();
+}
+
+export function guardarDay(article) {
+  const inputTitle = article.querySelector("#titleDayInput");
+
+    const { valid, sanitized, errors } = validaYSanitiza(inputTitle.textContent, {
+      allowSpecial: false,
+      maxLength: 50,
+    });
+    if (!valid) {
+      showErrorBorder(inputTitle);
+      console.log(errors);
+      
+      return false;
+    }
+    inputTitle.textContent = sanitized;
+    article.removeAttribute("data-new-day");
+  
+  closeEditableRoutineCard(article);
+  return true;
+}
+
+function closeAllEditingCards(article) {
+  const allCards = article.parentElement.querySelectorAll(".routine-day-card");
+  allCards.forEach((card) => {
+    if (card !== article) {
+      const editButton = card.querySelector(".icon-container-edit");
+      if (editButton.dataset.editable === "true") {
+        closeEditableRoutineCard(card);
+      }
+    }
+  });
 }

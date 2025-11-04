@@ -1,5 +1,6 @@
 import { applyCSS } from "../../utils/helpers";
 import {
+  guardarDay,
   openEditableRoutineCard,
   RoutineDayCard,
 } from "../components/routine-day-card";
@@ -33,7 +34,16 @@ export function Routine() {
   routineList.appendChild(addArticle);
 
   addArticle.addEventListener("click", () => {
-    const newArticle = RoutineDayCard("Nuevo");
+    const existingNewDay = routineList.querySelector("[data-new-day]");
+
+    if (existingNewDay) {
+      existingNewDay.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      return;
+    }
+    const newArticle = RoutineDayCard("new");
     routineList.insertBefore(newArticle, addArticle);
     openEditableRoutineCard(newArticle);
   });

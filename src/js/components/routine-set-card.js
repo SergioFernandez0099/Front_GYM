@@ -1,4 +1,4 @@
-import { applyCSS, findImageByName, toggleEditIcon } from "../../utils/helpers";
+import { applyCSS, clearErrorBorder, findImageByName, shakeEffect, showErrorBorder, toggleEditIcon } from "../../utils/helpers";
 
 const options = [
   "Press Banca",
@@ -137,7 +137,9 @@ function setUpSetCard(article) {
   if (arrowButton) {
     arrowButton.addEventListener("click", () => {
       if (article.hasAttribute("data-new-set")) {
+        // Faltan validaciones
         guardarSet(article);
+        return;
       }
 
       // Valiamos que no haya una card nueva abierta
@@ -148,7 +150,7 @@ function setUpSetCard(article) {
         return;
       }
 
-      closeAllOpenedCards(article);
+      if (!closeAllOpenedCards(article)) return;
 
       if (article.classList.contains("accordion")) {
         if (editButton.dataset.editable === "true") {
@@ -231,8 +233,6 @@ function setUpSetCard(article) {
 }
 
 function setUpSetNewCard(article) {
-  const ad = article.parentElement;
-
   const suggestionBox = article.querySelector("#suggestionBox");
   const description = article.querySelector(".description");
   const arrowIcon = article.querySelector(".arrowIcon");
@@ -273,19 +273,6 @@ function setUpSetNewCard(article) {
         suggestionBox.classList.remove("visible");
         suggestionBox.innerHTML = "";
       });
-    }
-  });
-
-  titleInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      if (suggestionBox.textContent.trim() !== "") {
-        const valorSugerido = suggestionBox.textContent;
-        titleInput.value = valorSugerido;
-        titleInput.style.border = "2px solid green";
-        suggestionBox.classList.remove("visible");
-        suggestionBox.innerHTML = "";
-        seriesInput.focus();
-      }
     }
   });
 
@@ -487,14 +474,7 @@ export function guardarSet(article) {
   }
 }
 
-function showErrorBorder(element) {
-  element.style.border = "1.5px solid red";
-  element.style.outline = "none";
-}
 
-function clearErrorBorder(element) {
-  element.style.border = "";
-}
 
 function inputActionSeriesYReps(input) {
   let valor = input.value;
@@ -525,16 +505,6 @@ function inputPasteActionSeriesYReps(event) {
   }
 }
 
-function shakeEffect(article) {
-  article.classList.remove("fade-in-up");
-  article.style.animation = "none";
-
-  // Fuerza reflow (reinicia animaciones)
-  void article.offsetWidth;
-  article.style.animation = "shake 0.5s ease-in-out";
-  setTimeout(() => (article.style.animation = ""), 600);
-}
-
 function closeAllOpenedCards(article) {
   const allCards = article.parentElement.querySelectorAll(".routine-set-card");
   allCards.forEach((card) => {
@@ -551,6 +521,10 @@ function closeAllOpenedCards(article) {
 
       if (card.classList.contains("accordion")) {
         if (editButton.dataset.editable === "true") {
+          if (validarSeriesYReps(seriesInput) || validarSeriesYReps(repsInput)) {
+              card.scrollIntoView({ behavior: "smooth", block: "center" });
+              return false;
+          }
           closeEditableCard(textarea, seriesInput, repsInput, editButton);
           toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
         }
@@ -558,4 +532,5 @@ function closeAllOpenedCards(article) {
       }
     }
   });
+    return true;
 }
