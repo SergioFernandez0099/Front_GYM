@@ -1,5 +1,8 @@
 import { applyCSS } from "../../utils/helpers";
-import { RoutineDayCard } from "../components/routine-day-card";
+import {
+  openEditableRoutineCard,
+  RoutineDayCard,
+} from "../components/routine-day-card";
 
 const routine = ["Pecho", "Espalda", "Cuádriceps", "Isquios"];
 
@@ -25,7 +28,15 @@ export function Routine() {
   routine.forEach((day) => {
     routineList.appendChild(RoutineDayCard(day));
   });
-  routineList.appendChild(RoutineDayCard("add"));
+
+  const addArticle = RoutineDayCard("add");
+  routineList.appendChild(addArticle);
+
+  addArticle.addEventListener("click", () => {
+    const newArticle = RoutineDayCard("Nuevo");
+    routineList.insertBefore(newArticle, addArticle);
+    openEditableRoutineCard(newArticle);
+  });
 
   routineContainer.appendChild(section);
 

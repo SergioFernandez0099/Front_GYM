@@ -73,14 +73,14 @@ export function Exercises() {
   exercisesContainer.appendChild(section);
 
   function checkScroll() {
-    if (filtersContainer.scrollWidth <= filtersContainer.clientWidth) {
-      filtersContainer.classList.add("no-scroll");
-    } else {
-      filtersContainer.classList.remove("no-scroll");
-    }
+    setTimeout(() => {
+      if (filtersContainer.scrollWidth <= filtersContainer.clientWidth) {
+        filtersContainer.classList.add("no-scroll");
+      } else {
+        filtersContainer.classList.remove("no-scroll");
+      }
+    }, 100);
   }
-
-
   // Espera al siguiente frame para medir correctamente
   requestAnimationFrame(checkScroll);
   window.addEventListener("resize", checkScroll);
@@ -88,5 +88,3 @@ export function Exercises() {
 
   return exercisesContainer;
 }
-
-

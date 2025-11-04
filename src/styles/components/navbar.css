@@ -124,6 +124,7 @@
         background-color: transparent;
         box-shadow: none;
         transition: top 0.3s linear;
+        z-index: 9999;
     }
 
     .navbar-container .menu-btn input[type="checkbox"],
@@ -164,6 +165,7 @@
         height: 100vh;
         width: 100%;
         z-index: 3;
+        pointer-events: none;
     }
 
     .navbar .menu-items-container .menu-items {
@@ -223,6 +225,10 @@
         box-shadow: none;
         background-color: transparent;
         transform: translateX(38px) scale(1.05);
+    }
+
+    #menu-toggle:checked~.menu-items-container {
+        pointer-events: all;
     }
 
     .navbar-container input[type="checkbox"]:checked {

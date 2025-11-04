@@ -1,4 +1,13 @@
-import { applyCSS } from "../../utils/helpers";
+import { applyCSS, findImageByName, toggleEditIcon } from "../../utils/helpers";
+
+const options = [
+  "Press Banca",
+  "Press militar",
+  "Hack squat",
+  "Extensión de cuádriceps",
+  "Femoral tumbado",
+  "Curl martillo",
+];
 
 export function RoutineSetCard(exercise) {
   applyCSS(
@@ -25,9 +34,6 @@ export function RoutineSetCard(exercise) {
     article.className = "routine-set-card";
     article.innerHTML = `
     <div class="routine-set-options">
-      <div class="icon-container icon-container-save fade-toggle">
-        <img src="/assets/icons/tick.svg" alt="Icono de guardado" class="saveIcon">
-      </div>
       <div class="icon-container icon-container-edit fade-toggle" data-editable="false">
         <img src="/assets/icons/edit.svg" alt="Icono de edición" class="editIcon">
       </div>
@@ -44,12 +50,12 @@ export function RoutineSetCard(exercise) {
           <img src="/assets/images/snorlax.png" alt="" class="routine-set-image" />
       </div>
       <div class="routine-set-info">
-          <input id="titleInput" type="text" autocomplete="off" placeholder="Escribe..." class="routine-set-tittle">
+          <input id="titleInput" type="text" autocomplete="off" placeholder="Escribe..." enterkeyhint="done" class="routine-set-tittle">
                 <div class="routine-details">
               <p class="routine-set-text">Series: 
-              <input id="series" type="number" min="1" max="99" readonly value="0"></p>
+              <input id="series" type="number" min="1" max="99" readonly placeholder="3" enterkeyhint="done"></p>
               <p class="routine-set-text">Reps:
-              <input id="reps" type="number" min="1" max="99" readonly value="0"></p>
+              <input id="reps" type="number" min="1" max="99" readonly placeholder="8" enterkeyhint="done"></p>
           </div>
       </div>
     </div>
@@ -62,10 +68,13 @@ export function RoutineSetCard(exercise) {
     cols="50"
     maxlength="148"
     readonly
+    enterkeyhint="done"
     placeholder="Descripción del ejercicio"
     oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')"></textarea>
 </div>
   `;
+    setUpSetCard(article);
+    setUpSetNewCard(article);
   } else {
     article.className = "routine-set-card";
     article.setAttribute("data-completa", "true");
@@ -89,9 +98,9 @@ export function RoutineSetCard(exercise) {
           <h2 class="routine-set-title">${exercise.name}</h2>
                 <div class="routine-details">
               <p class="routine-set-text">Series: 
-              <input id="series" type="number" min="1" max="99" readonly value="${exercise.series}"></p>
+              <input id="series" type="number" min="1" max="99" readonly enterkeyhint="done" value="${exercise.series}"></p>
               <p class="routine-set-text">Reps:
-              <input id="reps" type="number" min="1" max="99" readonly value="${exercise.reps}"></p>
+              <input id="reps" type="number" min="1" max="99" readonly enterkeyhint="done" value="${exercise.reps}"></p>
           </div>
       </div>
     </div>
@@ -104,12 +113,18 @@ export function RoutineSetCard(exercise) {
     cols="50"
     maxlength="148"
     readonly
+    enterkeyhint="done"
     placeholder="Descripción del ejercicio"
     oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')"></textarea>
 </div>
   `;
+    setUpSetCard(article);
   }
 
+  return article;
+}
+
+function setUpSetCard(article) {
   const editButton = article.querySelector(".icon-container-edit");
   const trashButton = article.querySelector(".icon-container-trash");
   const arrowButton = article.querySelector(".icon-container-arrow");
@@ -120,8 +135,22 @@ export function RoutineSetCard(exercise) {
   const textarea = article.querySelector("#description-text");
   const editIcon = article.querySelector(".editIcon");
 
+
   if (arrowButton) {
     arrowButton.addEventListener("click", () => {
+      if (article.hasAttribute("data-new-set")) {
+        // Validamos si tiene los datos correctos
+        // Efecto de shake y focus en tarjeta nueva
+        //return;
+      }
+
+      // Valiamos que no haya una card nueva abierta
+      const existe = document.querySelector("[data-new-set]") !== null;
+      if (existe) {
+        // Efecto de shake y focus en tarjeta nueva
+        // return;
+      }
+
       // Cerramos todas las demás cards
       const allCards =
         article.parentElement.querySelectorAll(".routine-set-card");
@@ -134,7 +163,6 @@ export function RoutineSetCard(exercise) {
           const seriesInput = card.querySelector("#series");
           const repsInput = card.querySelector("#reps");
           const textarea = card.querySelector("#description-text");
-          const editIcon = card.querySelector(".editIcon");
           const editButton = card.querySelector(".icon-container-edit");
 
           if (editButton.dataset.editable === "true") {
@@ -147,7 +175,7 @@ export function RoutineSetCard(exercise) {
       if (article.classList.contains("accordion")) {
         if (editButton.dataset.editable === "true") {
           closeEditableCard(textarea, seriesInput, repsInput);
-          toogleEditIcon("edit", editIcon, editButton);
+          toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
         }
         closeAccordion(
           article,
@@ -164,12 +192,48 @@ export function RoutineSetCard(exercise) {
 
   if (editButton) {
     editButton.addEventListener("click", () => {
+      if (article.hasAttribute("data-new-set")) {
+        guardarSet(article);
+      }
+
       if (editButton.dataset.editable === "false") {
         showEditableCard(textarea, seriesInput, repsInput);
-        toogleEditIcon("tick", editIcon, editButton);
+        toggleEditIcon("tick", editIcon, editButton, "1.65rem", "2rem");
       } else {
+        // Validar campos
+
         closeEditableCard(textarea, seriesInput, repsInput);
-        toogleEditIcon("edit", editIcon, editButton);
+        toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
+      }
+    });
+  }
+
+  if (seriesInput) {
+    seriesInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        // Añadir validación de numero
+        if (seriesInput.value.trim() !== "") {
+          repsInput.focus();
+        }
+      }
+    });
+  }
+
+  if (repsInput) {
+    repsInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        // Añadir validación de numero
+        if (repsInput.value.trim() !== "") {
+          textarea.focus();
+        }
+      }
+    });
+  }
+
+  if (textarea) {
+    textarea.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        guardarSet(article);
       }
     });
   }
@@ -177,8 +241,89 @@ export function RoutineSetCard(exercise) {
   if (trashButton) {
     trashButton.addEventListener("click", () => {});
   }
+}
 
-  return article;
+function setUpSetNewCard(article) {
+  const suggestionBox = article.querySelector("#suggestionBox");
+  const description = article.querySelector(".description");
+  const arrowIcon = article.querySelector(".arrowIcon");
+  const editButton = article.querySelector(".icon-container-edit");
+  const repsInput = article.querySelector("#reps");
+  const seriesInput = article.querySelector("#series");
+  const textarea = article.querySelector("#description-text");
+  const titleInput = article.querySelector("#titleInput");
+  const trashButton = article.querySelector(".icon-container-trash");
+  const editIcon = article.querySelector(".editIcon");
+
+  article.classList.add("fade-in-up");
+
+  article.setAttribute("data-new-set", "true");
+  article.classList.add("accordion");
+
+  titleInput.focus();
+
+  openAccordion(article, description, arrowIcon, trashButton, editButton);
+  toggleEditIcon("tick", editIcon, editButton, "1.65rem", "2rem");
+  showEditableCard(textarea, seriesInput, repsInput);
+
+  titleInput.addEventListener("input", () => {
+    const query = titleInput.value.toLowerCase();
+    suggestionBox.classList.add("visible");
+    suggestionBox.innerHTML = "";
+
+    if (query.length === 0) return;
+
+    const matches = options.filter((option) =>
+      option.toLowerCase().includes(query)
+    );
+
+    if (matches.length > 0) {
+      suggestionBox.textContent = matches[0];
+
+      suggestionBox.addEventListener("click", () => {
+        titleInput.value = matches[0];
+        titleInput.style.border = "2px solid green";
+        suggestionBox.classList.remove("visible");
+        suggestionBox.innerHTML = "";
+      });
+    }
+  });
+
+  titleInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      if (suggestionBox.textContent.trim() !== "") {
+        const valorSugerido = suggestionBox.textContent;
+        titleInput.value = valorSugerido;
+        titleInput.style.border = "2px solid green";
+        suggestionBox.classList.remove("visible");
+        suggestionBox.innerHTML = "";
+        seriesInput.focus();
+      }
+    }
+  });
+
+  titleInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      if (suggestionBox.textContent.trim() !== "") {
+        const valorSugerido = suggestionBox.textContent;
+        titleInput.value = valorSugerido;
+        titleInput.style.border = "2px solid green";
+        suggestionBox.classList.remove("visible");
+        suggestionBox.innerHTML = "";
+        seriesInput.focus();
+      }
+    }
+  });
+
+  titleInput.addEventListener("blur", () => {
+    if (suggestionBox.classList.contains("visible")) {
+      setTimeout(() => {
+        suggestionBox.classList.remove("visible");
+      }, 100);
+    }
+  });
+
+  article.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 export function closeEditableCard(textarea, seriesInput, repsInput) {
@@ -235,18 +380,69 @@ export function closeAccordion(
   editButton.classList.remove("visible");
 }
 
-export function toogleEditIcon(icon, editIcon, editButton) {
-  if (icon === "edit") {
-    editIcon.src = "/assets/icons/edit.svg";
-    editIcon.alt = "Icono de edición";
-    editIcon.style.width = "1.65rem";
-    editIcon.style.height = "1.65rem";
-    editButton.dataset.editable = false;
-  } else {
-    editIcon.src = "/assets/icons/tick.svg";
-    editIcon.alt = "Icono de guardado";
-    editIcon.style.width = "2rem";
-    editIcon.style.height = "2rem";
-    editButton.dataset.editable = true;
+function validarSet(titleInput) {
+  if (titleInput.value.trim() !== "") {
+    return options.includes(titleInput.value);
   }
+}
+
+async function cargarEjercicio(titleInput, image) {
+  const nombre = titleInput.value.trim();
+
+  const resultado = await findImageByName(nombre);
+
+  image.classList.add("fade-out");
+  setTimeout(() => {
+    if (resultado) {
+      image.src = resultado.url;
+      image.alt = "Imagen de " + resultado.alt;
+    } else {
+      image.src = "/assets/images/snorlax.png";
+      image.alt = "Imagen default";
+    }
+
+    // Cuando la nueva imagen se cargue, vuelve a mostrarla
+    image.onload = () => {
+      image.classList.remove("fade-out");
+    };
+  }, 200); // 200 ms para el efecto de salida
+
+  const h2 = document.createElement("h2");
+  h2.textContent = nombre;
+  h2.className = "routine-set-title";
+
+  titleInput.parentNode.replaceChild(h2, titleInput);
+}
+
+function guardarSet(article) {
+  const image = article.querySelector(".routine-set-image");
+  const titleInput = article.querySelector("#titleInput");
+  const editButton = article.querySelector(".icon-container-edit");
+  const trashButton = article.querySelector(".icon-container-trash");
+  const arrowIcon = article.querySelector(".arrowIcon");
+  const description = article.querySelector(".description");
+  const seriesInput = article.querySelector("#series");
+  const repsInput = article.querySelector("#reps");
+  const textarea = article.querySelector("#description-text");
+  const editIcon = article.querySelector(".editIcon");
+
+  // Validar set
+  // Petición
+  // Cambiar vista
+  if (!validarSet(titleInput)) {
+    article.classList.remove("fade-in-up");
+    article.style.animation = "none"; // asegúrate de reiniciar
+
+    // Fuerza reflow (reinicia animaciones)
+    void article.offsetWidth;
+    article.style.animation = "shake 0.5s ease-in-out";
+    setTimeout(() => (article.style.animation = ""), 600);
+    return;
+  }
+  cargarEjercicio(titleInput, image);
+
+  article.setAttribute("data-completa", "true");
+  closeEditableCard(textarea, seriesInput, repsInput);
+  closeAccordion(article, description, arrowIcon, trashButton, editButton);
+  toggleEditIcon("tick", editIcon, editButton, "1.65rem", "2rem");
 }

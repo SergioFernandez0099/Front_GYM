@@ -5,13 +5,13 @@
     background-color: rgba(30, 5, 5, 0.6);
     border-radius: 0.75rem;
     box-shadow: 0 4px 6px rgba(127, 29, 29, 0.8);
-    /* shadow-md + shadow-red-800 */
     display: flex;
     gap: 0.5rem;
     flex-direction: column;
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    animation: fadeInUp 0.4s ease;
 }
 
 .routine-day-add-card {
@@ -22,6 +22,45 @@
     border-radius: 0.75rem;
     overflow: hidden;
     display: flex;
+}
+
+.routine-day-options {
+    position: absolute;
+    display: flex;
+    z-index: 800;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    gap: 0.6rem;
+}
+
+.routine-day-options img {
+    height: 1.45rem;
+    width: 1.45rem;
+    padding: 0.25rem;
+    outline: none;
+}
+
+.routine-day-options .editIcon {
+    transition: height 0.3s ease, width 0.3s ease;
+}
+
+.routine-day-options>.icon-container {
+    outline: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1.45rem;
+    width: 1.45rem;
+    cursor: pointer;
+    border: 0.65px solid rgb(255, 255, 255);
+    border-radius: 100%;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), border 0.5 ease-in;
+}
+
+.routine-day-options>.icon-container:hover {
+    background-color: rgba(77, 71, 71, 1);
+    transform: scale(1.2);
+    border: none;
 }
 
 .routine-day-image-container {
@@ -46,15 +85,25 @@
     justify-content: center;
     flex-direction: column;
     overflow: hidden;
+    text-align: center;
 }
 
 .routine-day-title {
     color: white;
+    width: calc(100% - 4rem); 
     text-align: center;
     font-weight: bold;
     font-size: 1.6rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
     z-index: 1;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease, outline 0.3s ease, box-shadow 0.3s ease;
+}
+
+.routine-day-title[contenteditable="true"] {
+    box-shadow: 0 4px 6px rgba(87, 87, 87, 0.8);
+    outline: 2px solid #ff0000;
+    background-color: rgba(255, 255, 255, 0.63);
 }
 
 .button-container {

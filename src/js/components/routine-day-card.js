@@ -1,4 +1,5 @@
 import { router } from "../router";
+import { toggleEditIcon } from "../../utils/helpers";
 
 export function RoutineDayCard(day, series = 3, reps = 10) {
   const article = document.createElement("article");
@@ -18,17 +19,82 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
   } else {
     article.className = "routine-day-card";
     article.innerHTML = `
+    <div class="routine-day-options">
+      <div class="icon-container icon-container-trash fade-toggle">
+        <img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
+      </div> 
+      <div class="icon-container icon-container-edit" data-editable="false">
+        <img src="/assets/icons/edit.svg" alt="Icono de edición" class="editIcon">
+      </div>
+    </div>
     <div class="routine-info">
-        <h2 class="routine-day-title">${day}</h2>
+        <h2 id="titleDayInput" class="routine-day-title" contenteditable="false" spellcheck="false">${day}</h2>
     </div>
     <div class="routine-day-image-container">
         <img src="/assets/images/routine_card2.jpg" alt="Imagen de fondo en un gimnasio" class="routine-image" />
     </div>
   `;
-    article.addEventListener("click", () => {
-      router.navigate(`/routine/set/${day}`);
-    });
+    setUpDayCard(article);
   }
-
   return article;
+}
+
+function setUpDayCard(article,day="3") {
+  article.addEventListener("click", () => {
+    router.navigate(`/routine/set/${day}`);
+  });
+
+  const inputTitle = article.querySelector("#titleDayInput");
+  const editButton = article.querySelector(".icon-container-edit");
+  const trashButton = article.querySelector(".icon-container-trash");
+
+  inputTitle.addEventListener("click", (event) => {
+    if (editButton.dataset.editable === "true") {
+      event.stopPropagation();
+    }
+  });
+
+  inputTitle.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      inputTitle.blur();
+      inputTitle.setAttribute("contenteditable", "false");
+    }
+  });
+
+  editButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (editButton.dataset.editable === "true") {
+      closeEditableRoutineCard(article);
+    } else {
+      openEditableRoutineCard(article);
+    }
+  });
+
+  trashButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+}
+
+export function closeEditableRoutineCard(article) {
+  const editButton = article.querySelector(".icon-container-edit");
+  const editIcon = article.querySelector(".editIcon");
+  const inputTitle = article.querySelector("#titleDayInput");
+  const trashButton = article.querySelector(".icon-container-trash");
+
+  inputTitle.setAttribute("contenteditable", "false");
+  toggleEditIcon("edit", editIcon, editButton, "1.45rem", "1.85rem");
+  trashButton.classList.remove("visible");
+}
+
+export function openEditableRoutineCard(article) {
+  const editButton = article.querySelector(".icon-container-edit");
+  const editIcon = article.querySelector(".editIcon");
+  const inputTitle = article.querySelector("#titleDayInput");
+  const trashButton = article.querySelector(".icon-container-trash");
+
+  trashButton.classList.add("visible");
+  toggleEditIcon("tick", editIcon, editButton, "1.45rem", "1.85rem");
+  inputTitle.setAttribute("contenteditable", "true");
+  inputTitle.focus();
 }

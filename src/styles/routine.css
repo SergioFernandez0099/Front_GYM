@@ -28,8 +28,19 @@
     width: 95vw;
     flex-wrap: wrap;
     gap: 1rem;
+    z-index: 12;
 }
 
+.fade-toggle {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.fade-toggle.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
 
 @media (max-width: 768px) {
     .routine-container {
@@ -49,14 +60,3 @@
     }
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
