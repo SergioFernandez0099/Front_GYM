@@ -148,30 +148,7 @@ function setUpSetCard(article) {
         return;
       }
 
-      // Cerramos todas las demás cards
-      const allCards =
-        article.parentElement.querySelectorAll(".routine-set-card");
-      allCards.forEach((card) => {
-        if (card !== article) {
-          const desc = card.querySelector(".description");
-          const arrow = card.querySelector(".arrowIcon");
-          const edit = card.querySelector(".icon-container-edit");
-          const trash = card.querySelector(".icon-container-trash");
-          const seriesInput = card.querySelector("#series");
-          const repsInput = card.querySelector("#reps");
-          const textarea = card.querySelector("#description-text");
-          const editButton = card.querySelector(".icon-container-edit");
-          const editIcon = card.querySelector(".editIcon");
-
-          if (card.classList.contains("accordion")) {
-            if (editButton.dataset.editable === "true") {
-              closeEditableCard(textarea, seriesInput, repsInput, editButton);
-              toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
-            }
-            closeAccordion(card, desc, arrow, trash, edit);
-          }
-        }
-      });
+      closeAllOpenedCards(article);
 
       if (article.classList.contains("accordion")) {
         if (editButton.dataset.editable === "true") {
@@ -254,6 +231,8 @@ function setUpSetCard(article) {
 }
 
 function setUpSetNewCard(article) {
+  const ad = article.parentElement;
+
   const suggestionBox = article.querySelector("#suggestionBox");
   const description = article.querySelector(".description");
   const arrowIcon = article.querySelector(".arrowIcon");
@@ -332,6 +311,9 @@ function setUpSetNewCard(article) {
   });
 
   article.scrollIntoView({ behavior: "smooth", block: "center" });
+   setTimeout(() => {
+    closeAllOpenedCards(article);
+  }, 100);
 
   setTimeout(() => {
     titleInput.focus();
@@ -545,4 +527,30 @@ function shakeEffect(article) {
   void article.offsetWidth;
   article.style.animation = "shake 0.5s ease-in-out";
   setTimeout(() => (article.style.animation = ""), 600);
+}
+
+function closeAllOpenedCards(article) {
+      const allCards =
+        article.parentElement.querySelectorAll(".routine-set-card");
+      allCards.forEach((card) => {
+        if (card !== article) {
+          const desc = card.querySelector(".description");
+          const arrow = card.querySelector(".arrowIcon");
+          const edit = card.querySelector(".icon-container-edit");
+          const trash = card.querySelector(".icon-container-trash");
+          const seriesInput = card.querySelector("#series");
+          const repsInput = card.querySelector("#reps");
+          const textarea = card.querySelector("#description-text");
+          const editButton = card.querySelector(".icon-container-edit");
+          const editIcon = card.querySelector(".editIcon");
+
+          if (card.classList.contains("accordion")) {
+            if (editButton.dataset.editable === "true") {
+              closeEditableCard(textarea, seriesInput, repsInput, editButton);
+              toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
+            }
+            closeAccordion(card, desc, arrow, trash, edit);
+          }
+        }
+      });
 }

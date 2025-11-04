@@ -12,15 +12,6 @@ const defaultSet = [
   { name: "Extensión de tríceps", series: 3, reps: 10 },
 ];
 
-const options = [
-  "Press Banca",
-  "Press militar",
-  "Hack squat",
-  "Extensión de cuádriceps",
-  "Femoral tumbado",
-  "Curl martillo",
-];
-
 export function RoutineSet(set = defaultSet) {
   const routineSetContainer = document.createElement("div");
   routineSetContainer.className = "routine-container";
