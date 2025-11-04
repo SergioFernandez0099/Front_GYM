@@ -77,7 +77,6 @@ export function RoutineSetCard(exercise) {
     setUpSetNewCard(article);
   } else {
     article.className = "routine-set-card";
-    article.setAttribute("data-completa", "true");
     article.innerHTML = `
     <div class="routine-set-options">
       <div class="icon-container icon-container-edit fade-toggle" data-editable="false">
@@ -138,16 +137,15 @@ function setUpSetCard(article) {
   if (arrowButton) {
     arrowButton.addEventListener("click", () => {
       if (article.hasAttribute("data-new-set")) {
-        // Validamos si tiene los datos correctos
-        // Efecto de shake y focus en tarjeta nueva
-        //return;
+        guardarSet(article);
       }
 
       // Valiamos que no haya una card nueva abierta
       const existe = document.querySelector("[data-new-set]") !== null;
       if (existe) {
-        // Efecto de shake y focus en tarjeta nueva
-        // return;
+        const newArticle = document.querySelector("[data-new-set]");
+        guardarSet(newArticle);
+        return;
       }
 
       // Cerramos todas las demás cards
@@ -163,9 +161,13 @@ function setUpSetCard(article) {
           const repsInput = card.querySelector("#reps");
           const textarea = card.querySelector("#description-text");
           const editButton = card.querySelector(".icon-container-edit");
+          const editIcon = card.querySelector(".editIcon");
 
-          if (editButton.dataset.editable === "true") {
-            closeEditableCard(textarea, seriesInput, repsInput);
+          if (card.classList.contains("accordion")) {
+            if (editButton.dataset.editable === "true") {
+              closeEditableCard(textarea, seriesInput, repsInput, editButton);
+              toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
+            }
             closeAccordion(card, desc, arrow, trash, edit);
           }
         }
@@ -336,7 +338,9 @@ function setUpSetNewCard(article) {
   }, 300);
 }
 
-export function closeEditableCard(textarea, seriesInput, repsInput) {
+export function closeEditableCard(textarea, seriesInput, repsInput, editButton) {
+    if (editButton) editButton.dataset.editable = "false";
+
   if (seriesInput) {
     seriesInput.setAttribute("readonly", true);
     seriesInput.classList.remove("editable");
@@ -348,7 +352,9 @@ export function closeEditableCard(textarea, seriesInput, repsInput) {
   if (textarea) textarea.setAttribute("readonly", true);
 }
 
-export function showEditableCard(textarea, seriesInput, repsInput) {
+export function showEditableCard(textarea, seriesInput, repsInput, editButton) {
+  if (editButton) editButton.dataset.editable = "true";
+
   if (seriesInput) {
     seriesInput.removeAttribute("readonly");
     seriesInput.classList.add("editable");
@@ -390,7 +396,11 @@ export function closeAccordion(
   editButton.classList.remove("visible");
 }
 
-function validarSet(titleInput, seriesInput, repsInput) {
+export function validarSet(article) {
+  const titleInput = article.querySelector("#titleInput");
+  const seriesInput = article.querySelector("#series");
+  const repsInput = article.querySelector("#reps");
+
   let titleValid = true;
   const seriesValid = validarSeriesYReps(seriesInput);
   const repsValid = validarSeriesYReps(repsInput);
@@ -452,7 +462,7 @@ async function cargarEjercicio(titleInput, image) {
   titleInput.parentNode.replaceChild(h2, titleInput);
 }
 
-function guardarSet(article) {
+export function guardarSet(article) {
   // Verificar que ha habido cambios
   if (true) {
     const image = article.querySelector(".routine-set-image");
@@ -469,14 +479,8 @@ function guardarSet(article) {
     // Validar set
     // Petición
     // Cambiar vista
-    if (!validarSet(titleInput, seriesInput, repsInput)) {
-      article.classList.remove("fade-in-up");
-      article.style.animation = "none";
-
-      // Fuerza reflow (reinicia animaciones)
-      void article.offsetWidth;
-      article.style.animation = "shake 0.5s ease-in-out";
-      setTimeout(() => (article.style.animation = ""), 600);
+    if (!validarSet(article)) {
+      shakeEffect(article);
       return;
     }
 
@@ -531,4 +535,14 @@ function inputPasteActionSeriesYReps(event) {
   if (!/^\d+$/.test(clipboard)) {
     event.preventDefault(); // Bloquea si no es numérico
   }
+}
+
+function shakeEffect(article) {
+  article.classList.remove("fade-in-up");
+  article.style.animation = "none";
+
+  // Fuerza reflow (reinicia animaciones)
+  void article.offsetWidth;
+  article.style.animation = "shake 0.5s ease-in-out";
+  setTimeout(() => (article.style.animation = ""), 600);
 }

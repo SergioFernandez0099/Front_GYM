@@ -1,16 +1,20 @@
 .routine-set-card {
-    height: 10rem;
-    width: 19rem;
-    margin: 0.25rem;
-    background-color: rgba(30, 5, 5, 0.9);
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px rgba(127, 29, 29, 0.8);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-sizing: border-box;
-    transition: height 0.3s ease-in-out;
-    padding: 0.6rem;
+  height: 10rem;
+  width: 19rem;
+  margin: 0.25rem;
+  background-color: rgba(30, 5, 5, 0.9);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(127, 29, 29, 0.8);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  transition:
+    height 0.35s ease-in-out,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  padding: 0.6rem;
+  will-change: height, transform;
 }
 
 .routine-set-add-card {
@@ -76,13 +80,11 @@
     border: none;
 }
 
-.accordion {
-    flex-direction: column;
-    align-items: center;
-    justify-items: center;
-    height: 18rem;
-    justify-content: center;
-    overflow: hidden;
+.routine-set-card.accordion {
+  grid-row: span 2; /* sigue ocupando 2 filas */
+  height: 18rem;    /* crecimiento visual */
+  transform: scale(1.02); /* pequeño efecto de suavizado */
+  box-shadow: 0 8px 16px rgba(127, 29, 29, 0.9);
 }
 
 .accordion .routine-set-image-container {
@@ -129,12 +131,13 @@
     position: absolute;
     width: 9.3rem;
     top: 3.9rem;
-    padding-left: 0.2rem;
+    padding-left: 0.4rem;
     border-radius: 0.5rem;
     left: 9.2rem;
     height: 1.4rem;
     z-index: 10;
-    background: red;
+    color: white;
+    background: rgb(105, 105, 105);
     pointer-events: none;
     font-size: 0.8rem;
     opacity: 0;

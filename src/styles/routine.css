@@ -24,7 +24,9 @@
 .routine-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    grid-auto-rows: min-content;
     justify-items: center;
+    align-items: center;
     width: 95vw;
     flex-wrap: wrap;
     gap: 1rem;
@@ -53,6 +55,9 @@
 }
 
 @media (min-width: 768px) {
+    .routine-container{
+        margin-top: 4rem;
+    }
     .routine-list {
         margin-top: 2rem;
         margin-left: 2rem;

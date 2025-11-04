@@ -1,12 +1,7 @@
-import { findImageByName } from "../../utils/helpers";
 import {
-  closeAccordion,
-  closeEditableCard,
-  openAccordion,
+  guardarSet,
   RoutineSetCard,
-  showEditableCard,
 } from "../components/routine-set-card";
-import { toggleEditIcon } from "../../utils/helpers";
 
 const defaultSet = [
   { name: "Press Banca", series: 3, reps: 12 },
@@ -55,17 +50,7 @@ export function RoutineSet(set = defaultSet) {
     const existingNewSet = routineList.querySelector("[data-new-set]");
 
     if (existingNewSet) {
-      existingNewSet.classList.remove("fade-in-up");
-      existingNewSet.style.animation = "none";
-
-      void existingNewSet.offsetWidth;
-
-      existingNewSet.style.animation = "shake 0.5s ease-in-out";
-      setTimeout(() => {
-        existingNewSet.style.animation = "";
-      }, 600);
-
-      existingNewSet.scrollIntoView({ behavior: "smooth", block: "center" });
+      guardarSet(existingNewSet);
 
       return;
     }
