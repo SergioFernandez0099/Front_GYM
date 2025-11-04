@@ -135,7 +135,6 @@ function setUpSetCard(article) {
   const textarea = article.querySelector("#description-text");
   const editIcon = article.querySelector(".editIcon");
 
-
   if (arrowButton) {
     arrowButton.addEventListener("click", () => {
       if (article.hasAttribute("data-new-set")) {
@@ -167,8 +166,8 @@ function setUpSetCard(article) {
 
           if (editButton.dataset.editable === "true") {
             closeEditableCard(textarea, seriesInput, repsInput);
+            closeAccordion(card, desc, arrow, trash, edit);
           }
-          closeAccordion(card, desc, arrow, trash, edit);
         }
       });
 
@@ -192,27 +191,28 @@ function setUpSetCard(article) {
 
   if (editButton) {
     editButton.addEventListener("click", () => {
-      if (article.hasAttribute("data-new-set")) {
-        guardarSet(article);
-      }
-
       if (editButton.dataset.editable === "false") {
         showEditableCard(textarea, seriesInput, repsInput);
         toggleEditIcon("tick", editIcon, editButton, "1.65rem", "2rem");
       } else {
-        // Validar campos
-
-        closeEditableCard(textarea, seriesInput, repsInput);
-        toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
+        guardarSet(article);
       }
     });
   }
 
   if (seriesInput) {
+    seriesInput.addEventListener("input", () => {
+      inputActionSeriesYReps(seriesInput);
+    });
+
+    seriesInput.addEventListener("paste", (event) => {
+      inputPasteActionSeriesYReps(event);
+    });
+
     seriesInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         // Añadir validación de numero
-        if (seriesInput.value.trim() !== "") {
+        if (validarSeriesYReps(seriesInput)) {
           repsInput.focus();
         }
       }
@@ -220,10 +220,18 @@ function setUpSetCard(article) {
   }
 
   if (repsInput) {
+    repsInput.addEventListener("input", () => {
+      inputActionSeriesYReps(repsInput);
+    });
+
+    repsInput.addEventListener("paste", (event) => {
+      inputPasteActionSeriesYReps(event);
+    });
+
     repsInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         // Añadir validación de numero
-        if (repsInput.value.trim() !== "") {
+        if (validarSeriesYReps(repsInput)) {
           textarea.focus();
         }
       }
@@ -260,11 +268,13 @@ function setUpSetNewCard(article) {
   article.setAttribute("data-new-set", "true");
   article.classList.add("accordion");
 
-  titleInput.focus();
-
   openAccordion(article, description, arrowIcon, trashButton, editButton);
   toggleEditIcon("tick", editIcon, editButton, "1.65rem", "2rem");
   showEditableCard(textarea, seriesInput, repsInput);
+
+  setTimeout(() => {
+    titleInput.focus();
+  }, 100);
 
   titleInput.addEventListener("input", () => {
     const query = titleInput.value.toLowerCase();
@@ -380,10 +390,38 @@ export function closeAccordion(
   editButton.classList.remove("visible");
 }
 
-function validarSet(titleInput) {
-  if (titleInput.value.trim() !== "") {
-    return options.includes(titleInput.value);
+function validarSet(titleInput, seriesInput, repsInput) {
+  let titleValid = true;
+  const seriesValid = validarSeriesYReps(seriesInput);
+  const repsValid = validarSeriesYReps(repsInput);
+
+  if (titleInput) {
+    titleValid = validarTitulo(titleInput);
   }
+
+  return titleInput
+    ? titleValid && seriesValid && repsValid
+    : seriesValid && repsValid;
+}
+
+function validarTitulo(input) {
+  const title = input.value.trim();
+  if (title === "" || !options.includes(title)) {
+    showErrorBorder(input);
+    return false;
+  }
+  clearErrorBorder(input);
+  return true;
+}
+
+function validarSeriesYReps(input) {
+  const value = parseInt(input.value, 10);
+  if (isNaN(value) || value < 1 || value > 99) {
+    showErrorBorder(input);
+    return false;
+  }
+  clearErrorBorder(input);
+  return true;
 }
 
 async function cargarEjercicio(titleInput, image) {
@@ -415,34 +453,82 @@ async function cargarEjercicio(titleInput, image) {
 }
 
 function guardarSet(article) {
-  const image = article.querySelector(".routine-set-image");
-  const titleInput = article.querySelector("#titleInput");
-  const editButton = article.querySelector(".icon-container-edit");
-  const trashButton = article.querySelector(".icon-container-trash");
-  const arrowIcon = article.querySelector(".arrowIcon");
-  const description = article.querySelector(".description");
-  const seriesInput = article.querySelector("#series");
-  const repsInput = article.querySelector("#reps");
-  const textarea = article.querySelector("#description-text");
-  const editIcon = article.querySelector(".editIcon");
+  // Verificar que ha habido cambios
+  if (true) {
+    const image = article.querySelector(".routine-set-image");
+    const titleInput = article.querySelector("#titleInput");
+    const editButton = article.querySelector(".icon-container-edit");
+    const trashButton = article.querySelector(".icon-container-trash");
+    const arrowIcon = article.querySelector(".arrowIcon");
+    const description = article.querySelector(".description");
+    const seriesInput = article.querySelector("#series");
+    const repsInput = article.querySelector("#reps");
+    const textarea = article.querySelector("#description-text");
+    const editIcon = article.querySelector(".editIcon");
 
-  // Validar set
-  // Petición
-  // Cambiar vista
-  if (!validarSet(titleInput)) {
-    article.classList.remove("fade-in-up");
-    article.style.animation = "none"; // asegúrate de reiniciar
+    // Validar set
+    // Petición
+    // Cambiar vista
+    if (!validarSet(titleInput, seriesInput, repsInput)) {
+      article.classList.remove("fade-in-up");
+      article.style.animation = "none";
 
-    // Fuerza reflow (reinicia animaciones)
-    void article.offsetWidth;
-    article.style.animation = "shake 0.5s ease-in-out";
-    setTimeout(() => (article.style.animation = ""), 600);
+      // Fuerza reflow (reinicia animaciones)
+      void article.offsetWidth;
+      article.style.animation = "shake 0.5s ease-in-out";
+      setTimeout(() => (article.style.animation = ""), 600);
+      return;
+    }
+
+    if (article.hasAttribute("data-new-set")) {
+      cargarEjercicio(titleInput, image);
+      article.removeAttribute("data-new-set");
+    }
+
+    closeEditableCard(textarea, seriesInput, repsInput);
+    closeAccordion(article, description, arrowIcon, trashButton, editButton);
+    toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
+  } else {
+    closeEditableCard(textarea, seriesInput, repsInput);
+    closeAccordion(article, description, arrowIcon, trashButton, editButton);
+    toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
+  }
+}
+
+function showErrorBorder(element) {
+  element.style.border = "2px solid red";
+  element.style.outline = "none";
+}
+
+function clearErrorBorder(element) {
+  element.style.border = "";
+}
+
+function inputActionSeriesYReps(input) {
+  let valor = input.value;
+
+  // Elimina cualquier carácter que no sea número
+  valor = valor.replace(/\D/g, "");
+
+  let num = parseInt(valor, 10);
+
+  if (isNaN(num)) {
+    input.value = "";
+    showErrorBorder(input);
     return;
   }
-  cargarEjercicio(titleInput, image);
 
-  article.setAttribute("data-completa", "true");
-  closeEditableCard(textarea, seriesInput, repsInput);
-  closeAccordion(article, description, arrowIcon, trashButton, editButton);
-  toggleEditIcon("tick", editIcon, editButton, "1.65rem", "2rem");
+  if (num < 1) num = 1;
+  if (num > 99) num = 99;
+
+  input.value = num;
+
+  validarSeriesYReps(input);
+}
+
+function inputPasteActionSeriesYReps(event) {
+  const clipboard = event.clipboardData?.getData("text") ?? "";
+  if (!/^\d+$/.test(clipboard)) {
+    event.preventDefault(); // Bloquea si no es numérico
+  }
 }
