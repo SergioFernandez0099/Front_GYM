@@ -1,6 +1,13 @@
 import { router } from "../router";
-import { clearErrorBorder, shakeEffect, showErrorBorder, toggleEditIcon } from "../../utils/helpers";
+import {
+  clearErrorBorder,
+  openConfirmModal,
+  shakeEffect,
+  showErrorBorder,
+  toggleEditIcon,
+} from "../../utils/helpers";
 import { validaYSanitiza } from "../../utils/validators";
+import { createRoutine, deleteRoutine } from "../pages/services/api";
 
 export function RoutineDayCard(day, series = 3, reps = 10) {
   const article = document.createElement("article");
@@ -40,7 +47,7 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
   return article;
 }
 
-function setUpDayCard(article,day="3") {
+function setUpDayCard(article, day = "3") {
   article.addEventListener("click", () => {
     router.navigate(`/routine/set/${day.id}`);
   });
@@ -51,9 +58,6 @@ function setUpDayCard(article,day="3") {
 
   article.classList.add("fade-in-up");
 
-  article.addEventListener("click", () => {
-    router.navigate(`/routine/set/${day}`);
-  });
 
   inputTitle.addEventListener("click", (event) => {
     if (editButton.dataset.editable === "true") {
@@ -65,28 +69,26 @@ function setUpDayCard(article,day="3") {
     if (e.key === "Enter") {
       e.preventDefault();
 
-        if (!guardarDay(article)) {
-          shakeEffect(article);
-          article.scrollIntoView({ behavior: "smooth", block: "center" });
-        } else {
-          // TODO En caso de ser nuevo redirigir 
-          inputTitle.blur();
-          inputTitle.setAttribute("contenteditable", "false");
-        }
-
+      if (!guardarDay(article)) {
+        shakeEffect(article);
+        article.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        // TODO En caso de ser nuevo redirigir
+        inputTitle.blur();
+        inputTitle.setAttribute("contenteditable", "false");
+      }
     }
   });
 
   inputTitle.addEventListener("input", (e) => {
-     const currentText = inputTitle.textContent;
+    const currentText = inputTitle.textContent;
     const { valid, sanitized, errors } = validaYSanitiza(currentText);
     if (!valid) {
-      showErrorBorder(inputTitle);  
+      showErrorBorder(inputTitle);
     } else {
       clearErrorBorder(inputTitle);
     }
-  
-  })
+  });
 
   editButton.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -115,6 +117,14 @@ function setUpDayCard(article,day="3") {
 
   trashButton.addEventListener("click", (event) => {
     event.stopPropagation();
+    openConfirmModal("¿Eliminar rutina?", async () => {
+      const result = await deleteRoutine(3, day.id);
+      if (result) {
+        console.log(result);
+      } else {
+        shakeEffect(article);
+      }
+    });
   });
 
   if (day === "new") {
@@ -156,24 +166,34 @@ export function openEditableRoutineCard(article) {
   inputTitle.focus();
 }
 
-export function guardarDay(article) {
+export async function guardarDay(article) {
   const inputTitle = article.querySelector("#titleDayInput");
 
-    const { valid, sanitized, errors } = validaYSanitiza(inputTitle.textContent, {
-      allowSpecial: false,
-      maxLength: 50,
-    });
-    if (!valid) {
-      showErrorBorder(inputTitle);
-      console.log(errors);
-      
-      return false;
-    }
-    inputTitle.textContent = sanitized;
-    article.removeAttribute("data-new-day");
-  
-  closeEditableRoutineCard(article);
-  return true;
+  const { valid, sanitized, errors } = validaYSanitiza(inputTitle.textContent, {
+    allowSpecial: false,
+    maxLength: 50,
+  });
+  if (!valid) {
+    showErrorBorder(inputTitle);
+    console.log(errors);
+
+    return false;
+  }
+
+  const routineData = {
+    name: sanitized,
+  };
+
+  const result = await createRoutine(3, routineData);
+
+  if (result) {
+     inputTitle.textContent = sanitized;
+     article.removeAttribute("data-new-day");
+
+     closeEditableRoutineCard(article);
+     return true;
+  }
+  return false; 
 }
 
 function closeAllEditingCards(article) {

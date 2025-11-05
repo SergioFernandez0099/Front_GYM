@@ -32,15 +32,18 @@ export async function findImageByName(keyword) {
   const normalize = (text) =>
     text
       .toLowerCase()
-      .replace(/[-_]/g, ' ')   // reemplaza guiones y guiones bajos por espacios
-      .replace(/\s+/g, ' ')    // colapsa espacios múltiples
+      .replace(/[-_]/g, " ") // reemplaza guiones y guiones bajos por espacios
+      .replace(/\s+/g, " ") // colapsa espacios múltiples
       .trim();
 
   const normalizedKeyword = normalize(keyword);
   const paths = Object.keys(images);
 
   const match = paths.find((path) => {
-    const fileName = path.split('/').pop().replace(/\.[^/.]+$/, ''); // sin extensión
+    const fileName = path
+      .split("/")
+      .pop()
+      .replace(/\.[^/.]+$/, ""); // sin extensión
     const normalizedFile = normalize(fileName);
     return normalizedFile.includes(normalizedKeyword);
   });
@@ -48,8 +51,11 @@ export async function findImageByName(keyword) {
   if (!match) return null;
 
   const module = await images[match]();
-  const fileName = match.split('/').pop().replace(/\.[^/.]+$/, '');
-  const altName = fileName.replace(/[-_]/g, ' '); // alt más legible
+  const fileName = match
+    .split("/")
+    .pop()
+    .replace(/\.[^/.]+$/, "");
+  const altName = fileName.replace(/[-_]/g, " "); // alt más legible
 
   return {
     url: module.default,
@@ -90,4 +96,33 @@ export function showErrorBorder(element) {
 
 export function clearErrorBorder(element) {
   element.style.border = "";
+}
+
+export function openConfirmModal(title, onConfirm) {
+  const modal = document.getElementById("confirmModal");
+
+  const cancelBtn = modal.querySelector(".btn-cancel");
+  const confirmBtn = modal.querySelector(".btn-delete");
+  const modelTitle = modal.querySelector(".modal-title");
+
+  modelTitle.textContent = title;
+
+  modal.classList.add("show");
+
+  // Cerrar si se hace clic fuera del modal
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeConfirmModal();
+  });
+
+  cancelBtn.onclick = closeConfirmModal;
+
+  confirmBtn.onclick = async () => {
+    closeConfirmModal();
+    await onConfirm();
+  };
+}
+
+function closeConfirmModal() {
+  const modal = document.getElementById("confirmModal");
+  modal.classList.remove("show");
 }
