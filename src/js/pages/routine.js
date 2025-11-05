@@ -25,7 +25,7 @@ export async function Routine() {
 
   // 🔹 Obtener userId
   // const userId = getCurrentUserId();
-  const userId = 1;
+  const userId = 3;
   if (!userId) {
     routineList.textContent = "Usuario no logueado";
     return routineContainer;
@@ -37,7 +37,7 @@ export async function Routine() {
     
     // 🔹 Renderizar cada rutina
     routineDays.forEach(day => {
-      routineList.appendChild(RoutineDayCard(day.name)); // asumiendo que tu API devuelve { id, name }
+      routineList.appendChild(RoutineDayCard(day)); // asumiendo que tu API devuelve { id, name }
     });
 
   } catch (error) {

@@ -25,9 +25,9 @@ export function initRouter() {
     .on(
       "/routine/set/:id",
       requireLogin(async ({ data }) => {
-        const routineId = data.id; // id de la rutina desde la URL
+        const routineId = parseInt(data.id); // id de la rutina desde la URL
         // const userId = getCurrentUserId(); // id del usuario logueado
-        const userId = 1; // id del usuario logueado
+        const userId = 3; // id del usuario logueado
         const routineSetContainer = await RoutineSet({ userId, routineId });
         render(routineSetContainer);
       })

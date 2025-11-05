@@ -29,7 +29,7 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
       </div>
     </div>
     <div class="routine-info">
-        <h2 id="titleDayInput" class="routine-day-title" contenteditable="false" spellcheck="false">${day}</h2>
+        <h2 id="titleDayInput" class="routine-day-title" contenteditable="false" spellcheck="false">${day.name}</h2>
     </div>
     <div class="routine-day-image-container">
         <img src="/assets/images/routine_card2.jpg" alt="Imagen de fondo en un gimnasio" class="routine-image" />
@@ -42,7 +42,7 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
 
 function setUpDayCard(article,day="3") {
   article.addEventListener("click", () => {
-    router.navigate(`/routine/set/1`);
+    router.navigate(`/routine/set/${day.id}`);
   });
 
   const inputTitle = article.querySelector("#titleDayInput");
