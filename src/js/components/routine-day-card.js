@@ -41,7 +41,7 @@ export function RoutineDayCard(day, series = 3, reps = 10) {
 
 function setUpDayCard(article,day="3") {
   article.addEventListener("click", () => {
-    router.navigate(`/routine/set/${day}`);
+    router.navigate(`/routine/set/1`);
   });
 
   const inputTitle = article.querySelector("#titleDayInput");

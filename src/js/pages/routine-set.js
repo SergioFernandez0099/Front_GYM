@@ -2,17 +2,9 @@ import {
   guardarSet,
   RoutineSetCard,
 } from "../components/routine-set-card";
+import { fetchRoutineSets } from "./services/api";
 
-const defaultSet = [
-  { name: "Press Banca", series: 3, reps: 12 },
-  { name: "Press inclinado", series: 3, reps: 10 },
-  { name: "Press militar", series: 3, reps: 10 },
-  { name: "Elevaciones laterales", series: 3, reps: 10 },
-  { name: "Fondos de tríceps", series: 3, reps: 8 },
-  { name: "Extensión de tríceps", series: 3, reps: 10 },
-];
-
-export function RoutineSet(set = defaultSet) {
+export async function RoutineSet({ userId, routineId }) {
   const routineSetContainer = document.createElement("div");
   routineSetContainer.className = "routine-container";
 
@@ -21,41 +13,32 @@ export function RoutineSet(set = defaultSet) {
 
   const routineList = document.createElement("div");
   routineList.className = "routine-list";
-  routineList.style.gridTemplateColumns =
-    "repeat(auto-fill, minmax(19rem, 1fr))";
+  routineList.style.gridTemplateColumns = "repeat(auto-fill, minmax(19rem, 1fr))";
   section.appendChild(routineList);
 
-  set.forEach((exercise) => {
-    routineList.appendChild(RoutineSetCard(exercise));
+  routineSetContainer.appendChild(section);
+
+  const setData = await fetchRoutineSets(userId, routineId);
+
+  setData.forEach((set) => {
+    routineList.appendChild(RoutineSetCard(set));
   });
 
   const addArticle = RoutineSetCard("add");
-
   const addArticleButton = addArticle.querySelector(".addButton");
-
-  if (document.activeElement) {
-    document.activeElement.blur();
-  }
 
   addArticleButton.addEventListener("click", () => {
     const existingNewSet = routineList.querySelector("[data-new-set]");
-
     if (existingNewSet) {
       guardarSet(existingNewSet);
-
       return;
     }
-
     const newArticle = RoutineSetCard("new");
-
     routineList.insertBefore(newArticle, addArticle);
-
     newArticle.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 
   routineList.appendChild(addArticle);
-
-  routineSetContainer.appendChild(section);
 
   return routineSetContainer;
 }

@@ -24,11 +24,20 @@ export function initRouter() {
     )
     .on(
       "/routine/set/:id",
-      requireLogin(({ data }) => render(RoutineSet())) //data.id
+      requireLogin(async ({ data }) => {
+        const routineId = data.id; // id de la rutina desde la URL
+        // const userId = getCurrentUserId(); // id del usuario logueado
+        const userId = 1; // id del usuario logueado
+        const routineSetContainer = await RoutineSet({ userId, routineId });
+        render(routineSetContainer);
+      })
     )
     .on(
       "/routine",
-      requireLogin(() => render(Routine()))
+      requireLogin(async () => {
+        const routineContainer = await Routine();
+        render(routineContainer);
+      })
     )
     .on(
       "/contact",
@@ -36,7 +45,10 @@ export function initRouter() {
     )
     .on(
       "/exercises",
-      requireLogin(() => render(Exercises()))
+      requireLogin(async () => {
+        const exerciseContainer = await Exercises();
+        render(exerciseContainer);
+      })
     )
     .notFound(() => render(`<h2>404 - Página no encontrada</h2>`))
     .resolve();

@@ -1,5 +1,6 @@
 import { applyCSS } from "../../utils/helpers";
 import { ExerciseCard } from "../components/exercise-card";
+import { fetchExercises } from "./services/api";
 
 const filters = [
   { name: "Pecho", value: "pecho" },
@@ -16,7 +17,7 @@ const filters = [
   { name: "Abdomen", value: "abdomen" },
 ];
 
-export function Exercises() {
+export async function Exercises() {
   applyCSS(
     "/src/styles/exercises.css",
     "/src/styles/components/exercise-card.css"
@@ -59,16 +60,11 @@ export function Exercises() {
 
   section.appendChild(exerciseList);
 
-  exerciseList.appendChild(ExerciseCard());
-  exerciseList.appendChild(ExerciseCard());
-  exerciseList.appendChild(ExerciseCard());
-  exerciseList.appendChild(ExerciseCard());
-  exerciseList.appendChild(ExerciseCard());
-  exerciseList.appendChild(ExerciseCard());
-  exerciseList.appendChild(ExerciseCard());
-  exerciseList.appendChild(ExerciseCard());
-  exerciseList.appendChild(ExerciseCard());
-  exerciseList.appendChild(ExerciseCard());
+    const exercisesData = await fetchExercises();
+
+      exercisesData.forEach((exercise) => {
+        exerciseList.appendChild(ExerciseCard(exercise));
+      });
 
   exercisesContainer.appendChild(section);
 

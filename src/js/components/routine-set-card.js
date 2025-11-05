@@ -9,7 +9,7 @@ const options = [
   "Curl martillo",
 ];
 
-export function RoutineSetCard(exercise) {
+export function RoutineSetCard(set) {
   applyCSS(
     "/src/styles/routine.css",
     "/src/styles/components/routine-day-card.css",
@@ -18,7 +18,7 @@ export function RoutineSetCard(exercise) {
   );
 
   const article = document.createElement("article");
-  if (exercise === "add") {
+  if (set === "add") {
     article.className = "routine-set-add-card";
     article.innerHTML = `
     <div class="button-container">
@@ -30,7 +30,7 @@ export function RoutineSetCard(exercise) {
       </div>
     </div>
   `;
-  } else if (exercise === "new") {
+  } else if (set === "new") {
     article.className = "routine-set-card";
     article.innerHTML = `
     <div class="routine-set-options">
@@ -91,15 +91,15 @@ export function RoutineSetCard(exercise) {
     </div>
     <div class="default-card">
       <div class="routine-set-image-container">
-          <img src="/assets/images/exercises/legs/hack-squat-800_rd.png" alt="" class="routine-set-image" />
+          <img src="${set.exercise.imageUrl}" alt="" class="routine-set-image" />
       </div>
       <div class="routine-set-info">
-          <h2 class="routine-set-title">${exercise.name}</h2>
+          <h2 class="routine-set-title">${set.exercise.name}</h2>
                 <div class="routine-details">
               <p class="routine-set-text">Series: 
-              <input id="series" type="number" min="1" max="99" readonly enterkeyhint="done" value="${exercise.series}"></p>
+              <input id="series" type="number" min="1" max="99" readonly enterkeyhint="done" value="${set.series}"></p>
               <p class="routine-set-text">Reps:
-              <input id="reps" type="number" min="1" max="99" readonly enterkeyhint="done" value="${exercise.reps}"></p>
+              <input id="reps" type="number" min="1" max="99" readonly enterkeyhint="done" value="${set.repetitions}"></p>
           </div>
       </div>
     </div>
@@ -114,7 +114,7 @@ export function RoutineSetCard(exercise) {
     readonly
     enterkeyhint="done"
     placeholder="Descripción del ejercicio"
-    oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')"></textarea>
+    oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')">${set.description}</textarea>
 </div>
   `;
     setUpSetCard(article);

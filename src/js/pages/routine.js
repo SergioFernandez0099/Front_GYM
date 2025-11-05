@@ -1,12 +1,9 @@
 import { applyCSS } from "../../utils/helpers";
-import {
-  openEditableRoutineCard,
-  RoutineDayCard,
-} from "../components/routine-day-card";
+import { openEditableRoutineCard, RoutineDayCard } from "../components/routine-day-card";
+import { fetchRoutineDays } from "./services/api"; // asegúrate de la ruta correcta
+// import { getCurrentUserId } from "../../utils/auth"; // si usas JWT
 
-const routine = ["Pecho", "Espalda", "Cuádriceps", "Isquios"];
-
-export function Routine() {
+export async function Routine() {
   applyCSS(
     "/src/styles/routine.css",
     "/src/styles/components/routine-day-card.css",
@@ -24,21 +21,38 @@ export function Routine() {
   routineList.className = "routine-list";
 
   section.appendChild(routineList);
+  routineContainer.appendChild(section);
 
-  routine.forEach((day) => {
-    routineList.appendChild(RoutineDayCard(day));
-  });
+  // 🔹 Obtener userId
+  // const userId = getCurrentUserId();
+  const userId = 1;
+  if (!userId) {
+    routineList.textContent = "Usuario no logueado";
+    return routineContainer;
+  }
 
+  try {
+    // 🔹 Traer rutinas desde la API
+    const routineDays = await fetchRoutineDays(userId);
+    
+    // 🔹 Renderizar cada rutina
+    routineDays.forEach(day => {
+      routineList.appendChild(RoutineDayCard(day.name)); // asumiendo que tu API devuelve { id, name }
+    });
+
+  } catch (error) {
+    console.error("Error cargando rutinas:", error);
+    routineList.textContent = "No se pudieron cargar las rutinas.";
+  }
+
+  // 🔹 Botón para añadir nueva rutina
   const addArticle = RoutineDayCard("add");
-  routineList.appendChild(addArticle);
-
   addArticle.addEventListener("click", () => {
     const newArticle = RoutineDayCard("Nuevo");
     routineList.insertBefore(newArticle, addArticle);
     openEditableRoutineCard(newArticle);
   });
-
-  routineContainer.appendChild(section);
+  routineList.appendChild(addArticle);
 
   return routineContainer;
 }
