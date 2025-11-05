@@ -30,7 +30,10 @@ export async function RoutineSet({ userId, routineId }) {
   addArticleButton.addEventListener("click", () => {
     const existingNewSet = routineList.querySelector("[data-new-set]");
     if (existingNewSet) {
-      guardarSet(existingNewSet);
+      existingNewSet.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       return;
     }
     const newArticle = RoutineSetCard("new");

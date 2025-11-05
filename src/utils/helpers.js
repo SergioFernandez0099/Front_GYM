@@ -73,3 +73,21 @@ export function toggleEditIcon(icon, editIcon, editButton, minSize, maxSize) {
   }
 }
 
+export function shakeEffect(article) {
+  article.classList.remove("fade-in-up");
+  article.style.animation = "none";
+
+  // Fuerza reflow (reinicia animaciones)
+  void article.offsetWidth;
+  article.style.animation = "shake 0.5s ease-in-out";
+  setTimeout(() => (article.style.animation = ""), 600);
+}
+
+export function showErrorBorder(element) {
+  element.style.border = "1.5px solid red";
+  element.style.outline = "none";
+}
+
+export function clearErrorBorder(element) {
+  element.style.border = "";
+}

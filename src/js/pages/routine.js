@@ -48,7 +48,16 @@ export async function Routine() {
   // 🔹 Botón para añadir nueva rutina
   const addArticle = RoutineDayCard("add");
   addArticle.addEventListener("click", () => {
-    const newArticle = RoutineDayCard("Nuevo");
+    const existingNewDay = routineList.querySelector("[data-new-day]");
+
+    if (existingNewDay) {
+      existingNewDay.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      return;
+    }
+    const newArticle = RoutineDayCard("new");
     routineList.insertBefore(newArticle, addArticle);
     openEditableRoutineCard(newArticle);
   });
