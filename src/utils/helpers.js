@@ -80,13 +80,23 @@ export function toggleEditIcon(icon, editIcon, editButton, minSize, maxSize) {
 }
 
 export function shakeEffect(article) {
+  removeFadeInUp(article);
+  article.style.animation = "shake 0.5s ease-in-out";
+  setTimeout(() => (article.style.animation = ""), 600);
+}
+
+export function glowEffect(article) {
+  removeFadeInUp(article);
+  article.style.animation =  "saved-glow 1.2s ease-out";
+  setTimeout(() => (article.style.animation = ""), 1200);
+}
+
+function removeFadeInUp(article) {
   article.classList.remove("fade-in-up");
   article.style.animation = "none";
 
   // Fuerza reflow (reinicia animaciones)
   void article.offsetWidth;
-  article.style.animation = "shake 0.5s ease-in-out";
-  setTimeout(() => (article.style.animation = ""), 600);
 }
 
 export function showErrorBorder(element) {

@@ -1,13 +1,18 @@
 import { router } from "../router";
 import {
   clearErrorBorder,
+  glowEffect,
   openConfirmModal,
   shakeEffect,
   showErrorBorder,
   toggleEditIcon,
 } from "../../utils/helpers";
 import { validaYSanitiza } from "../../utils/validators";
-import { createRoutine, deleteRoutine } from "../pages/services/api";
+import {
+  createRoutine,
+  deleteRoutine,
+  updateRoutine,
+} from "../pages/services/api";
 
 export function RoutineDayCard(day, series = 3, reps = 10) {
   const article = document.createElement("article");
@@ -58,7 +63,6 @@ function setUpDayCard(article, day = "3") {
 
   article.classList.add("fade-in-up");
 
-
   inputTitle.addEventListener("click", (event) => {
     if (editButton.dataset.editable === "true") {
       event.stopPropagation();
@@ -90,26 +94,25 @@ function setUpDayCard(article, day = "3") {
     }
   });
 
-  editButton.addEventListener("click", (event) => {
+  editButton.addEventListener("click", async (event) => {
     event.stopPropagation();
 
-    const existe = document.querySelector("[data-new-day]") !== null;
-    if (existe) {
-      const newArticle = document.querySelector("[data-new-day]");
-
-      if (!guardarDay(newArticle)) {
-        shakeEffect(newArticle);
-        newArticle.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-
+    const newArticle = document.querySelector("[data-new-day]");
+    if (newArticle && newArticle !== article) {
+ 
+      shakeEffect(newArticle);
+      newArticle.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
 
     closeAllEditingCards(article);
 
     if (editButton.dataset.editable === "true") {
-      guardarDay(article);
-      closeEditableRoutineCard(article);
+      const isNew = article.hasAttribute("data-new-day");
+      const saved = isNew
+        ? await guardarDay(article)
+        : await editarDay(article, day.id);
+      if (saved) closeEditableRoutineCard(article);
     } else {
       openEditableRoutineCard(article);
     }
@@ -117,11 +120,20 @@ function setUpDayCard(article, day = "3") {
 
   trashButton.addEventListener("click", (event) => {
     event.stopPropagation();
-    openConfirmModal("¿Eliminar rutina?", async () => {
-      const result = await deleteRoutine(3, day.id);
-      if (result) {
-        console.log(result);
-      } else {
+
+    openConfirmModal("¿Eliminar set?", async () => {
+      try {
+        // const setId = article.dataset.id;
+        const result = await deleteRoutine(3, day.id);
+
+        if (result) {
+          article.classList.add("fade-out");
+          setTimeout(() => article.remove(), 300);
+        } else {
+          shakeEffect(article);
+        }
+      } catch (error) {
+        console.error("Error al borrar set:", error);
         shakeEffect(article);
       }
     });
@@ -187,13 +199,55 @@ export async function guardarDay(article) {
   const result = await createRoutine(3, routineData);
 
   if (result) {
-     inputTitle.textContent = sanitized;
-     article.removeAttribute("data-new-day");
+    inputTitle.textContent = sanitized;
+    article.removeAttribute("data-new-day");
 
-     closeEditableRoutineCard(article);
-     return true;
+    glowEffect(article);
+
+    closeEditableRoutineCard(article);
+    return true;
   }
-  return false; 
+  return false;
+}
+
+export async function editarDay(article, dayId) {
+  const inputTitle = article.querySelector("#titleDayInput");
+
+  const { valid, sanitized, errors } = validaYSanitiza(inputTitle.textContent, {
+    allowSpecial: false,
+    maxLength: 50,
+  });
+
+  if (!valid) {
+    showErrorBorder(inputTitle);
+    console.log(errors);
+    return false;
+  }
+
+  const routineData = {
+    name: sanitized,
+  };
+
+  try {
+    const result = await updateRoutine(3, dayId, routineData);
+
+    if (result) {
+      inputTitle.textContent = sanitized;
+      closeEditableRoutineCard(article);
+
+      glowEffect(article);
+
+      return true;
+    } else {
+      console.warn("Error al actualizar la rutina");
+      shakeEffect(article);
+      return false;
+    }
+  } catch (error) {
+    console.error("Error en editarDay:", error);
+    shakeEffect(article);
+    return false;
+  }
 }
 
 function closeAllEditingCards(article) {

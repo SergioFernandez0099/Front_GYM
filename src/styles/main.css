@@ -74,6 +74,12 @@ section {
     animation: fadeInUp 0.4s ease;
 }
 
+.fade-out {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
 .loader-overlay {
   position: fixed;
   inset: 0;
@@ -216,5 +222,17 @@ section {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes saved-glow {
+  0% {
+    box-shadow: 0 0 0px rgba(76, 175, 80, 0);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(76, 175, 80, 0);
   }
 }

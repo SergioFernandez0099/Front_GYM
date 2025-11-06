@@ -16,6 +16,20 @@ export async function fetchExercises() {
   }
 }
 
+export async function fetchMuscleGroups() {
+  try {
+    const response = await fetch(`${API_BASE}/muscleGroups`);
+    if (!response.ok)
+      throw new Error(
+        `Error al obtener los grupos musculares: ${response.statusText}`
+      );
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
 export async function fetchRoutineSets(userId, routineId) {
   try {
     const response = await fetch(

@@ -228,8 +228,46 @@ function setUpSetCard(article) {
   }
 
   if (trashButton) {
-    trashButton.addEventListener("click", () => {});
-  }
+  trashButton.addEventListener("click", async () => {
+    // Evita doble clics
+    trashButton.disabled = true;
+
+    // Confirmación opcional
+    const confirmDelete = confirm("¿Seguro que quieres borrar este set?");
+    if (!confirmDelete) {
+      trashButton.disabled = false;
+      return;
+    }
+
+    try {
+      const setId = article.dataset.id; // Suponiendo que tus cards existentes tengan un data-id
+      if (!setId) {
+        // Si no hay ID (por ejemplo, card recién creada y no guardada)
+        article.remove();
+        return;
+      }
+
+      // Petición DELETE al backend
+      const response = await fetch(`/api/routineSets/${setId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Error al borrar el set");
+
+      // Eliminamos la card del DOM con animación
+      article.classList.add("fade-out");
+      setTimeout(() => article.remove(), 300);
+
+    } catch (error) {
+      console.error("Error al borrar el set:", error);
+      alert("No se pudo borrar el set. Inténtalo de nuevo.");
+      trashButton.disabled = false;
+    }
+  });
+}
 }
 
 function setUpSetNewCard(article) {

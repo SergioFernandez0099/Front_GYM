@@ -1,5 +1,6 @@
 let isLoggedIn = true;
 let token = null;
+let userId = 3;
 
 export function setLoginStatus(status, newToken = null) {
   isLoggedIn = status;
@@ -12,4 +13,8 @@ export function getLoginStatus() {
 
 export function getToken() {
   return token;
+}
+
+export function getCurrentUserId(){
+  return userId;
 }

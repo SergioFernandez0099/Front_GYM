@@ -1,7 +1,7 @@
 export function ExerciseCard(exercise) {
   const article = document.createElement("article");
   article.className = "exercise-card";
-
+  article.setAttribute("data-muscle-group", exercise.muscleGroup.name);
   article.innerHTML = `
     <div class="exercise-image-container">
         <img src="${exercise.imageUrl}" alt="" class="exercise-image" />

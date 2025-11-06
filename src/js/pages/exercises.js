@@ -1,6 +1,6 @@
 import { applyCSS } from "../../utils/helpers";
 import { ExerciseCard } from "../components/exercise-card";
-import { fetchExercises } from "./services/api";
+import { fetchExercises, fetchMuscleGroups } from "./services/api";
 
 const filters = [
   { name: "Pecho", value: "pecho" },
@@ -29,24 +29,29 @@ export async function Exercises() {
   const filtersContainer = document.createElement("div");
   filtersContainer.className = "filters-container";
 
-  filters.forEach((f) => {
+  const muscleGroupsData = await fetchMuscleGroups();
+
+  muscleGroupsData.forEach((muscleGroup) => {
     const p = document.createElement("p");
     p.className = "filter";
-    p.textContent = f.name;
-    p.dataset.muscle = f.value;
+    p.textContent = muscleGroup.name;
 
     p.addEventListener("click", () => {
+      const isActive = p.classList.contains("active");
+
       // quitar active de todos
       filtersContainer
         .querySelectorAll(".filter")
-        .forEach((f2) => f2.classList.remove("active"));
-      // añadir active al pulsado
-      p.classList.add("active");
-
-      // Acción específica
-      handleFilter(f.value);
+        .forEach((filter) => filter.classList.remove("active"));
+      if (!isActive) {
+        // añadir active solo si no estaba activo antes
+        p.classList.add("active");
+        handleFilter(muscleGroup.name);
+      } else {
+        // si ya estaba activo, mostramos todos
+        handleFilter("Todos");
+      }
     });
-
     filtersContainer.appendChild(p);
   });
 
@@ -60,11 +65,11 @@ export async function Exercises() {
 
   section.appendChild(exerciseList);
 
-    const exercisesData = await fetchExercises();
+  const exercisesData = await fetchExercises();
 
-      exercisesData.forEach((exercise) => {
-        exerciseList.appendChild(ExerciseCard(exercise));
-      });
+  exercisesData.forEach((exercise) => {
+    exerciseList.appendChild(ExerciseCard(exercise));
+  });
 
   exercisesContainer.appendChild(section);
 
@@ -82,5 +87,19 @@ export async function Exercises() {
   window.addEventListener("resize", checkScroll);
   window.addEventListener("load", checkScroll);
 
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   return exercisesContainer;
+}
+
+function handleFilter(muscleGroup) {
+  const exerciseCards = document.querySelectorAll(".exercise-card");
+  exerciseCards.forEach((card) => {
+    const cardMuscleGroup = card.getAttribute("data-muscle-group");
+    if (muscleGroup === "Todos" || cardMuscleGroup === muscleGroup) {
+      card.style.display = "flex";
+    } else {
+      card.style.display = "none";
+    }
+  });
 }

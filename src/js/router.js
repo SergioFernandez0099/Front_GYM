@@ -45,9 +45,8 @@ export function initRouter() {
       render(Contact());
     }))
     .on("/exercises", requireLogin(async () => {
-      const exerciseContainer = await Exercises();
-      routeHandlers["/exercises"] = () => render(exerciseContainer);
-      render(exerciseContainer);
+      routeHandlers["/exercises"] = () => render(Exercises());
+      render(Exercises());
     }))
     .notFound(() => {
       routeHandlers["404"] = () => render(`<h2>404 - Página no encontrada</h2>`);
@@ -75,7 +74,7 @@ function requireLogin(callback) {
 
 async function render(content) {
   const app = document.getElementById("app");
-  showLoader();
+ showLoader();
   app.innerHTML = "";
 
   try {
@@ -92,7 +91,7 @@ async function render(content) {
     console.error("Error al renderizar:", error);
     app.innerHTML = "<h2>Error al cargar la página</h2>";
   } finally {
-    hideLoader();
+   hideLoader();
   }
 }
 

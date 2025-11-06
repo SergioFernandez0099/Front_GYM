@@ -3,6 +3,7 @@ import {
   openEditableRoutineCard,
   RoutineDayCard,
 } from "../components/routine-day-card";
+import { getCurrentUserId } from "../store";
 import { fetchRoutineDays } from "./services/api"; // asegúrate de la ruta correcta
 // import { getCurrentUserId } from "../../utils/auth"; // si usas JWT
 
@@ -27,8 +28,7 @@ export async function Routine() {
   routineContainer.appendChild(section);
 
   // 🔹 Obtener userId
-  // const userId = getCurrentUserId();
-  const userId = 3;
+  const userId = getCurrentUserId();
   if (!userId) {
     routineList.textContent = "Usuario no logueado";
     return routineContainer;
