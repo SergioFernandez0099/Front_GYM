@@ -1,5 +1,8 @@
 import { applyCSS } from "../../utils/helpers";
-import { openEditableRoutineCard, RoutineDayCard } from "../components/routine-day-card";
+import {
+  openEditableRoutineCard,
+  RoutineDayCard,
+} from "../components/routine-day-card";
 import { fetchRoutineDays } from "./services/api"; // asegúrate de la ruta correcta
 // import { getCurrentUserId } from "../../utils/auth"; // si usas JWT
 
@@ -34,12 +37,11 @@ export async function Routine() {
   try {
     // 🔹 Traer rutinas desde la API
     const routineDays = await fetchRoutineDays(userId);
-    
+
     // 🔹 Renderizar cada rutina
-    routineDays.forEach(day => {
+    routineDays.forEach((day) => {
       routineList.appendChild(RoutineDayCard(day)); // asumiendo que tu API devuelve { id, name }
     });
-
   } catch (error) {
     console.error("Error cargando rutinas:", error);
     routineList.textContent = "No se pudieron cargar las rutinas.";
@@ -62,6 +64,8 @@ export async function Routine() {
     openEditableRoutineCard(newArticle);
   });
   routineList.appendChild(addArticle);
+
+  // await new Promise((resolve) => setTimeout(resolve, 4000));
 
   return routineContainer;
 }

@@ -24,7 +24,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#1e0505">
 
-    <link rel="stylesheet" href="/src/styles/main.css"> 
+    <link rel="stylesheet" href="/src/styles/main.css">
 
     <meta name="description" content="G Y M - Entrenamiento y registro diario">
     <meta property="og:title" content="G Y M">
@@ -37,8 +37,11 @@
     <div id="navbar"></div>
     <main>
         <div id="app"></div>
-
     </main>
+
+    <div id="loader-overlay" class="loader-overlay">
+        <img src="/favicon.png" alt="Cargando..." class="loader-img" />
+    </div>
 
     <div id="confirmModal" class="modal-overlay">
         <div class="modal">
@@ -50,7 +53,7 @@
             </div>
         </div>
     </div>
-  
+
     <script type="module" src="./src/js/app.js"></script>
 </body>
 

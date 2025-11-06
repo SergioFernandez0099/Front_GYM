@@ -1,5 +1,5 @@
 import "../../styles/components/navbar.css";
-import { router } from "../router.js";
+import { router, safeNavigate } from "../router.js";
 
 export function Navbar() {
   const nav = document.createElement("nav");
@@ -66,7 +66,7 @@ export function Navbar() {
     link.addEventListener("click", (e) => {
       e.preventDefault();
       const href = link.getAttribute("href");
-      router.navigate(href);
+      safeNavigate(href);
       inputMenu.checked = false;
       mainContainer.style.filter = "none";
       overlay.style.display = "none";
