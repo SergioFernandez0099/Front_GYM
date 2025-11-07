@@ -69,11 +69,11 @@ function setUpDayCard(article, day = "3") {
     }
   });
 
-  inputTitle.addEventListener("keydown", (e) => {
+  inputTitle.addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
 
-      if (!guardarDay(article)) {
+      if (await guardarDay(article)) {
         shakeEffect(article);
         article.scrollIntoView({ behavior: "smooth", block: "center" });
       } else {
