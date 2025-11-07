@@ -147,14 +147,14 @@ function closeConfirmModal() {
 
 export function adjustAppHeight() {
    requestAnimationFrame(() => {
-      const app = document.getElementById("app");
+      const main = document.querySelector("main");
       const contentHeight = app.scrollHeight;
       const viewportHeight = window.innerHeight;
 
       if (contentHeight <= viewportHeight) {
-        app.style.height = "84vh";
+        main.style.minHeight = "84vh";
       } else {
-        app.style.height = "auto";
+        main.style.minHeight = "100vh";
       }
     });
 }

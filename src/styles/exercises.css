@@ -4,7 +4,7 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    height: auto;
+    overflow: hidden;
 }
 
 .filters-container {
@@ -49,19 +49,20 @@
 .exercise-list-container {
     display: flex;
     justify-content: center;
-    /*min-height: 100vh;*/
     width: 100%;
-    /* ARREGLAR ESTO */
-    height: 75vh; 
+    flex: 1;
     overflow: hidden;
 }
 
 .exercise-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(18.25rem, 1fr));
-    justify-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     height: 100%;
-    width: 95vw;
+    width: 100%;
+    max-height: calc(100vh - 5rem);
     gap: 0.7rem;
     padding-bottom: 3rem;
     overflow-y: auto;
