@@ -1,0 +1,60 @@
+.footer {
+    width: 100vw;
+    height: 7vh;
+    border-top: 1px solid #ccc;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    color: #555;
+    background-color: #ffffff;
+    gap: 0.5rem;
+}
+
+.github-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #333;
+    font-size: 1rem;
+    flex-wrap: nowrap;
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.github-icon {
+    display: block;
+    outline: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    transition: fill 0.2s ease-in, background-color 0.3s ease-out;
+}
+
+.github-icon:hover {
+    fill: white;
+    background-color: black;
+}
+
+.no-hover:hover {
+    fill: inherit;           /* o el color normal */
+    background-color: transparent;
+}
+
+.footer-info {
+    user-select: none;
+}
+
+@media (max-width: 600px) {
+    .footer {
+        font-size: 0.9rem;
+        height: 12vh;
+    }
+
+    .github-link, .github-icon {
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+}
