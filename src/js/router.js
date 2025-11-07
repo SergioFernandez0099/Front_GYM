@@ -7,7 +7,7 @@ import { Exercises } from "./pages/exercises.js";
 import { getLoginStatus } from "./store.js";
 import { Routine } from "./pages/routine.js";
 import { RoutineSet } from "./pages/routine-set.js";
-import { hideLoader, showLoader } from "../utils/helpers.js";
+import { adjustAppHeight, hideLoader, showLoader } from "../utils/helpers.js";
 
 export const router = new Navigo("/");
 
@@ -17,39 +17,60 @@ const routeHandlers = {};
 // Inicializa el router después de que el DOM cargue
 export function initRouter() {
   router
-    .on("/", requireLogin(() => {
-      routeHandlers["/"] = () => render(Home());
-      render(Home());
-    }))
+    .on(
+      "/",
+      requireLogin(() => {
+        routeHandlers["/"] = () => render(Home());
+        render(Home());
+      })
+    )
     .on("/login", () => {
-      routeHandlers["/login"] = () => render(`<h2>Por favor, inicia sesión</h2>`);
+      routeHandlers["/login"] = () =>
+        render(`<h2>Por favor, inicia sesión</h2>`);
       render(`<h2>Por favor, inicia sesión</h2>`);
     })
-    .on("/about", requireLogin(() => {
-      routeHandlers["/about"] = () => render(About());
-      render(About());
-    }))
-    .on("/routine/set/:id", requireLogin(async ({ data }) => {
-      const routineId = parseInt(data.id);
-      const userId = 3;
-      const routineSetContainer = await RoutineSet({ userId, routineId });
-      routeHandlers[`/routine/set/${routineId}`] = () => render(routineSetContainer);
-      render(routineSetContainer);
-    }))
-    .on("/routine", requireLogin(() => {
-      routeHandlers["/routine"] = () => render(Routine());
-      render(Routine());
-    }))
-    .on("/contact", requireLogin(() => {
-      routeHandlers["/contact"] = () => render(Contact());
-      render(Contact());
-    }))
-    .on("/exercises", requireLogin(async () => {
-      routeHandlers["/exercises"] = () => render(Exercises());
-      render(Exercises());
-    }))
+    .on(
+      "/about",
+      requireLogin(() => {
+        routeHandlers["/about"] = () => render(About());
+        render(About());
+      })
+    )
+    .on(
+      "/routine/set/:id",
+      requireLogin(async ({ data }) => {
+        const routineId = parseInt(data.id);
+        const userId = 3;
+        const routineSetContainer = await RoutineSet({ userId, routineId });
+        routeHandlers[`/routine/set/${routineId}`] = () =>
+          render(routineSetContainer);
+        render(routineSetContainer);
+      })
+    )
+    .on(
+      "/routine",
+      requireLogin(() => {
+        routeHandlers["/routine"] = () => render(Routine());
+        render(Routine());
+      })
+    )
+    .on(
+      "/contact",
+      requireLogin(() => {
+        routeHandlers["/contact"] = () => render(Contact());
+        render(Contact());
+      })
+    )
+    .on(
+      "/exercises",
+      requireLogin(async () => {
+        routeHandlers["/exercises"] = () => render(Exercises());
+        render(Exercises());
+      })
+    )
     .notFound(() => {
-      routeHandlers["404"] = () => render(`<h2>404 - Página no encontrada</h2>`);
+      routeHandlers["404"] = () =>
+        render(`<h2>404 - Página no encontrada</h2>`);
       render(`<h2>404 - Página no encontrada</h2>`);
     })
     .resolve();
@@ -74,7 +95,7 @@ function requireLogin(callback) {
 
 async function render(content) {
   const app = document.getElementById("app");
- showLoader();
+  showLoader();
   app.innerHTML = "";
 
   try {
@@ -91,7 +112,9 @@ async function render(content) {
     console.error("Error al renderizar:", error);
     app.innerHTML = "<h2>Error al cargar la página</h2>";
   } finally {
-   hideLoader();
+    // Esto para colocar el footer correctamente
+    adjustAppHeight();
+    hideLoader();
   }
 }
 

@@ -144,3 +144,17 @@ function closeConfirmModal() {
   const modal = document.getElementById("confirmModal");
   modal.classList.remove("show");
 }
+
+export function adjustAppHeight() {
+   requestAnimationFrame(() => {
+      const app = document.getElementById("app");
+      const contentHeight = app.scrollHeight;
+      const viewportHeight = window.innerHeight;
+
+      if (contentHeight <= viewportHeight) {
+        app.style.height = "84vh";
+      } else {
+        app.style.height = "auto";
+      }
+    });
+}
