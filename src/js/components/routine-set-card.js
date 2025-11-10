@@ -2,11 +2,13 @@ import {
     applyCSS,
     clearErrorBorder,
     findImageByName,
+    glowEffect,
+    openConfirmModal,
     shakeEffect,
     showErrorBorder,
     toggleEditIcon
 } from "../../utils/helpers";
-import {createRoutineSet, fetchExercises} from "../pages/services/api.js";
+import {createRoutineSet, deleteRoutineSet, fetchExercises, updateRoutineSet} from "../pages/services/api.js";
 import {getCurrentUserId} from "../store.js";
 
 let exercises = [];
@@ -34,7 +36,7 @@ export async function RoutineSetCard(set, routineId) {
       </div>
     </div>
   `;
-    } else if (set === "new") {
+    } else if (set.isNew) {
         article.className = "routine-set-card";
         article.innerHTML = `
     <div class="routine-set-options">
@@ -121,7 +123,7 @@ export async function RoutineSetCard(set, routineId) {
     oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')">${set.description}</textarea>
 </div>
   `;
-        setUpSetCard(article);
+        setUpSetCard(article, set);
     }
 
     return article;
@@ -236,40 +238,30 @@ function setUpSetCard(article, set) {
             // Evita doble clics
             trashButton.disabled = true;
 
-            // Confirmación opcional
-            const confirmDelete = confirm("¿Seguro que quieres borrar este set?");
-            if (!confirmDelete) {
-                trashButton.disabled = false;
-                return;
-            }
+            openConfirmModal("¿Eliminar ejercicio?", async () => {
+                try {
+                    const setId = set.id; // Suponiendo que tus cards existentes tengan un data-id
+                    if (!setId) {
+                        article.classList.add("fade-out-inward");
+                        setTimeout(() => article.remove(), 300);
+                        return;
+                    }
 
-            try {
-                const setId = article.dataset.id; // Suponiendo que tus cards existentes tengan un data-id
-                if (!setId) {
-                    // Si no hay ID (por ejemplo, card recién creada y no guardada)
-                    article.remove();
-                    return;
+                    const response = await deleteRoutineSet(getCurrentUserId(), routineIdGlobal, setId)
+
+                    if (!response) throw new Error("Error al borrar el set");
+
+                    article.classList.add("fade-out-inward");
+                    setTimeout(() => article.remove(), 300);
+
+                } catch (error) {
+                    console.error("Error al borrar el set:", error);
+                    alert("No se pudo borrar el set. Inténtalo de nuevo.");
+                    shakeEffect(article);
+                    trashButton.disabled = false;
                 }
-
-                // Petición DELETE al backend
-                const response = await fetch(`/api/routineSets/${setId}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-
-                if (!response.ok) throw new Error("Error al borrar el set");
-
-                // Eliminamos la card del DOM con animación
-                article.classList.add("fade-out");
-                setTimeout(() => article.remove(), 300);
-
-            } catch (error) {
-                console.error("Error al borrar el set:", error);
-                alert("No se pudo borrar el set. Inténtalo de nuevo.");
-                trashButton.disabled = false;
-            }
+            });
+            trashButton.disabled = false;
         });
     }
 }
@@ -286,6 +278,7 @@ async function setUpSetNewCard(article) {
     const trashButton = article.querySelector(".icon-container-trash");
     const editIcon = article.querySelector(".editIcon");
 
+    // Optimizar
     const resultado = await fetchExercises();
     if (resultado) {
         exercises = resultado;
@@ -520,17 +513,34 @@ export async function guardarSet(article, set) {
             if (result) {
                 cargarEjercicio(titleInput, image);
                 article.removeAttribute("data-new-set");
-                return true;
+                Object.assign(set, result);
+                delete set.isNew;
+            } else {
+                shakeEffect(article);
+                console.log(result)
+                return false;
             }
-            console.log(result)
-            return false;
         } else {
-
+            const setData = {
+                exerciseId: set.exerciseId,
+                series: parseInt(seriesInput.value),
+                repetitions: parseInt(repsInput.value),
+                description: textarea.value,
+            };
+            const result = await updateRoutineSet(getCurrentUserId(), routineIdGlobal, parseInt(set.id), setData);
+            if (result) {
+            } else {
+                shakeEffect(article);
+                console.log(result)
+                return false;
+            }
         }
 
         closeEditableCard(textarea, seriesInput, repsInput);
         closeAccordion(article, description, arrowIcon, trashButton, editButton);
         toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
+        glowEffect(article)
+        return true;
     } else {
         closeEditableCard(textarea, seriesInput, repsInput);
         closeAccordion(article, description, arrowIcon, trashButton, editButton);

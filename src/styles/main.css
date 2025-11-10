@@ -78,13 +78,15 @@ section {
 }
 
 .fade-in-up {
-    animation: fadeInUp 0.4s ease;
+    animation: fadeInUp 0.4s ease forwards;
 }
 
 .fade-out {
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    animation: fadeOutDown 0.3s ease forwards;
+}
+
+.fade-out-inward {
+    animation: fadeOutInward 0.3s ease forwards;
 }
 
 .loader-overlay {
@@ -189,14 +191,14 @@ section {
 @media (min-width: 768px) {
     main {
         margin-top: 3rem;
-        padding-top: 1rem ;
+        padding-top: 1rem;
     }
 }
 
 @media (max-width: 768px) {
     main {
         margin-top: 1rem;
-        padding-top: 1rem ;
+        padding-top: 1rem;
     }
 }
 
@@ -237,6 +239,28 @@ section {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+@keyframes fadeOutInward {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.8);
     }
 }
 

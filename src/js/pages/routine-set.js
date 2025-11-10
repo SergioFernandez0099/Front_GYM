@@ -38,7 +38,15 @@ export async function RoutineSet({userId, routineId}) {
             });
             return;
         }
-        const newArticle = await RoutineSetCard("new", routineId);
+
+        const newSet = {
+            isNew: true,
+            exerciseId: null,
+            series: null,
+            repetitions: null,
+            description: ""
+        };
+        const newArticle = await RoutineSetCard(newSet, routineId);
         routineList.insertBefore(newArticle, addArticle);
 
         newArticle.scrollIntoView({behavior: "smooth", block: "center"});

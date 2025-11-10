@@ -4,7 +4,8 @@ import {
   RoutineDayCard,
 } from "../components/routine-day-card";
 import { getCurrentUserId } from "../store";
-import { fetchRoutineDays } from "./services/api"; // asegúrate de la ruta correcta
+import { fetchRoutineDays } from "./services/api";
+import {RoutineSetCard} from "../components/routine-set-card.js"; // asegúrate de la ruta correcta
 // import { getCurrentUserId } from "../../utils/auth"; // si usas JWT
 
 export async function Routine() {
@@ -59,7 +60,12 @@ export async function Routine() {
       });
       return;
     }
-    const newArticle = RoutineDayCard("new");
+      const newDay = {
+          isNew: true,
+          name: ". . .",
+          id: null,
+      };
+    const newArticle = RoutineDayCard(newDay);
     routineList.insertBefore(newArticle, addArticle);
     openEditableRoutineCard(newArticle);
   });
