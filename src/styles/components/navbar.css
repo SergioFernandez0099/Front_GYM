@@ -115,6 +115,35 @@
     width: 100%;
 }
 
+.navbar .reload-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.85);;
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    top: 4.5rem;
+    left: 1rem;
+    padding: 0.25rem;
+    animation: popIn 0.5s ease-in-out forwards;
+}
+
+.navbar .reload-container  #reload {
+    color: red;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transition: transform 0.6s ease-in-out;
+}
+
+.navbar .reload-container  #reload:hover {
+    animation: spin 1s linear infinite;
+}
+
 @media (max-width: 768px) {
     .navbar {
         opacity: 0.95;
@@ -126,6 +155,31 @@
         transition: top 0.3s linear;
         z-index: 9999;
     }
+
+
+    .menu-btn {
+        top: 0.8rem;
+        left: 0.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        padding-top: 0.4rem;
+        padding-bottom: 0.4rem;
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+        background-color: rgba(255, 255, 255, 0.85);
+        border-radius: 100%;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+        height: 50px;
+        z-index: 4;
+        position: absolute;
+        transition: background-color 0.3s ease-in-out, transform 0.6s ease-in-out, box-shadow 0.3s ease-in-out;
+        transform: translateX(0);
+    }
+
 
     .navbar-container .menu-btn input[type="checkbox"],
     .navbar-container {
@@ -139,7 +193,7 @@
         position: relative;
     }
 
-    svg {
+    #hamburger {
         position: absolute;
         width: 50px;
         cursor: pointer;
@@ -193,28 +247,6 @@
         cursor: pointer;
     }
 
-    .menu-btn {
-        top: 0.8rem;
-        margin-left: 0.4rem;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-            0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        padding-top: 0.4rem;
-        padding-bottom: 0.4rem;
-        padding-left: 0.4rem;
-        padding-right: 0.4rem;
-        background-color: rgba(255, 255, 255, 0.85);
-        border-radius: 100%;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 50px;
-        height: 50px;
-        z-index: 4;
-        position: absolute;
-        transition: background-color 0.3s ease-in-out, transform 0.6s ease-in-out, box-shadow 0.3s ease-in-out;
-        transform: translateX(0);
-    }
 
     /* Estado abierto */
     #menu-toggle:checked~.menu-items-container .menu-items {

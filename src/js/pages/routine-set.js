@@ -1,5 +1,6 @@
 import {RoutineSetCard,} from "../components/routine-set-card";
 import {fetchRoutineSets} from "./services/api";
+import {getCurrentUserId} from "../store.js";
 
 export async function RoutineSet({userId, routineId}) {
     const routineSetContainer = document.createElement("div");
@@ -28,7 +29,6 @@ export async function RoutineSet({userId, routineId}) {
 
     routineList.appendChild(addArticle);
 
-
     addArticleButton.addEventListener("click", async () => {
         const existingNewSet = routineList.querySelector("[data-new-set]");
         if (existingNewSet) {
@@ -54,8 +54,4 @@ export async function RoutineSet({userId, routineId}) {
 
 
     return routineSetContainer;
-}
-
-function insertAfter(newNode, referenceNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }

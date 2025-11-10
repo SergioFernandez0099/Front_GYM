@@ -1,19 +1,40 @@
 const API_BASE = import.meta.env.VITE_API_BASE;
 
+const EXERCISES_CACHE_TTL = 40000; // 40 seg
+let exercisesCache = null;
+let exercisesCacheTimestamp = 0;
+
 // GETs
 
 export async function fetchExercises() {
-  try {
-    const response = await fetch(`${API_BASE}/exercises`);
-    if (!response.ok)
-      throw new Error(
-        `Error al obtener los ejercicios: ${response.statusText}`
-      );
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
+    const now = Date.now();
+
+    // Retornar cache si aún es válido
+    if (exercisesCache && (now - exercisesCacheTimestamp < EXERCISES_CACHE_TTL)) {
+        return exercisesCache;
+    }
+
+    // Fetch desde la API
+    try {
+        const response = await fetch(`${API_BASE}/exercises`);
+        if (!response.ok) throw new Error(`Error al obtener los ejercicios: ${response.statusText}`);
+
+        const data = await response.json();
+
+        console.log("Ejercicios")
+        // Guardar en cache
+        exercisesCache = data;
+        exercisesCacheTimestamp = now;
+
+        return data;
+    } catch (error) {
+        console.error(error);
+
+        // fallback: retornar cache aunque esté stale
+        if (exercisesCache) return exercisesCache;
+
+        return [];
+    }
 }
 
 export async function fetchMuscleGroups() {

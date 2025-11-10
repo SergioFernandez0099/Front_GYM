@@ -278,11 +278,10 @@ async function setUpSetNewCard(article) {
     const trashButton = article.querySelector(".icon-container-trash");
     const editIcon = article.querySelector(".editIcon");
 
-    // Optimizar
+    // Optimizado con memoria caché
     const resultado = await fetchExercises();
     if (resultado) {
         exercises = resultado;
-        console.log(resultado)
     }
 
     article.classList.add("fade-in-up");
