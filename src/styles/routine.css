@@ -1,5 +1,4 @@
 .routine-container {
-    padding-top: 1.5rem;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -9,7 +8,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     flex: 1;
-    box-sizing: border-box; 
+    box-sizing: border-box;
     animation: fadeInUp 0.4s ease;
 }
 
@@ -22,15 +21,18 @@
 }
 
 .routine-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    grid-auto-rows: min-content;
-    justify-items: center;
-    align-items: center;
-    width: 95vw;
+    display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    max-height: calc(100vh - 5rem);
     gap: 1rem;
     z-index: 12;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .fade-toggle {
@@ -46,7 +48,7 @@
 
 @media (max-width: 768px) {
     .routine-container {
-        padding-top: 5rem;
+        padding-top: 0.5rem;
     }
 
     .routine-list-container {
@@ -55,13 +57,12 @@
 }
 
 @media (min-width: 768px) {
-    .routine-container{
-        margin-top: 4rem;
+
+    .routine-container {
+        padding-top: 0.5rem;
     }
     .routine-list {
         margin-top: 2rem;
-        margin-left: 2rem;
-        margin-right: 2rem
     }
 }
 

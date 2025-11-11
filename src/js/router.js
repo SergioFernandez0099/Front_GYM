@@ -8,6 +8,7 @@ import { getLoginStatus } from "./store.js";
 import { Routine } from "./pages/routine.js";
 import { RoutineSet } from "./pages/routine-set.js";
 import { adjustAppHeight, hideLoader, showLoader } from "../utils/helpers.js";
+import {updateReloadButton} from "./components/navbar.js";
 
 export const router = new Navigo("/");
 
@@ -108,6 +109,10 @@ async function render(content) {
     } else {
       console.warn("Tipo de contenido no soportado:", resolvedContent);
     }
+
+      const reloadBtn = document.querySelector("#reload");
+      if (reloadBtn) updateReloadButton(reloadBtn);
+
   } catch (error) {
     console.error("Error al renderizar:", error);
     app.innerHTML = "<h2>Error al cargar la página</h2>";

@@ -1,11 +1,12 @@
 import "../../styles/components/navbar.css";
-import { router, safeNavigate } from "../router.js";
+import {router, safeNavigate} from "../router.js";
+import {setForceNoCache} from "../store.js";
 
 export function Navbar() {
-  const nav = document.createElement("nav");
-  nav.className = "navbar";
+    const nav = document.createElement("nav");
+    nav.className = "navbar";
 
-  nav.innerHTML = `
+    nav.innerHTML = `
     <div class="navbar-container">
       <input type="checkbox" id="menu-toggle" />
       <label class="menu-btn" for="menu-toggle">
@@ -17,7 +18,7 @@ export function Navbar() {
           </g>
         </svg>
       </label>
-      
+
       <div class="reload-container">
           <svg fill="currentColor" height="800px" width="800px" version="1.1" id="reload" xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 489.711 489.711" xml:space="preserve" >
@@ -56,43 +57,110 @@ export function Navbar() {
      <div class="overlay"></div>
   `;
 
-  const inputMenu = nav.querySelector("#menu-toggle");
-  const mainContainer = document.querySelector("main");
-  const overlay = nav.querySelector(".overlay");
+    const inputMenu = nav.querySelector("#menu-toggle");
+    const mainContainer = document.querySelector("main");
+    const reloadBtn = nav.querySelector("#reload");
+    const overlay = nav.querySelector(".overlay");
 
-  function handleResize() {
-    if (window.innerWidth < 768) return;
-    inputMenu.checked = false;
-    mainContainer.style.filter = "none";
-    if (overlay) overlay.style.display = "none";
-  }
+    let angle = 0;
+    let animationFrame;
+    let spinning = false;
+    let clickAnimation = false;
 
+    function rotate() {
+        let step = spinning ? 3 : 0;
+        if (clickAnimation) step = 20;
 
+        angle += step;
+        reloadBtn.style.transform = `rotate(${angle}deg)`;
 
-  window.addEventListener("resize", handleResize);
-  window.addEventListener("orientationchange", handleResize);
-
-  inputMenu.addEventListener("click", () => {
-    if (inputMenu.checked) {
-      mainContainer.style.filter = "blur(2px)";
-      overlay.style.display = "block";
-    } else {
-      mainContainer.style.filter = "none";
-      overlay.style.display = "none";
+        if (spinning || clickAnimation) {
+            animationFrame = requestAnimationFrame(rotate);
+        } else {
+            animationFrame = null;
+        }
     }
-  });
 
-  const menuLinks = nav.querySelectorAll("a");
-  menuLinks.forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const href = link.getAttribute("href");
-      safeNavigate(href);
-      inputMenu.checked = false;
-      mainContainer.style.filter = "none";
-      overlay.style.display = "none";
+    reloadBtn.addEventListener("mouseenter", () => {
+        spinning = true;
+        if (!animationFrame) rotate();
     });
-  });
 
-  return nav;
+    reloadBtn.addEventListener("mouseleave", () => {
+        spinning = false;
+    });
+
+    reloadBtn.addEventListener("click", () => {
+        clickAnimation = true;
+        if (!animationFrame) rotate();
+
+        reloadBtn.classList.remove("reload-clicked");
+        void reloadBtn.offsetWidth; // reflow
+        reloadBtn.classList.add("reload-clicked");
+
+        // Navegación usando la ruta guardada
+        const route = reloadBtn.dataset.route;
+        setForceNoCache(true);
+        if (route) safeNavigate(route);
+
+        setTimeout(() => {
+            clickAnimation = false;
+            if (reloadBtn.matches(":hover")) {
+                spinning = true;
+                if (!animationFrame) rotate();
+            }
+        }, 400);
+    });
+
+    function handleResize() {
+        if (window.innerWidth < 768) return;
+        inputMenu.checked = false;
+        mainContainer.style.filter = "none";
+        if (overlay) overlay.style.display = "none";
+    }
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+
+    inputMenu.addEventListener("click", () => {
+        if (inputMenu.checked) {
+            mainContainer.style.filter = "blur(2px)";
+            overlay.style.display = "block";
+        } else {
+            mainContainer.style.filter = "none";
+            overlay.style.display = "none";
+        }
+    });
+
+    const menuLinks = nav.querySelectorAll("a");
+    menuLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const href = link.getAttribute("href");
+            safeNavigate(href);
+            inputMenu.checked = false;
+            mainContainer.style.filter = "none";
+            overlay.style.display = "none";
+        });
+    });
+
+    return nav;
+}
+
+export function updateReloadButton(reloadBtn) {
+    const last = router.lastResolved();
+
+    if (!last) {
+        reloadBtn.parentNode.style.display = "none";
+        return;
+    }
+
+    const currentRoute = Array.isArray(last) ? last[last.length - 1]?.url : last?.url;
+    if (currentRoute === "login" || currentRoute === "home" || currentRoute === "" || currentRoute === undefined) {
+        reloadBtn.parentNode.style.display = "none";
+    } else {
+        reloadBtn.parentNode.style.display = "block";
+    }
+
+    reloadBtn.dataset.route = "/" + currentRoute;
 }

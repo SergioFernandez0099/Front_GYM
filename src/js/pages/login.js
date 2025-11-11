@@ -1,4 +1,5 @@
 import { applyCSS } from "../../utils/helpers";
+import {login} from "./services/api.js";
 
 class FormUtils {
   // Validación de contraseña
@@ -19,19 +20,6 @@ class FormUtils {
     //   };
     // }
     return { isValid: true };
-  }
-
-  // Simula el login con retardo (demo)
-  static simulateLogin(email, password) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (email === "admin" && password === "1234") {
-          resolve({ success: true, user: { email } });
-        } else {
-          reject(new Error("Invalid email or password"));
-        }
-      }, 1000); // Retardo reducido para demo
-    });
   }
 
   // Muestra una notificación temporal dentro del formulario o contenedor dado
@@ -316,10 +304,10 @@ class LoginForm {
     this.isSubmitting = true;
     this.submitBtn.classList.add("loading"); // Muestra loader
     const user = this.userField.value;
-    const password = this.passwordField.value;
+    const pin = this.passwordField.value;
 
     try {
-      await FormUtils.simulateLogin(user, password);
+        const data = await login( user, pin );
       this.onLogin(); // Llama al callback de éxito
     } catch (error) {
       // Muestra mensaje de error y agita

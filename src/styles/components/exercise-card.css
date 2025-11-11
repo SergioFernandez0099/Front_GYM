@@ -10,6 +10,12 @@
     gap: 0.6rem;
     transition: transform 0.3s ease, width 0.3s ease;
     animation: fadeInUp 0.4s ease;
+    z-index: 1;
+}
+
+.exercise-card:hover {
+    transform: scale(1.05);
+    z-index: 2;
 }
 
 .exercise-image-container {

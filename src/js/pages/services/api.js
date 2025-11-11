@@ -1,193 +1,166 @@
-const API_BASE = import.meta.env.VITE_API_BASE;
+import {getCurrentUserId, getForceNoCache, setCurrentUserId, setForceNoCache} from "../../store.js";
 
-const EXERCISES_CACHE_TTL = 40000; // 40 seg
+const API_BASE = import.meta.env.VITE_API_BASE;
+const CACHE_TTL = 40000; // 40 seg
+
 let exercisesCache = null;
 let exercisesCacheTimestamp = 0;
 
-// GETs
+let muscleGroupsCache = null;
+let muscleGroupsCacheTimestamp = 0;
 
-export async function fetchExercises() {
-    const now = Date.now();
-
-    // Retornar cache si aún es válido
-    if (exercisesCache && (now - exercisesCacheTimestamp < EXERCISES_CACHE_TTL)) {
-        return exercisesCache;
-    }
-
-    // Fetch desde la API
+export async function login(name, pin) {
     try {
-        const response = await fetch(`${API_BASE}/exercises`);
-        if (!response.ok) throw new Error(`Error al obtener los ejercicios: ${response.statusText}`);
+        const data = await fetchSend("/auth/login", "POST", {
+            name: name,
+            pin: pin
+        });
 
-        const data = await response.json();
 
-        console.log("Ejercicios")
-        // Guardar en cache
-        exercisesCache = data;
-        exercisesCacheTimestamp = now;
+        setCurrentUserId(data.user.id);
+        console.log("login success");
+        console.log(getCurrentUserId())
+
+        // Guardamos los datos en el store
+        // setUser(data); // data puede ser { user, token } o como lo devuelva tu backend
 
         return data;
     } catch (error) {
+        console.error("Login fallido:", error);
+        throw error; // lanzar error para que lo manejes en la UI
+    }
+}
+
+// Función helper para peticiones GET con cookie
+async function fetchGet(path) {
+    const res = await fetch(`${API_BASE}${path}`, {
+        credentials: "include", // ✅ envía cookie HttpOnly automáticamente
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || `Error al obtener ${path}`);
+    return data;
+}
+
+// Función helper para POST/PUT con cookie
+async function fetchSend(path, method, body) {
+    const res = await fetch(`${API_BASE}${path}`, {
+        method,
+        headers: {"Content-Type": "application/json"},
+        credentials: "include",
+        body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || `Error en ${method} ${path}`);
+    return data;
+}
+
+// ---------------------
+// GETs con cache
+// ---------------------
+
+export async function fetchExercises() {
+    const now = Date.now();
+    const force = getForceNoCache();
+
+    if (force) {
+        exercisesCache = null;
+        exercisesCacheTimestamp = 0;
+    }
+
+    if (!force && exercisesCache && now - exercisesCacheTimestamp < CACHE_TTL) {
+        return exercisesCache;
+    }
+
+    try {
+        const data = await fetchGet("/exercises");
+        exercisesCache = data;
+        exercisesCacheTimestamp = now;
+        setForceNoCache(false);
+        return data;
+    } catch (error) {
         console.error(error);
-
-        // fallback: retornar cache aunque esté stale
         if (exercisesCache) return exercisesCache;
-
         return [];
     }
 }
 
 export async function fetchMuscleGroups() {
-  try {
-    const response = await fetch(`${API_BASE}/muscleGroups`);
-    if (!response.ok)
-      throw new Error(
-        `Error al obtener los grupos musculares: ${response.statusText}`
-      );
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
+    const now = Date.now();
+    const force = getForceNoCache();
+
+    if (force) {
+        muscleGroupsCache = null;
+        muscleGroupsCacheTimestamp = 0;
+    }
+
+    if (!force && muscleGroupsCache && now - muscleGroupsCacheTimestamp < CACHE_TTL) {
+        return muscleGroupsCache;
+    }
+
+    try {
+        const data = await fetchGet("/muscleGroups");
+        muscleGroupsCache = data;
+        muscleGroupsCacheTimestamp = now;
+        setForceNoCache(false);
+        return data;
+    } catch (error) {
+        console.error(error);
+        if (muscleGroupsCache) return muscleGroupsCache;
+        return [];
+    }
 }
 
-export async function fetchRoutineSets(userId, routineId) {
-  try {
-    const response = await fetch(
-      `${API_BASE}/users/${userId}/routines/${routineId}/sets`
-    );
-    if (!response.ok)
-      throw new Error(`Error al obtener los sets: ${response.statusText}`);
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-export async function fetchRoutineDays(userId) {
-  try {
-    const response = await fetch(`${API_BASE}/users/${userId}/routines`);
-    if (!response.ok)
-      throw new Error(`Error al obtener los días: ${response.statusText}`);
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return []; // retornar array vacío en caso de error
-  }
-}
-
-// POSTs
+// ---------------------
+// POSTs, PUTs, DELETEs
+// ---------------------
 
 export async function createRoutine(userId, routineData) {
-  try {
-    const response = await fetch(`${API_BASE}/users/${userId}/routines`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(routineData), // { name }
-    });
-    if (!response.ok)
-      throw new Error(`Error al crear rutina: ${response.statusText}`);
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+    return await fetchSend(`/users/${userId}/routines`, "POST", routineData);
 }
 
 export async function createRoutineSet(userId, routineId, setData) {
-  try {
-    const response = await fetch(
-      `${API_BASE}/users/${userId}/routines/${routineId}/sets`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(setData), // { exerciseId, series, repetitions, description }
-      }
+    return await fetchSend(
+        `/users/${userId}/routines/${routineId}/sets`,
+        "POST",
+        setData
     );
-    if (!response.ok)
-      throw new Error(`Error al crear set: ${response.statusText}`);
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
 }
-
-// PUTs
 
 export async function updateRoutine(userId, routineId, updatedData) {
-  try {
-    const response = await fetch(
-      `${API_BASE}/users/${userId}/routines/${routineId}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData), // { name?, description? }
-      }
+    return await fetchSend(
+        `/users/${userId}/routines/${routineId}`,
+        "PUT",
+        updatedData
     );
-    if (!response.ok)
-      throw new Error(`Error al actualizar rutina: ${response.statusText}`);
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
 }
 
-// Actualizar un set
 export async function updateRoutineSet(userId, routineId, setId, updatedData) {
-  try {
-    const response = await fetch(
-      `${API_BASE}/users/${userId}/routines/${routineId}/sets/${setId}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData), // { series?, repetitions?, description?, exerciseId? }
-      }
+    return await fetchSend(
+        `/users/${userId}/routines/${routineId}/sets/${setId}`,
+        "PUT",
+        updatedData
     );
-    if (!response.ok)
-      throw new Error(`Error al actualizar set: ${response.statusText}`);
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
 }
-
-// DELETEs
 
 export async function deleteRoutine(userId, routineId) {
-  try {
-    const response = await fetch(
-      `${API_BASE}/users/${userId}/routines/${routineId}`,
-      {
-        method: "DELETE",
-      }
-    );
-    if (!response.ok)
-      throw new Error(`Error al eliminar rutina: ${response.statusText}`);
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+    return await fetchSend(`/users/${userId}/routines/${routineId}`, "DELETE");
 }
 
-// Eliminar un set
 export async function deleteRoutineSet(userId, routineId, setId) {
-  try {
-    const response = await fetch(
-      `${API_BASE}/users/${userId}/routines/${routineId}/sets/${setId}`,
-      {
-        method: "DELETE",
-      }
+    return await fetchSend(
+        `/users/${userId}/routines/${routineId}/sets/${setId}`,
+        "DELETE"
     );
-    if (!response.ok)
-      throw new Error(`Error al eliminar set: ${response.statusText}`);
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+}
+
+// ---------------------
+// GETs sin cache para rutinas
+// ---------------------
+
+export async function fetchRoutineSets(userId, routineId) {
+    return await fetchGet(`/users/${userId}/routines/${routineId}/sets`);
+}
+
+export async function fetchRoutineDays(userId) {
+    return await fetchGet(`/users/${userId}/routines`);
 }

@@ -11,6 +11,13 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 1;
+}
+
+.routine-day-card:hover {
+    transform: scale(1.05);
+    z-index: 2;
 }
 
 .routine-day-add-card {
@@ -43,7 +50,7 @@
     transition: height 0.3s ease, width 0.3s ease;
 }
 
-.routine-day-options>.icon-container {
+.routine-day-options > .icon-container {
     outline: none;
     display: flex;
     justify-content: center;
@@ -56,7 +63,7 @@
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), border 0.5s ease-in;
 }
 
-.routine-day-options>.icon-container:hover {
+.routine-day-options > .icon-container:hover {
     background-color: rgba(77, 71, 71, 1);
     transform: scale(1.2);
     border: none;
@@ -89,7 +96,7 @@
 
 .routine-day-title {
     color: white;
-    width: calc(100% - 4rem); 
+    width: calc(100% - 4rem);
     text-align: center;
     font-weight: bold;
     font-size: 1.6rem;

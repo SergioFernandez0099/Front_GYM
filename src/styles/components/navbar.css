@@ -76,9 +76,9 @@
 .container-logo h1 .border {
     color: white;
     text-shadow: -1px -1px 0 white,
-        1px -1px 0 white,
-        -1px 1px 0 white,
-        1px 1px 0 white;
+    1px -1px 0 white,
+    -1px 1px 0 white,
+    1px 1px 0 white;
 }
 
 .wave {
@@ -131,18 +131,37 @@
     animation: popIn 0.5s ease-in-out forwards;
 }
 
-.navbar .reload-container  #reload {
+.navbar .reload-container #reload {
     color: red;
     position: relative;
     width: 100%;
     height: 100%;
     cursor: pointer;
-    transition: transform 0.6s ease-in-out;
 }
 
-.navbar .reload-container  #reload:hover {
-    animation: spin 1s linear infinite;
+.navbar .reload-container #reload.hover-spin {
+    animation: spinHover 1s linear infinite;
 }
+
+@keyframes spinHover {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Click rápido */
+.navbar .reload-container #reload.reload-clicked {
+    animation: clickSpin 0.4s linear;
+}
+
+@keyframes clickSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(0.8); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+/*.navbar .reload-container #reload:hover {*/
+/*    animation: spin 1s linear infinite;*/
+/*}*/
 
 @media (max-width: 768px) {
     .navbar {
@@ -249,17 +268,17 @@
 
 
     /* Estado abierto */
-    #menu-toggle:checked~.menu-items-container .menu-items {
+    #menu-toggle:checked ~ .menu-items-container .menu-items {
         transform: translateX(0);
     }
 
-    input[type="checkbox"]:checked+.menu-btn {
+    input[type="checkbox"]:checked + .menu-btn {
         box-shadow: none;
         background-color: transparent;
         transform: translateX(38px) scale(1.05);
     }
 
-    #menu-toggle:checked~.menu-items-container {
+    #menu-toggle:checked ~ .menu-items-container {
         pointer-events: all;
     }
 
@@ -272,9 +291,8 @@
     #bottom-line {
         transform-box: fill-box;
         transform-origin: center;
-        transition:
-            transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
-            opacity 0.4s ease;
+        transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+        opacity 0.4s ease;
     }
 
     /* Estado normal (hamburguesa) */
@@ -291,16 +309,16 @@
     }
 
     /* Estado checked (X animada) */
-    #menu-toggle:checked+.menu-btn svg #top-line {
+    #menu-toggle:checked + .menu-btn svg #top-line {
         transform: translateY(10px) rotate(-45deg) scale(1.05);
     }
 
-    #menu-toggle:checked+.menu-btn svg #middle-line {
+    #menu-toggle:checked + .menu-btn svg #middle-line {
         opacity: 0;
         transform: scale(0.5);
     }
 
-    #menu-toggle:checked+.menu-btn svg #bottom-line {
+    #menu-toggle:checked + .menu-btn svg #bottom-line {
         transform: translateY(-10px) rotate(45deg) scale(1.05);
     }
 
@@ -314,25 +332,25 @@
     0%,
     100% {
         clip-path: polygon(0% 47%,
-                10% 48%,
-                33% 54%,
-                54% 60%,
-                70% 61%,
-                84% 59%,
-                100% 52%,
-                100% 100%,
-                0% 100%);
+        10% 48%,
+        33% 54%,
+        54% 60%,
+        70% 61%,
+        84% 59%,
+        100% 52%,
+        100% 100%,
+        0% 100%);
     }
 
     50% {
         clip-path: polygon(0% 60%,
-                15% 65%,
-                34% 66%,
-                51% 62%,
-                67% 50%,
-                84% 45%,
-                100% 46%,
-                100% 100%,
-                0% 100%);
+        15% 65%,
+        34% 66%,
+        51% 62%,
+        67% 50%,
+        84% 45%,
+        100% 46%,
+        100% 100%,
+        0% 100%);
     }
 }

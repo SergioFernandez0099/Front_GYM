@@ -2,10 +2,11 @@ import {removeLoginCss} from "../utils/helpers.js";
 import {Navbar} from "./components/navbar.js";
 import {Login} from "./pages/login.js";
 import {initRouter, router} from "./router.js";
-import {getLoginStatus, setLoginStatus} from "./store.js";
+import {clearCurrentUserId, getLoginStatus} from "./store.js";
 import {Footer} from "./components/footer.js";
 
 function renderApp() {
+    // clearCurrentUserId();
     if (!getLoginStatus()) {
         // Mostrar login primero
         const app = document.getElementById("app");
@@ -13,7 +14,6 @@ function renderApp() {
         app.appendChild(
             Login({
                 onLogin: () => {
-                    setLoginStatus(true);
                     initSPA();
                     router.navigate("/");
                 },

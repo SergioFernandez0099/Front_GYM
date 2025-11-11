@@ -45,6 +45,9 @@ export function RoutineDayCard(day) {
     }
 
     article.classList.add("fade-in-up");
+    setTimeout(() => {
+        article.classList.remove("fade-in-up");
+    }, 400);
     return article;
 }
 
