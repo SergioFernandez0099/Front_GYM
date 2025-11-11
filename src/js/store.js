@@ -1,3 +1,5 @@
+import {validateToken} from "./pages/services/api.js";
+
 let userId = localStorage.getItem("userId") || null;
 let forceNoCache = false;
 
@@ -25,4 +27,18 @@ export function setForceNoCache(value) {
 
 export function getForceNoCache() {
     return forceNoCache;
+}
+
+export async function checkAndSetLogin() {
+    if (!getCurrentUserId()) return false;
+
+    try {
+        const data = await validateToken();
+        if (data?.userId) setCurrentUserId(data.userId);
+        else clearCurrentUserId();
+        return !!data?.userId;
+    } catch {
+        clearCurrentUserId();
+        return false;
+    }
 }

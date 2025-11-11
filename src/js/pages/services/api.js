@@ -1,4 +1,5 @@
-import {getCurrentUserId, getForceNoCache, setCurrentUserId, setForceNoCache} from "../../store.js";
+import {clearCurrentUserId, getCurrentUserId, getForceNoCache, setCurrentUserId, setForceNoCache} from "../../store.js";
+import {safeNavigate} from "../../router.js";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const CACHE_TTL = 40000; // 40 seg
@@ -28,6 +29,41 @@ export async function login(name, pin) {
     } catch (error) {
         console.error("Login fallido:", error);
         throw error; // lanzar error para que lo manejes en la UI
+    }
+}
+
+export async function logout() {
+    try {
+        // Si tu backend tiene un endpoint /auth/logout (para eliminar cookie o sesión)
+        await fetch(`${API_BASE}/auth/logout`, {
+            method: "POST",
+            credentials: "include", // para enviar cookies HttpOnly
+        });
+    } catch (err) {
+        console.warn("Error en logout (probablemente sin endpoint):", err);
+    } finally {
+        // Limpia el estado local y el localStorage
+        clearCurrentUserId();
+
+        // Redirige al login (según tu router)
+        safeNavigate("login")
+    }
+}
+
+export async function validateToken() {
+    try {
+        const res = await fetch(`${API_BASE}/auth/validate`, {
+            method: "GET",
+            credentials: "include",
+            cache: "no-store"
+        });
+
+        if (!res.ok) return false; // token inválido
+
+        return await res.json(); //
+    } catch (err) {
+        console.error("Error validando token:", err);
+        return false;
     }
 }
 
