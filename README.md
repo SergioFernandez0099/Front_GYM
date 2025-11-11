@@ -73,7 +73,7 @@ index.html       # Entrada principal
 vite.config.js   # Configuración de Vite
 ```
 
-## 🗂 Licencia
+## 📖 Licencia
 Este proyecto es open source. Revisa el archivo `LICENSE` para más detalles.
 
 ## 🔗 Enlaces Útiles
