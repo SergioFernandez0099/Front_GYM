@@ -1,5 +1,5 @@
 import { applyCSS } from "../../utils/helpers";
-import {login} from "./services/api.js";
+import { login } from "./services/api.js";
 
 class FormUtils {
   // Validación de contraseña
@@ -146,8 +146,8 @@ class LoginForm {
 
     // Crea la estructura HTML del formulario
     this.container = document.createElement("div");
+    this.container.classList.add("login-container");
     this.container.innerHTML = `
-      <div class="login-container">
         <div class="login-card">
           <div class="login-header">
             <h2 class="border">G Y M</h2>
@@ -193,7 +193,6 @@ class LoginForm {
             <p>¿No tienes una cuenta? <a href="#">Regístrate</a></p>
           </div>
         </div>
-      </div>
     `;
 
     // Obtener referencias a elementos clave (se hace una sola vez)
@@ -307,7 +306,7 @@ class LoginForm {
     const pin = this.passwordField.value;
 
     try {
-        const data = await login( user, pin );
+      const data = await login(user, pin);
       this.onLogin(); // Llama al callback de éxito
     } catch (error) {
       // Muestra mensaje de error y agita
