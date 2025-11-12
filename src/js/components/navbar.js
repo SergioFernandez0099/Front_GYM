@@ -42,7 +42,7 @@ export function Navbar() {
         <ul class="menu-items">
           <li><a href="/">Inicio</a></li>
           <li><a href="/routine">Rutina</a></li>
-          <li><a href="/sheets">Registro</a></li>
+          <li><a href="/calendar">Registro</a></li>
           <li><a href="/exercises">Ejercicios</a></li>
           <li><a href="/logout">Salir</a></li>
         

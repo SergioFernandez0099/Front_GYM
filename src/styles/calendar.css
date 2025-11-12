@@ -1,0 +1,40 @@
+.calendar-container {
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+}
+
+#calendar {
+    max-width: 900px;
+    margin: 50px auto;
+    border: 1px solid #ccc;
+    border-radius: 0.8rem;
+    padding: 0.5rem;
+    background-color: #f9f9f9;
+    height: 600px;
+}
+
+
+.fc .fc-daygrid-event {
+  padding: 0 !important;
+  margin: 0 auto !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+
+.fc .fc-daygrid-day:hover {
+    background-color: #ff0000;
+    /* color de fondo al pasar el cursor */
+    transition: background-color 0.2s ease;
+    /* efecto suave */
+    cursor: pointer;
+    /* cambia el cursor */
+}
+
+
+.fc .fc-col-header-cell-cushion,
+.fc .fc-toolbar-title::first-letter {
+    text-transform: capitalize;
+}
+

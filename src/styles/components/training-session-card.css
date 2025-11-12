@@ -1,0 +1,117 @@
+.train-sess-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.train-sess-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 1.2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.train-sess-card-header {
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.train-sess-card-image {
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+}
+
+.train-sess-card-title {
+    font-size: 2rem;
+}
+
+.train-sess-card-serie {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+    width: 100%;
+}
+
+.train-sess-card-input-weight::-webkit-inner-spin-button,
+.train-sess-card-input-weight::-webkit-outer-spin-button,
+.train-sess-card-input-reps::-webkit-inner-spin-button,
+.train-sess-card-input-reps::-webkit-outer-spin-button,
+.train-sess-card-input-intensity::-webkit-inner-spin-button,
+.train-sess-card-input-intensity::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+.train-sess-card-input-weight,
+.train-sess-card-input-reps,
+.train-sess-card-input-intensity {
+    all: unset;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1.5px solid #d1d5db;
+    /* gris claro */
+    border-radius: 0.75rem;
+    background-color: #f9fafb;
+    /* gris muy suave */
+    color: #111827;
+    /* texto oscuro */
+    transition: all 0.2s ease;
+    appearance: textfield;
+    width: 15%;
+}
+
+.train-sess-card-input-weight:focus,
+.train-sess-card-input-reps:focus,
+.train-sess-card-input-intensity:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background-color: #ffffff;
+}
+
+
+.train-sess-card-serie-weight-image {
+    width: 2rem;
+    object-fit: cover;
+    height: 2rem;
+}
+
+@media (max-width: 768px) {
+    .train-sess-card-container {
+        font-size: 1rem;
+    }
+
+    .train-sess-card-title {
+        font-size: 2rem;
+    }
+
+    .train-sess-card-image {
+        width: 5rem;
+        height: 5rem;
+    }
+
+    .train-sess-card-input-weight,
+    .train-sess-card-input-reps,
+    .train-sess-card-input-intensity {
+        font-size: 1rem;
+        padding: 0.50rem 0.75rem;
+
+    }
+}
+
+@media (max-width: 500px) {
+    .train-sess-card {
+        width: 20rem;
+    }
+
+}

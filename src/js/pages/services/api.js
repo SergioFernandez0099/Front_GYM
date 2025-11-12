@@ -1,5 +1,11 @@
-import {clearCurrentUserId, getCurrentUserId, getForceNoCache, setCurrentUserId, setForceNoCache} from "../../store.js";
-import {safeNavigate} from "../../router.js";
+import {
+  clearCurrentUserId,
+  getCurrentUserId,
+  getForceNoCache,
+  setCurrentUserId,
+  setForceNoCache,
+} from "../../store.js";
+import { safeNavigate } from "../../router.js";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const CACHE_TTL = 40000; // 40 seg
@@ -11,83 +17,81 @@ let muscleGroupsCache = null;
 let muscleGroupsCacheTimestamp = 0;
 
 export async function login(name, pin) {
-    try {
-        const data = await fetchSend("/auth/login", "POST", {
-            name: name,
-            pin: pin
-        });
+  try {
+    const data = await fetchSend("/auth/login", "POST", {
+      name: name,
+      pin: pin,
+    });
 
+    setCurrentUserId(data.user.id);
+    console.log("login success");
+    console.log(getCurrentUserId());
 
-        setCurrentUserId(data.user.id);
-        console.log("login success");
-        console.log(getCurrentUserId())
-
-        // Guardamos los datos en el store
-        // setUser(data); // data puede ser { user, token } o como lo devuelva tu backend
-
-        return data;
-    } catch (error) {
-        console.error("Login fallido:", error);
-        throw error; // lanzar error para que lo manejes en la UI
-    }
+    return data;
+  } catch (error) {
+    console.error("Login fallido:", error);
+    throw error;
+  }
 }
 
 export async function logout() {
-    try {
-        // Si tu backend tiene un endpoint /auth/logout (para eliminar cookie o sesión)
-        await fetch(`${API_BASE}/auth/logout`, {
-            method: "POST",
-            credentials: "include", // para enviar cookies HttpOnly
-        });
-    } catch (err) {
-        console.warn("Error en logout (probablemente sin endpoint):", err);
-    } finally {
-        // Limpia el estado local y el localStorage
-        clearCurrentUserId();
-
-        // Redirige al login (según tu router)
-        safeNavigate("login")
-    }
+  try {
+    await fetch(`${API_BASE}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (err) {
+    console.warn("Error en logout (probablemente sin endpoint):", err);
+  } finally {
+    clearCurrentUserId();
+    safeNavigate("login");
+  }
 }
 
 export async function validateToken() {
-    try {
-        const res = await fetch(`${API_BASE}/auth/validate`, {
-            method: "GET",
-            credentials: "include",
-            cache: "no-store"
-        });
+  try {
+    const res = await fetch(`${API_BASE}/auth/validate`, {
+      method: "GET",
+      credentials: "include",
+      cache: "no-store",
+    });
 
-        if (!res.ok) return false; // token inválido
+    if (!res.ok) return false; // token inválid
 
-        return await res.json(); //
-    } catch (err) {
-        console.error("Error validando token:", err);
-        return false;
-    }
+    return await res.json();
+  } catch (err) {
+    console.error("Error validando token:", err);
+    return false;
+  }
 }
 
 // Función helper para peticiones GET con cookie
 async function fetchGet(path) {
-    const res = await fetch(`${API_BASE}${path}`, {
-        credentials: "include", // ✅ envía cookie HttpOnly automáticamente
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || `Error al obtener ${path}`);
-    return data;
+  const res = await fetch(`${API_BASE}${path}`, {
+    credentials: "include",
+  });
+
+  await handleAuthError(res);
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error al obtener ${path}`);
+  return data;
 }
 
 // Función helper para POST/PUT con cookie
 async function fetchSend(path, method, body) {
-    const res = await fetch(`${API_BASE}${path}`, {
-        method,
-        headers: {"Content-Type": "application/json"},
-        credentials: "include",
-        body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || `Error en ${method} ${path}`);
-    return data;
+  const res = await fetch(`${API_BASE}${path}`, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(body),
+  });
+
+  await handleAuthError(res);
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error en ${method} ${path}`);
+  return data;
 }
 
 // ---------------------
@@ -95,55 +99,59 @@ async function fetchSend(path, method, body) {
 // ---------------------
 
 export async function fetchExercises() {
-    const now = Date.now();
-    const force = getForceNoCache();
+  const now = Date.now();
+  const force = getForceNoCache();
 
-    if (force) {
-        exercisesCache = null;
-        exercisesCacheTimestamp = 0;
-    }
+  if (force) {
+    exercisesCache = null;
+    exercisesCacheTimestamp = 0;
+  }
 
-    if (!force && exercisesCache && now - exercisesCacheTimestamp < CACHE_TTL) {
-        return exercisesCache;
-    }
+  if (!force && exercisesCache && now - exercisesCacheTimestamp < CACHE_TTL) {
+    return exercisesCache;
+  }
 
-    try {
-        const data = await fetchGet("/exercises");
-        exercisesCache = data;
-        exercisesCacheTimestamp = now;
-        setForceNoCache(false);
-        return data;
-    } catch (error) {
-        console.error(error);
-        if (exercisesCache) return exercisesCache;
-        return [];
-    }
+  try {
+    const data = await fetchGet("/exercises");
+    exercisesCache = data;
+    exercisesCacheTimestamp = now;
+    setForceNoCache(false);
+    return data;
+  } catch (error) {
+    console.error(error);
+    if (exercisesCache) return exercisesCache;
+    return [];
+  }
 }
 
 export async function fetchMuscleGroups() {
-    const now = Date.now();
-    const force = getForceNoCache();
+  const now = Date.now();
+  const force = getForceNoCache();
 
-    if (force) {
-        muscleGroupsCache = null;
-        muscleGroupsCacheTimestamp = 0;
-    }
+  if (force) {
+    muscleGroupsCache = null;
+    muscleGroupsCacheTimestamp = 0;
+  }
 
-    if (!force && muscleGroupsCache && now - muscleGroupsCacheTimestamp < CACHE_TTL) {
-        return muscleGroupsCache;
-    }
+  if (
+    !force &&
+    muscleGroupsCache &&
+    now - muscleGroupsCacheTimestamp < CACHE_TTL
+  ) {
+    return muscleGroupsCache;
+  }
 
-    try {
-        const data = await fetchGet("/muscleGroups");
-        muscleGroupsCache = data;
-        muscleGroupsCacheTimestamp = now;
-        setForceNoCache(false);
-        return data;
-    } catch (error) {
-        console.error(error);
-        if (muscleGroupsCache) return muscleGroupsCache;
-        return [];
-    }
+  try {
+    const data = await fetchGet("/muscleGroups");
+    muscleGroupsCache = data;
+    muscleGroupsCacheTimestamp = now;
+    setForceNoCache(false);
+    return data;
+  } catch (error) {
+    console.error(error);
+    if (muscleGroupsCache) return muscleGroupsCache;
+    return [];
+  }
 }
 
 // ---------------------
@@ -151,42 +159,42 @@ export async function fetchMuscleGroups() {
 // ---------------------
 
 export async function createRoutine(userId, routineData) {
-    return await fetchSend(`/users/${userId}/routines`, "POST", routineData);
+  return await fetchSend(`/users/${userId}/routines`, "POST", routineData);
 }
 
 export async function createRoutineSet(userId, routineId, setData) {
-    return await fetchSend(
-        `/users/${userId}/routines/${routineId}/sets`,
-        "POST",
-        setData
-    );
+  return await fetchSend(
+    `/users/${userId}/routines/${routineId}/sets`,
+    "POST",
+    setData
+  );
 }
 
 export async function updateRoutine(userId, routineId, updatedData) {
-    return await fetchSend(
-        `/users/${userId}/routines/${routineId}`,
-        "PUT",
-        updatedData
-    );
+  return await fetchSend(
+    `/users/${userId}/routines/${routineId}`,
+    "PUT",
+    updatedData
+  );
 }
 
 export async function updateRoutineSet(userId, routineId, setId, updatedData) {
-    return await fetchSend(
-        `/users/${userId}/routines/${routineId}/sets/${setId}`,
-        "PUT",
-        updatedData
-    );
+  return await fetchSend(
+    `/users/${userId}/routines/${routineId}/sets/${setId}`,
+    "PUT",
+    updatedData
+  );
 }
 
 export async function deleteRoutine(userId, routineId) {
-    return await fetchSend(`/users/${userId}/routines/${routineId}`, "DELETE");
+  return await fetchSend(`/users/${userId}/routines/${routineId}`, "DELETE");
 }
 
 export async function deleteRoutineSet(userId, routineId, setId) {
-    return await fetchSend(
-        `/users/${userId}/routines/${routineId}/sets/${setId}`,
-        "DELETE"
-    );
+  return await fetchSend(
+    `/users/${userId}/routines/${routineId}/sets/${setId}`,
+    "DELETE"
+  );
 }
 
 // ---------------------
@@ -194,9 +202,18 @@ export async function deleteRoutineSet(userId, routineId, setId) {
 // ---------------------
 
 export async function fetchRoutineSets(userId, routineId) {
-    return await fetchGet(`/users/${userId}/routines/${routineId}/sets`);
+  return await fetchGet(`/users/${userId}/routines/${routineId}/sets`);
 }
 
 export async function fetchRoutineDays(userId) {
-    return await fetchGet(`/users/${userId}/routines`);
+  return await fetchGet(`/users/${userId}/routines`);
+}
+
+async function handleAuthError(res) {
+  if (res.status === 401 || res.status === 403) {
+    console.warn("Sesión expirada o no autorizada. Redirigiendo al login...");
+    clearCurrentUserId();
+    safeNavigate("login");
+    throw new Error("No autorizado");
+  }
 }
