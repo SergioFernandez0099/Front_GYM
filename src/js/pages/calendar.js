@@ -18,6 +18,7 @@ export async function trainingSchedule() {
     initialView: "dayGridMonth",
     locale: esLocale,
     dayMaxEventRows: true,
+      aspectRatio: 1.5,
     events: [
       {
         start: "2025-11-15",
@@ -30,10 +31,10 @@ export async function trainingSchedule() {
     eventContent: function (info) {
       const img = document.createElement("img");
       img.src = info.event.extendedProps.imageUrl;
-      img.style.width = "2rem";
-      img.style.height = "2rem";
-      img.style.objectFit = "cover"; // para que la imagen llene el espacio
-      img.style.borderRadius = "6px";
+      img.style.width = "70%";
+      img.style.height = "70%";
+      img.style.objectFit = "contain"; // para que la imagen llene el espacio
+      img.style.filter = "drop-shadow(0 1px 3px #575757)";
       img.style.pointerEvents = "none"; // opcional, para que no bloquee clics
       return { domNodes: [img] };
     },
