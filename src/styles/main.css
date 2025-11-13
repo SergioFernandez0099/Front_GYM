@@ -195,6 +195,10 @@ section {
     display: flex;
 }
 
+.hide {
+    display: none !important;;
+}
+
 @media (min-width: 768px) {
     main {
         margin-top: 3rem;
