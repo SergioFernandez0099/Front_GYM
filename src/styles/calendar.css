@@ -8,7 +8,7 @@
     max-width: 900px;
     margin: 50px auto;
     border: 1px solid #ccc;
-    border-radius: 0.7rem;
+    border-radius: 0.5rem;
     padding: 0.5rem;
     background-color: rgba(223, 223, 223, 0.97);
     height: 600px;
@@ -65,12 +65,11 @@
     object-fit: contain;
     filter: drop-shadow(0 1px 3px #575757);
     pointer-events: none;
-    transition: transform 0.25s ease; /* transición suave */
+    transition: transform 0.25s ease;
 }
 
-/* Efecto hover (zoom) */
 .fc .fc-event-main:hover .calendar-img {
-    transform: scale(1.10); /* agranda un 15% */
+    transform: scale(1.10);
 }
 
 .fc .fc-daygrid-day:hover {
@@ -81,6 +80,36 @@
 
 .fc .fc-col-header-cell {
     background-color: #2c3e50;
+}
+
+.fc .fc-col-header-cell:first-child {
+    border-top-left-radius: 0.4rem;
+}
+
+.fc .fc-col-header-cell:last-child {
+    border-top-right-radius: 0.4rem;
+}
+
+.fc .fc-scrollgrid-section-header th {
+    background-color: #2c3e50;
+    border-top-left-radius: 0.4rem;
+}
+
+.fc .fc-day-mon th {
+    border-top-left-radius: 0.5rem;
+}
+
+.fc .fc-day-sun th {
+    border-top-right-radius: 0.5rem;
+}
+
+.fc-theme-standard th:last-child  {
+    border-top-right-radius: 0.5rem;
+}
+
+.fc .fc-scrollgrid-section-liquid > td {
+    border-bottom-right-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
 }
 
 .fc .fc-col-header-cell-cushion,
@@ -100,10 +129,16 @@
     border-color: #3d3d3d;
 }
 
+.fc .fc-view-harness, .fc .fc-scrollgrid {
+    border-radius: 0.5rem;
+}
+
 .fc .fc-daygrid {
     outline: 2px solid #3d3d3d; /* borde alrededor del grid completo */
     outline-offset: -1px; /* se alinea con los bordes internos */
     border-collapse: collapse; /* para que los bordes no se sumen */
+    border-radius: 0.5rem;
+
 }
 
 .fc .fc-button .fc-icon {
