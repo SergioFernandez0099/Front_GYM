@@ -1,8 +1,9 @@
-import { Calendar } from "@fullcalendar/core";
+import {Calendar} from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { applyCSS } from "../../utils/helpers";
+import {applyCSS} from "../../utils/helpers";
 import esLocale from "@fullcalendar/core/locales/es";
-import { createYearPicker } from "../components/yearpicker.js";
+import {createYearPicker} from "../components/yearpicker.js";
+import {fetchTrainingSessions} from "./services/api.js";
 
 export async function trainingSchedule() {
     applyCSS("/src/styles/calendar.css", "/src/styles/components/yearpicker.css");
@@ -13,6 +14,14 @@ export async function trainingSchedule() {
     const calendarEl = document.createElement("div");
     calendarEl.id = "calendar";
     calendarContainer.appendChild(calendarEl);
+
+    const sessionsData = await fetchTrainingSessions();
+
+    const sessionEvents = sessionsData.map(session => ({
+        start: session.date,
+        allDay: true,
+        extendedProps: {imageUrl: "favicon.png"},
+    }));
 
     const calendar = new Calendar(calendarEl, {
         plugins: [dayGridPlugin],
@@ -25,18 +34,12 @@ export async function trainingSchedule() {
             center: "title",
             right: "prev,next"
         },
-        events: [
-            {
-                start: "2025-11-15",
-                allDay: true,
-                extendedProps: { imageUrl: "favicon.png" },
-            },
-        ],
+        events: sessionEvents,
         eventContent: function (info) {
             const img = document.createElement("img");
             img.src = info.event.extendedProps.imageUrl;
             img.className = "calendar-img";
-            return { domNodes: [img] };
+            return {domNodes: [img]};
         },
     });
 

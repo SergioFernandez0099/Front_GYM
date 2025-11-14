@@ -9,7 +9,6 @@ import {
     toggleEditIcon
 } from "../../utils/helpers";
 import {createRoutineSet, deleteRoutineSet, fetchExercises, updateRoutineSet} from "../pages/services/api.js";
-import {getCurrentUserId} from "../store.js";
 
 let exercises = [];
 let routineIdGlobal;
@@ -247,7 +246,7 @@ function setUpSetCard(article, set) {
                         return;
                     }
 
-                    const response = await deleteRoutineSet(getCurrentUserId(), routineIdGlobal, setId)
+                    const response = await deleteRoutineSet(routineIdGlobal, setId)
 
                     if (!response) throw new Error("Error al borrar el set");
 
@@ -508,7 +507,7 @@ export async function guardarSet(article, set) {
                 repetitions: parseInt(repsInput.value),
                 description: textarea.value,
             };
-            const result = await createRoutineSet(getCurrentUserId(), routineIdGlobal, setData);
+            const result = await createRoutineSet(routineIdGlobal, setData);
             if (result) {
                 cargarEjercicio(titleInput, image);
                 article.removeAttribute("data-new-set");
@@ -526,7 +525,7 @@ export async function guardarSet(article, set) {
                 repetitions: parseInt(repsInput.value),
                 description: textarea.value,
             };
-            const result = await updateRoutineSet(getCurrentUserId(), routineIdGlobal, parseInt(set.id), setData);
+            const result = await updateRoutineSet(routineIdGlobal, parseInt(set.id), setData);
             if (result) {
             } else {
                 shakeEffect(article);

@@ -1,6 +1,7 @@
 import {adjustAppHeight, applyCSS} from "../../utils/helpers";
 import {ExerciseCard} from "../components/exercise-card";
 import {fetchExercises, fetchMuscleGroups} from "./services/api";
+import {getCurrentUserId} from "../store.js";
 
 export async function Exercises() {
     applyCSS(

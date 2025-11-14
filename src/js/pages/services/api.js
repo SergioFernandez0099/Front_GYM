@@ -158,41 +158,41 @@ export async function fetchMuscleGroups() {
 // POSTs, PUTs, DELETEs
 // ---------------------
 
-export async function createRoutine(userId, routineData) {
-  return await fetchSend(`/users/${userId}/routines`, "POST", routineData);
+export async function createRoutine(routineData) {
+  return await fetchSend(`/users/${getCurrentUserId()}/routines`, "POST", routineData);
 }
 
-export async function createRoutineSet(userId, routineId, setData) {
+export async function createRoutineSet(routineId, setData) {
   return await fetchSend(
-    `/users/${userId}/routines/${routineId}/sets`,
+    `/users/${getCurrentUserId()}/routines/${routineId}/sets`,
     "POST",
     setData
   );
 }
 
-export async function updateRoutine(userId, routineId, updatedData) {
+export async function updateRoutine(routineId, updatedData) {
   return await fetchSend(
-    `/users/${userId}/routines/${routineId}`,
+    `/users/${getCurrentUserId()}/routines/${routineId}`,
     "PUT",
     updatedData
   );
 }
 
-export async function updateRoutineSet(userId, routineId, setId, updatedData) {
+export async function updateRoutineSet(routineId, setId, updatedData) {
   return await fetchSend(
-    `/users/${userId}/routines/${routineId}/sets/${setId}`,
+    `/users/${getCurrentUserId()}/routines/${routineId}/sets/${setId}`,
     "PUT",
     updatedData
   );
 }
 
-export async function deleteRoutine(userId, routineId) {
-  return await fetchSend(`/users/${userId}/routines/${routineId}`, "DELETE");
+export async function deleteRoutine(routineId) {
+  return await fetchSend(`/users/${getCurrentUserId()}/routines/${routineId}`, "DELETE");
 }
 
-export async function deleteRoutineSet(userId, routineId, setId) {
+export async function deleteRoutineSet(routineId, setId) {
   return await fetchSend(
-    `/users/${userId}/routines/${routineId}/sets/${setId}`,
+    `/users/${getCurrentUserId()}/routines/${routineId}/sets/${setId}`,
     "DELETE"
   );
 }
@@ -201,12 +201,12 @@ export async function deleteRoutineSet(userId, routineId, setId) {
 // GETs sin cache para rutinas
 // ---------------------
 
-export async function fetchRoutineSets(userId, routineId) {
-  return await fetchGet(`/users/${userId}/routines/${routineId}/sets`);
+export async function fetchRoutineSets(routineId) {
+  return await fetchGet(`/users/${getCurrentUserId()}/routines/${routineId}/sets`);
 }
 
-export async function fetchRoutineDays(userId) {
-  return await fetchGet(`/users/${userId}/routines`);
+export async function fetchRoutineDays() {
+  return await fetchGet(`/users/${getCurrentUserId()}/routines`);
 }
 
 async function handleAuthError(res) {
@@ -216,4 +216,12 @@ async function handleAuthError(res) {
     safeNavigate("login");
     throw new Error("No autorizado");
   }
+}
+
+// ---------------------
+// GETs sin cache para sesiones de entrenamiento
+// ---------------------
+
+export async function fetchTrainingSessions() {
+    return await fetchGet(`/users/${getCurrentUserId()}/sessions`);
 }

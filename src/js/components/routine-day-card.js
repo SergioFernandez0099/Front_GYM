@@ -9,7 +9,6 @@ import {
 } from "../../utils/helpers";
 import {validaYSanitiza} from "../../utils/validators";
 import {createRoutine, deleteRoutine, updateRoutine} from "../pages/services/api";
-import {getCurrentUserId} from "../store.js";
 
 export function RoutineDayCard(day) {
     const article = document.createElement("article");
@@ -112,7 +111,7 @@ export function attachRoutineDayCardEvents(article, day) {
                     setTimeout(() => article.remove(), 300);
                     return;
                 }
-                const result = await deleteRoutine(getCurrentUserId(), day.id);
+                const result = await deleteRoutine(day.id);
                 if (result) {
                     article.classList.add("fade-out-inward");
                     setTimeout(() => article.remove(), 300);
@@ -144,7 +143,7 @@ async function saveDay(article, day, isNew = false) {
     let result;
 
     try {
-        result = isNew ? await createRoutine(getCurrentUserId(), routineData) : await updateRoutine(getCurrentUserId(), day.id, routineData);
+        result = isNew ? await createRoutine(routineData) : await updateRoutine(day.id, routineData);
     } catch (err) {
         console.error("Error guardando día:", err);
         shakeEffect(article);

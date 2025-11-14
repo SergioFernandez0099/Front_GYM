@@ -74,8 +74,7 @@ export function initRouter() {
       "/routine/set/:id",
       requireLogin(async ({ data }) => {
         const routineId = parseInt(data.id);
-        const userId = 3;
-        const routineSetContainer = await RoutineSet({ userId, routineId });
+        const routineSetContainer = await RoutineSet(routineId);
         routeHandlers[`/routine/set/${routineId}`] = () =>
           render(routineSetContainer);
         render(routineSetContainer);

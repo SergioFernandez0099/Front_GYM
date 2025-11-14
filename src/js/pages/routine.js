@@ -23,14 +23,8 @@ export async function Routine() {
     section.appendChild(routineList);
     routineContainer.appendChild(section);
 
-    const userId = getCurrentUserId();
-    if (!userId) {
-        routineList.textContent = "Usuario no logueado";
-        return routineContainer;
-    }
-
     try {
-        const routineDays = await fetchRoutineDays(userId);
+        const routineDays = await fetchRoutineDays();
         const fragment = document.createDocumentFragment();
 
         routineDays.forEach(day => {

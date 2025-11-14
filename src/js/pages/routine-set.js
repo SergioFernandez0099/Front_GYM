@@ -2,7 +2,7 @@ import {RoutineSetCard,} from "../components/routine-set-card";
 import {fetchRoutineSets} from "./services/api";
 import {getCurrentUserId} from "../store.js";
 
-export async function RoutineSet({userId, routineId}) {
+export async function RoutineSet(routineId) {
     const routineSetContainer = document.createElement("div");
     routineSetContainer.className = "routine-container";
 
@@ -16,7 +16,7 @@ export async function RoutineSet({userId, routineId}) {
 
     routineSetContainer.appendChild(section);
 
-    const setData = await fetchRoutineSets(userId, routineId);
+    const setData = await fetchRoutineSets(routineId);
 
     // Si tienes muchos sets y quieres crearlos todos en paralelo (sin esperar uno por uno):
     const cards = await Promise.all(setData.map(set => RoutineSetCard(set, routineId)));

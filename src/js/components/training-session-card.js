@@ -1,22 +1,15 @@
-import { applyCSS } from "../../utils/helpers";
-import {
-  RoutineDayCard,
-  attachRoutineDayCardEvents,
-  handleAddRoutine,
-} from "./routine-day-card";
-import { getCurrentUserId } from "../store";
-import { fetchRoutineDays } from "../pages/services/api";
+import {applyCSS} from "../../utils/helpers";
 
 export async function trainingSessionCard() {
-  applyCSS(
-    "/src/styles/components/training-session-card.css",
-    "/src/styles/training-session-list.css"
-  );
+    applyCSS(
+        "/src/styles/components/training-session-card.css",
+        "/src/styles/training-session-list.css"
+    );
 
-  const trainingSessionCardContainer = document.createElement("div");
-  trainingSessionCardContainer.className = "train-sess-card-container";
+    const trainingSessionCardContainer = document.createElement("div");
+    trainingSessionCardContainer.className = "train-sess-card-container";
 
-  trainingSessionCardContainer.innerHTML = `
+    trainingSessionCardContainer.innerHTML = `
   <div class="train-sess-card">
     <div class="train-sess-card-header">
             <img src="/assets/images/exercises/pecho/press_banca.png" alt="" class="train-sess-card-image">
@@ -86,5 +79,5 @@ export async function trainingSessionCard() {
 //   addCard.addEventListener("click", () => handleAddRoutine(routineList));
 //   routineList.appendChild(addCard);
 
-  return trainingSessionCardContainer;
+    return trainingSessionCardContainer;
 }
