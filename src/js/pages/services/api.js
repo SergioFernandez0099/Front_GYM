@@ -197,6 +197,15 @@ export async function deleteRoutineSet(routineId, setId) {
   );
 }
 
+export async function createTrainingSession(setData) {
+    return await fetchSend(
+        `/users/${getCurrentUserId()}/sessions`,
+        "POST",
+        setData
+    );
+}
+
+
 // ---------------------
 // GETs sin cache para rutinas
 // ---------------------
@@ -225,3 +234,8 @@ async function handleAuthError(res) {
 export async function fetchTrainingSessions() {
     return await fetchGet(`/users/${getCurrentUserId()}/sessions`);
 }
+
+export async function fetchTrainingSession(sessionId) {
+    return await fetchGet(`/users/${getCurrentUserId()}/sessions/${sessionId}`);
+}
+

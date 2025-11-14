@@ -72,12 +72,11 @@ export function initRouter() {
     )
     .on(
       "/routine/set/:id",
-      requireLogin(async ({ data }) => {
+      requireLogin( ({ data }) => {
         const routineId = parseInt(data.id);
-        const routineSetContainer = await RoutineSet(routineId);
         routeHandlers[`/routine/set/${routineId}`] = () =>
-          render(routineSetContainer);
-        render(routineSetContainer);
+          render(RoutineSet(routineId));
+        render(RoutineSet(routineId));
       })
     )
     .on(
@@ -88,11 +87,12 @@ export function initRouter() {
       })
     )
     .on(
-      "/trainingSessionCard",
-      requireLogin(() => {
+      "/sessions/:sessionId",
+      requireLogin((data) => {
+          const sessionId = parseInt(data.sessionId);
         routeHandlers["/trainingSessionCard"] = () =>
-          render(trainingSessionCard());
-        render(trainingSessionCard());
+          render(trainingSessionCard(sessionId));
+        render(trainingSessionCard(sessionId));
       })
     )
     .on(
@@ -103,9 +103,9 @@ export function initRouter() {
       })
     )
       .on(
-      "/calendar",
+      "/sessions",
       requireLogin(async () => {
-        routeHandlers["/calendar"] = () => render(trainingSchedule());
+        routeHandlers["/sessions"] = () => render(trainingSchedule());
         render(trainingSchedule());
       })
     )

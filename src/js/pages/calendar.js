@@ -1,9 +1,11 @@
 import {Calendar} from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
 import {applyCSS} from "../../utils/helpers";
 import esLocale from "@fullcalendar/core/locales/es";
 import {createYearPicker} from "../components/yearpicker.js";
-import {fetchTrainingSessions} from "./services/api.js";
+import {createTrainingSession, fetchTrainingSessions} from "./services/api.js";
+import {safeNavigate} from "../router.js";
 
 export async function trainingSchedule() {
     applyCSS("/src/styles/calendar.css", "/src/styles/components/yearpicker.css");
@@ -18,13 +20,14 @@ export async function trainingSchedule() {
     const sessionsData = await fetchTrainingSessions();
 
     const sessionEvents = sessionsData.map(session => ({
+        id: session.id,
         start: session.date,
         allDay: true,
         extendedProps: {imageUrl: "favicon.png"},
     }));
 
     const calendar = new Calendar(calendarEl, {
-        plugins: [dayGridPlugin],
+        plugins: [dayGridPlugin, interactionPlugin],
         initialView: "dayGridMonth",
         locale: esLocale,
         dayMaxEventRows: true,
@@ -41,6 +44,15 @@ export async function trainingSchedule() {
             img.className = "calendar-img";
             return {domNodes: [img]};
         },
+        eventClick: function(info) {
+            console.log("clicked");
+            const sessionId = info.event.id;
+            safeNavigate(`/sessions/${sessionId}`);
+        },
+        dateClick: async function (info) {
+            const sessionId = await crearSessionEntrenamiento(1, info.dateStr);
+            safeNavigate(`/sessions/${sessionId}`);
+        }
     });
 
     calendar.render();
@@ -75,4 +87,15 @@ export async function trainingSchedule() {
     attachTitleClick();
 
     return calendarContainer;
+}
+
+async function crearSessionEntrenamiento(routineId, date) {
+
+    const data = {
+        routineId: routineId,
+        date: date,
+    }
+    const result = await createTrainingSession(routineId, data)
+
+    return result.id;
 }

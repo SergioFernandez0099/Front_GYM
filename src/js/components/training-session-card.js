@@ -1,10 +1,14 @@
 import {applyCSS} from "../../utils/helpers";
+import {fetchTrainingSession, fetchTrainingSessions} from "../pages/services/api.js";
 
-export async function trainingSessionCard() {
+export async function trainingSessionCard(sessionId) {
     applyCSS(
         "/src/styles/components/training-session-card.css",
         "/src/styles/training-session-list.css"
     );
+
+    const trainingSessionData = await fetchTrainingSession(sessionId);
+    console.log(trainingSessionData);
 
     const trainingSessionCardContainer = document.createElement("div");
     trainingSessionCardContainer.className = "train-sess-card-container";
@@ -53,14 +57,9 @@ export async function trainingSessionCard() {
     </div>
   `;
 
-//   const userId = getCurrentUserId();
-//   if (!userId) {
-//     routineList.textContent = "Usuario no logueado";
-//     return routineContainer;
-//   }
 
 //   try {
-//     const routineDays = await fetchRoutineDays(userId);
+//     const routineDays = await fetchRoutineDays();
 //     const fragment = document.createDocumentFragment();
 
 //     routineDays.forEach((day) => {
