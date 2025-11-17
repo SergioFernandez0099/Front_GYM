@@ -1,13 +1,8 @@
-import {adjustAppHeight, applyCSS} from "../../utils/helpers";
+import {adjustAppHeight} from "../../utils/helpers";
 import {ExerciseCard} from "../components/exercise-card";
-import {fetchExercises, fetchMuscleGroups} from "./services/api";
-import {getCurrentUserId} from "../store.js";
+import {fetchExercises, fetchMuscleGroups} from "../services/api";
 
 export async function Exercises() {
-    applyCSS(
-        "/src/styles/exercises.css",
-        "/src/styles/components/exercise-card.css"
-    );
 
     const exercisesContainer = document.createElement("div");
     exercisesContainer.className = "exercises-container";
@@ -74,7 +69,7 @@ export async function Exercises() {
                 behavior: 'auto'
             });
         }
-    }, { passive: false });
+    }, {passive: false});
 
     section.appendChild(exerciseList);
 

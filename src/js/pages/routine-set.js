@@ -1,6 +1,5 @@
 import {RoutineSetCard,} from "../components/routine-set-card";
-import {fetchRoutineSets} from "./services/api";
-import {getCurrentUserId} from "../store.js";
+import {fetchRoutineSets} from "../services/api";
 
 export async function RoutineSet(routineId) {
     const routineSetContainer = document.createElement("div");

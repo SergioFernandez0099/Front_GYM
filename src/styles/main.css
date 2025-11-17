@@ -31,7 +31,7 @@ html {
     background-color: #555;
 }
 
-body {
+body.default {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0)),
     url('/assets/images/bg.jpg');

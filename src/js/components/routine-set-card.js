@@ -1,5 +1,4 @@
 import {
-    applyCSS,
     clearErrorBorder,
     findImageByName,
     glowEffect,
@@ -8,18 +7,12 @@ import {
     showErrorBorder,
     toggleEditIcon
 } from "../../utils/helpers";
-import {createRoutineSet, deleteRoutineSet, fetchExercises, updateRoutineSet} from "../pages/services/api.js";
+import {createRoutineSet, deleteRoutineSet, fetchExercises, updateRoutineSet} from "../services/api.js";
 
 let exercises = [];
 let routineIdGlobal;
 
 export async function RoutineSetCard(set, routineId) {
-    applyCSS(
-        "/src/styles/routine.css",
-        "/src/styles/components/routine-day-card.css",
-        "/src/styles/components/routine-set-card.css",
-        "/src/styles/components/routine-form.css"
-    );
     routineIdGlobal = parseInt(routineId);
 
     const article = document.createElement("article");

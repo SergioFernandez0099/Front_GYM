@@ -1,0 +1,22 @@
+/* Variables globales */
+@import './variables.css';
+
+/* Estilos base */
+@import './main.css';
+
+/* Estilos de páginas */
+@import './login.css';
+@import './calendar.css';
+@import './exercises.css';
+@import './exercises-set.css';
+@import './routine.css';
+@import './training-session-list.css';
+
+/* Estilos de componentes */
+@import './components/exercise-card.css';
+@import './components/footer.css';
+@import './components/navbar.css';
+@import './components/routine-day-card.css';
+@import './components/routine-set-card.css';
+@import './components/training-session-card.css';
+@import './components/yearpicker.css';

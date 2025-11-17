@@ -8,7 +8,7 @@ import {
     toggleEditIcon,
 } from "../../utils/helpers";
 import {validaYSanitiza} from "../../utils/validators";
-import {createRoutine, deleteRoutine, updateRoutine} from "../pages/services/api";
+import {createRoutine, deleteRoutine, updateRoutine} from "../services/api";
 
 export function RoutineDayCard(day) {
     const article = document.createElement("article");

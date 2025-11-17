@@ -1,15 +1,7 @@
-import { applyCSS } from "../../utils/helpers";
-import { RoutineDayCard, attachRoutineDayCardEvents, handleAddRoutine } from "../components/routine-day-card";
-import { getCurrentUserId } from "../store";
-import { fetchRoutineDays } from "./services/api";
+import {attachRoutineDayCardEvents, handleAddRoutine, RoutineDayCard} from "../components/routine-day-card";
+import {fetchRoutineDays} from "../services/api";
 
 export async function Routine() {
-    applyCSS(
-        "/src/styles/routine.css",
-        "/src/styles/components/routine-day-card.css",
-        "/src/styles/components/routine-set-card.css",
-        "/src/styles/components/routine-form.css"
-    );
 
     const routineContainer = document.createElement("div");
     routineContainer.className = "routine-container";

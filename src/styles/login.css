@@ -1,11 +1,5 @@
-/* Glassmorphism Login Form - Complete & Self-Contained */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-body {
+body.login {
     background: linear-gradient(135deg, #ff0000 0%, #000000 70%);
     background-attachment: fixed;
 }
@@ -426,7 +420,7 @@ body {
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-    body {
+    body.login {
         align-items: flex-start;
         background: linear-gradient(135deg, #ff0000 0%, #000000 50%);
     }

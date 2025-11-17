@@ -4,8 +4,8 @@ import {
   getForceNoCache,
   setCurrentUserId,
   setForceNoCache,
-} from "../../store.js";
-import { safeNavigate } from "../../router.js";
+} from "../store.js";
+import { safeNavigate } from "../router.js";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const CACHE_TTL = 40000; // 40 seg

@@ -1,5 +1,3 @@
-import "../../styles/components/footer.css";
-
 let contador = 0;
 
 export function Footer() {

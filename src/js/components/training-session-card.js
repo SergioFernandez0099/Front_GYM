@@ -1,11 +1,6 @@
-import {applyCSS} from "../../utils/helpers";
-import {fetchTrainingSession, fetchTrainingSessions} from "../pages/services/api.js";
+import {fetchTrainingSession} from "../services/api.js";
 
 export async function trainingSessionCard(sessionId) {
-    applyCSS(
-        "/src/styles/components/training-session-card.css",
-        "/src/styles/training-session-list.css"
-    );
 
     const trainingSessionData = await fetchTrainingSession(sessionId);
     console.log(trainingSessionData);

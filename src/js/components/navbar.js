@@ -1,4 +1,3 @@
-import "../../styles/components/navbar.css";
 import {router, safeNavigate} from "../router.js";
 import {setForceNoCache} from "../store.js";
 

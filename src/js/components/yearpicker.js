@@ -1,4 +1,4 @@
-export function createYearPicker({ range = 100, onSelect, initialYear = new Date().getFullYear() }) {
+export function createYearPicker({range = 100, onSelect, initialYear = new Date().getFullYear()}) {
     const systemYear = new Date().getFullYear(); // año real del sistema
     const scrollOffset = 9; // Pongo 9 para que se cargue bien en la interfaz
     let currentYear = initialYear;
@@ -74,5 +74,5 @@ export function createYearPicker({ range = 100, onSelect, initialYear = new Date
 
     document.body.appendChild(modal);
 
-    return { container: modal, show, hide };
+    return {container: modal, show, hide};
 }

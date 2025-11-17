@@ -1,14 +1,12 @@
 import {Calendar} from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import {applyCSS} from "../../utils/helpers";
 import esLocale from "@fullcalendar/core/locales/es";
 import {createYearPicker} from "../components/yearpicker.js";
-import {createTrainingSession, fetchTrainingSessions} from "./services/api.js";
+import {createTrainingSession, fetchTrainingSessions} from "../services/api.js";
 import {safeNavigate} from "../router.js";
 
 export async function trainingSchedule() {
-    applyCSS("/src/styles/calendar.css", "/src/styles/components/yearpicker.css");
 
     const calendarContainer = document.createElement("div");
     calendarContainer.className = "calendar-container";
@@ -44,7 +42,7 @@ export async function trainingSchedule() {
             img.className = "calendar-img";
             return {domNodes: [img]};
         },
-        eventClick: function(info) {
+        eventClick: function (info) {
             console.log("clicked");
             const sessionId = info.event.id;
             safeNavigate(`/sessions/${sessionId}`);
