@@ -23,17 +23,13 @@
     .exercise-list {
         flex-direction: column;
         flex-wrap: nowrap;
+        justify-content: flex-start;
+
     }
 }
 
 @media (min-width: 768px) {
     .exercise-list {
-        margin-top: 2rem;
-        flex-direction: row;
-        align-items: start;
-        justify-content: flex-start;
-        align-content: flex-start;
-        margin-left: 0.5em;
         gap: 1.4rem;
     }
 }
