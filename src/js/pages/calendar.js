@@ -36,6 +36,34 @@ export async function trainingSchedule() {
             right: "prev,next"
         },
         events: sessionEvents,
+        eventLongPressDelay: 600,
+        eventDidMount(info) {
+            info._longPress = false;
+
+            // Inicio del press
+            info.el.addEventListener("mousedown", () => {
+                info._pressTimer = setTimeout(() => {
+                    info._longPress = true;
+                    // TODO mostrar modal de borrado
+                    alert("LONG PRESS en evento " + info.event.id);
+                }, 600);
+            });
+
+            // Fin del press
+            info.el.addEventListener("mouseup", (e) => {
+                clearTimeout(info._pressTimer);
+
+                if (info._longPress) {
+                    e.stopImmediatePropagation(); // Evita que dispare eventClick
+                    info._longPress = false;
+                }
+            });
+
+            // Si el ratón sale, cancelar
+            info.el.addEventListener("mouseleave", () => {
+                clearTimeout(info._pressTimer);
+            });
+        },
         eventContent: function (info) {
             const img = document.createElement("img");
             img.src = info.event.extendedProps.imageUrl;
