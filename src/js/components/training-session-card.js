@@ -2,6 +2,7 @@ import {fetchTrainingSession} from "../services/api.js";
 
 export async function trainingSessionCard(sessionId) {
 
+    console.log(sessionId);
     const trainingSessionData = await fetchTrainingSession(sessionId);
     console.log(trainingSessionData);
 

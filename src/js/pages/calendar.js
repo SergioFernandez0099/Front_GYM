@@ -43,7 +43,6 @@ export async function trainingSchedule() {
             return {domNodes: [img]};
         },
         eventClick: function (info) {
-            console.log("clicked");
             const sessionId = info.event.id;
             safeNavigate(`/sessions/${sessionId}`);
         },

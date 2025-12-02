@@ -97,7 +97,7 @@ export function initRouter() {
         )
         .on(
             "/sessions/:sessionId",
-            requireLogin((data) => {
+            requireLogin(({data}) => {
                 const sessionId = parseInt(data.sessionId);
                 routeHandlers["/trainingSessionCard"] = () =>
                     render(trainingSessionCard(sessionId));
