@@ -1,8 +1,8 @@
 import {fetchTrainingSession} from "../services/api.js";
+import {createExercisePicker} from "./modals/exercise-picker.js";
 
 export async function trainingSessionCard(sessionId) {
 
-    console.log(sessionId);
     const trainingSessionData = await fetchTrainingSession(sessionId);
     console.log(trainingSessionData);
 
@@ -90,6 +90,58 @@ export async function trainingSessionCard(sessionId) {
         </div>
     </div>
   `;
+
+    const generalOptions = document.createElement("div");
+    generalOptions.className = "train-sess-card-general-options";
+    trainingSessionCardContainer.appendChild(generalOptions);
+
+    const btnList = document.createElement("button");
+    btnList.className = "train-sess-card-general-options-list";
+    btnList.textContent = "Ejercicios";
+
+    const imgList = document.createElement("img");
+    imgList.src = "/assets/icons/trash.svg";
+    imgList.alt = "Icono de listado";
+    imgList.className = "listIcon";
+
+    btnList.appendChild(imgList);
+    generalOptions.appendChild(btnList);
+
+    const btnAdd = document.createElement("button");
+    btnAdd.className = "train-sess-card-general-options-add";
+    btnAdd.textContent = "Añadir ejercicio";
+
+    const imgAdd = document.createElement("img");
+    imgAdd.src = "/assets/icons/trash.svg";
+    imgAdd.alt = "Icono de añadir";
+    imgAdd.className = "addIcon";
+
+    btnAdd.appendChild(imgAdd);
+    generalOptions.appendChild(btnAdd);
+
+    const btnDelete = document.createElement("button");
+    btnDelete.className = "train-sess-card-general-options-del";
+    btnDelete.textContent = "Borrar rutina";
+
+    const imgDelete = document.createElement("img");
+    imgDelete.src = "/assets/icons/trash.svg";
+    imgDelete.alt = "Icono de borrar";
+    imgDelete.className = "trashIcon";
+
+
+    btnDelete.appendChild(imgDelete);
+    generalOptions.appendChild(btnDelete);
+
+    trainingSessionCardContainer.prepend(generalOptions);
+
+    const exercisesPicker = createExercisePicker(trainingSessionData.sessionExercises)
+
+    generalOptions.addEventListener('click', (e) => {
+        const element = e.target;
+        if (element.classList.contains('train-sess-card-general-options-list')) {
+            exercisesPicker.show();
+        }
+    })
 
 
 //   try {

@@ -1,4 +1,4 @@
-.yearpicker-modal {
+.exercise-picker-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -15,13 +15,13 @@
     transition: opacity 0.2s;
 }
 
-.yearpicker-modal.show {
+.exercise-picker-modal.show {
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
 }
 
-.yearpicker-container {
+.exercise-picker-container {
     background: #fff;
     border-radius: 8px;
     max-height: 300px;
@@ -31,26 +31,22 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.yearpicker-items {
-    padding: 5px;
+.exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.exercise-item {
+    padding: 10px;
+    background: #f3f3f3;
+    border-radius: 6px;
+    text-decoration: none;
+    color: black;
     cursor: pointer;
 }
 
-.yearpicker-items.current {
-    background: #007bff;
-    color: #fff;
-    font-weight: bold;
-    border-radius: 4rem;
-    margin: 0.5rem;
-}
-
-.yearpicker-items.system-year {
-    color: #007bff;
-    font-weight: 600;
-}
-
-.yearpicker-items:hover {
-    border-radius: 4rem;
-    background: #eee;
-    color: #007bff;
+.exercise-item.dragging {
+    opacity: 0.4;
 }

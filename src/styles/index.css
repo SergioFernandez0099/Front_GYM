@@ -19,4 +19,5 @@
 @import './components/routine-day-card.css';
 @import './components/routine-set-card.css';
 @import './components/training-session-card.css';
-@import './components/yearpicker.css';
+@import 'components/modals/year-picker.css';
+@import './components/modals/exercise-picker.css';

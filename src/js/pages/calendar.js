@@ -2,7 +2,7 @@ import {Calendar} from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import esLocale from "@fullcalendar/core/locales/es";
-import {createYearPicker} from "../components/yearpicker.js";
+import {createYearPicker} from "../components/modals/year-picker.js";
 import {createTrainingSession, fetchTrainingSessions} from "../services/api.js";
 import {safeNavigate} from "../router.js";
 

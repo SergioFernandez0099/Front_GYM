@@ -1,15 +1,15 @@
 export function createYearPicker({range = 100, onSelect, initialYear = new Date().getFullYear()}) {
     const systemYear = new Date().getFullYear(); // año real del sistema
-    const scrollOffset = 9; // Pongo 9 para que se cargue bien en la interfaz
+    const scrollOffset = 10; // Pongo 9 para que se cargue bien en la interfaz
     let currentYear = initialYear;
 
     // ======= Modal =======
     const modal = document.createElement('div');
-    modal.className = 'yearpicker-modal';
+    modal.className = 'year-picker-modal';
 
     // ======= Contenedor años =======
     const container = document.createElement('div');
-    container.className = 'yearpicker-container';
+    container.className = 'year-picker-container';
     modal.appendChild(container);
 
     // ======= Crear lista de años =======
@@ -17,7 +17,7 @@ export function createYearPicker({range = 100, onSelect, initialYear = new Date(
         container.innerHTML = '';
         for (let i = centerYear - range; i <= centerYear + range; i++) {
             const yearItem = document.createElement('div');
-            yearItem.className = 'yearpicker-items';
+            yearItem.className = 'year-picker-items';
             yearItem.textContent = i;
 
             // Año seleccionado

@@ -1,9 +1,36 @@
 .train-sess-card-container {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     margin: 1rem;
     height: 80vh;
+    gap: 0.3rem;
+}
+
+.train-sess-card-general-options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.train-sess-card-general-options button {
+    all:unset;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.8rem;
+    font-size: 0.8rem;
+    gap: 0.2rem;
+    background: #2c3e50;
+    padding: 0.4rem 0.6rem;
+}
+
+.train-sess-card-general-options img {
+   height: 1.2rem;
+    width: 1.2rem;
+
 }
 
 .train-sess-card {
@@ -44,7 +71,7 @@
     padding: 0.45rem;
 }
 
-.train-sess-card-save-icon .saveIcon{
+.train-sess-card-save-icon .saveIcon {
     height: 0.9rem;
     width: 0.9rem;
     color: white;
@@ -94,7 +121,7 @@
     gap: 0.5rem;
 }
 
-.train-sess-card option{
+.train-sess-card option {
     border-radius: 10rem;
     display: flex;
     justify-content: center;
@@ -164,7 +191,7 @@
 }
 
 .train-sess-card-add-serie {
-    all:unset;
+    all: unset;
     text-align: center;
     background: darkred;
     border-radius: 10rem;
@@ -173,12 +200,12 @@
     color: white;
 }
 
-.train-sess-card-description{
+.train-sess-card-description {
     margin: 1rem 0.5rem;
 }
 
 .train-sess-card-delete-btn {
-    all:unset;
+    all: unset;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -199,7 +226,7 @@
 }
 
 .train-sess-card-buttons button {
-    all:unset;
+    all: unset;
     border: 1px solid black;
     border-radius: 0.4rem;
     font-size: 0.7rem;
@@ -213,7 +240,7 @@
     background: darkorange;
 }
 
-.train-sess-card-buttons .train-sess-card-buttons-next{
+.train-sess-card-buttons .train-sess-card-buttons-next {
     background: lawngreen;
 }
 
@@ -231,7 +258,6 @@
     /*.train-sess-card-title {*/
     /*    font-size: 2rem;*/
     /*}*/
-
     .train-sess-card-image {
         width: 10rem;
         height: 10rem;
