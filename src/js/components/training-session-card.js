@@ -1,5 +1,6 @@
 import {fetchTrainingSession} from "../services/api.js";
 import {createExercisePicker} from "../modals/exercise-picker.js";
+import {validarNumero10} from "../../utils/validators.js";
 
 export async function trainingSessionCard(sessionId) {
 
@@ -33,48 +34,12 @@ export async function trainingSessionCard(sessionId) {
                 <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
                 <span>Kg</span>
-                 <select class="train-sess-card-input-reps"> 
-                  <option value="">…</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                </select>
+               <input class="train-sess-card-input-reps" type="number">
                 <span>Reps</span>
                 <span>RIR</span>
-                <select class="train-sess-card-input-rir"> 
-                  <option value="">…</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                </select>
+                <input class="train-sess-card-input-rir" type="number">
                 <span>@</span>
-                 <select class="train-sess-card-input-intensity"> 
-                  <option value="">…</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                </select>
+                <input class="train-sess-card-input-intensity" type="number">
             </div>
              <div class="train-sess-card-serie">
                 <span class="train-sess-card-serie-num">2</span>
@@ -95,10 +60,10 @@ export async function trainingSessionCard(sessionId) {
                 <span>Kg</span>
                 <input class="train-sess-card-input-reps" type="number">
                 <span>Reps</span>
-                <span>RIR</span>
-                <input class="train-sess-card-input-rir" type="number">
-                <span>@</span>
-                <input class="train-sess-card-input-intensity" type="number">
+                <span class="label">RIR</span>
+                 <input class="train-sess-card-input-rir" type="number">
+                <span class="label">@</span>
+                 <input class="train-sess-card-input-intensity" type="number">
             </div>
             <button class="train-sess-card-add-serie">Añadir serie</button>
             <hr>
@@ -158,11 +123,52 @@ export async function trainingSessionCard(sessionId) {
 
     generalOptions.addEventListener('click', (e) => {
         const element = e.target;
+
         if (element.classList.contains('train-sess-card-general-options-list')) {
             exercisesPicker.show();
         }
     })
 
+    const card = trainingSessionCardContainer.querySelector(".train-sess-card");
+    // card.addEventListener("beforeinput", (e) => {
+    //     const element = e.target;
+    //     if (element.classList.contains("train-sess-card-input-intensity") ||
+    //         element.classList.contains("train-sess-card-input-rir")
+    //     ) {
+    //         // e.data puede ser null si se borra
+    //         const inputData = e.data || "";
+    //
+    //         // Simular cuál sería el nuevo valor si se permitiera el input
+    //         const start = element.selectionStart;
+    //         const end = element.selectionEnd;
+    //         const newValue =
+    //             element.value.slice(0, start) +
+    //             inputData +
+    //             element.value.slice(end);
+    //
+    //         // Si está vacío, permitir
+    //         if (newValue === "") return;
+    //
+    //         // Validar: máximo 2 dígitos
+    //         if (!/^\d{1,2}$/.test(newValue)) {
+    //             e.preventDefault();
+    //             return;
+    //         }
+    //
+    //         // Validar que sea un número de 1 o 2 dígitos
+    //         if (!/^\d{1,2}$/.test(newValue)) {
+    //             e.preventDefault();
+    //             return;
+    //         }
+    //
+    //         // Convertir a número y validar rango 1-10
+    //         const num = Number(newValue);
+    //         if (num < 1 || num > 10) {
+    //             e.preventDefault();
+    //         }
+    //     }
+    //
+    // })
 
 //   try {
 //     const routineDays = await fetchRoutineDays();

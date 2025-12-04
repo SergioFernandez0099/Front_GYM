@@ -17,7 +17,7 @@
 }
 
 .train-sess-card-general-options button {
-    all:unset;
+    all: unset;
     display: inline-flex;
     cursor: pointer;
     align-items: center;
@@ -33,7 +33,7 @@
 }
 
 .train-sess-card-general-options img {
-   height: 1.2rem;
+    height: 1.2rem;
     width: 1.2rem;
 
 }
@@ -190,6 +190,7 @@
     transition: all 0.2s ease;
     appearance: textfield;
     text-align: center;
+    height: 1.55rem;
 }
 
 .train-sess-card-input-reps,
@@ -200,6 +201,14 @@
 
 .train-sess-card-input-weight {
     width: 2rem;
+}
+
+.train-sess-card-input-reps,
+.train-sess-card-input-intensity {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 1.7rem;
 }
 
 .train-sess-card-input-weight:focus,
