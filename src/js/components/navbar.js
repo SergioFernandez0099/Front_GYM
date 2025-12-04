@@ -149,6 +149,7 @@ export function Navbar() {
 
 export function updateReloadButton(reloadBtn) {
     const last = router.lastResolved();
+    const reloadContainer = document.querySelector(".reload-container");
 
     if (!last) {
         reloadBtn.parentNode.style.display = "none";
@@ -159,6 +160,13 @@ export function updateReloadButton(reloadBtn) {
     if (currentRoute === "login" || currentRoute === "home" || currentRoute === "" || currentRoute === undefined) {
         reloadBtn.parentNode.style.display = "none";
     } else {
+        if (currentRoute.includes("sessions")) {
+            reloadContainer.style.top = "1.5rem";
+            reloadContainer.style.left = "4.5rem";
+        } else {
+            reloadContainer.style.top = "4.5rem";
+            reloadContainer.style.left = "1rem";
+        }
         reloadBtn.parentNode.style.display = "block";
     }
 

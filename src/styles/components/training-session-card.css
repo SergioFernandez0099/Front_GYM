@@ -3,28 +3,33 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    margin: 1rem;
+    margin: 0.7rem;
     height: 80vh;
-    gap: 0.3rem;
+    gap: 0.5rem;
 }
 
 .train-sess-card-general-options {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    gap: 0.3rem;
 }
 
 .train-sess-card-general-options button {
     all:unset;
-    display: flex;
+    display: inline-flex;
     cursor: pointer;
     align-items: center;
     justify-content: center;
     border-radius: 0.8rem;
     font-size: 0.8rem;
     gap: 0.2rem;
-    background: #2c3e50;
+    background: #d9d5d5;
     padding: 0.4rem 0.6rem;
+    line-height: 1.2;
+    text-align: center;
+    border: 1px solid black;
 }
 
 .train-sess-card-general-options img {
@@ -36,12 +41,12 @@
 .train-sess-card {
     display: flex;
     flex-direction: column;
-    border: 1px solid #ddd;
     border-radius: 1.2rem;
-    padding: 1rem;
-    background-color: #f9f9f9;
+    padding: 0.8rem 0.6rem;
+    background-color: #aeabab;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
+    width: 100%;
 }
 
 .train-sess-card-exercise-num {
@@ -59,19 +64,35 @@
     font-size: 0.9rem;
 }
 
-.train-sess-card-save-icon {
-    cursor: pointer;
+.train-sess-card-icon {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background: lightgreen;
+    cursor: pointer;
     border-radius: 50%;
     display: flex;
     align-items: center;
+}
+
+.train-sess-card-save-icon {
+    top: 0.5rem;
+    right: 2.8rem;
+    background: lightgreen;
     padding: 0.45rem;
 }
 
-.train-sess-card-save-icon .saveIcon {
+.train-sess-card-info-icon {
+    top: 0.5rem;
+    right: 0.5rem;
+    background: deepskyblue;
+    padding: 0.17rem;
+}
+
+.infoIcon {
+    height: 1.5rem;
+    width: 1.5rem;
+    color: white;
+}
+
+.saveIcon {
     height: 0.9rem;
     width: 0.9rem;
     color: white;
@@ -91,23 +112,37 @@
     object-fit: cover;
 }
 
+.train-sess-card-serie-weight-image {
+    height: 1.8rem;
+    width: 1.8rem;
+    object-fit: cover;
+    margin-right: 0.2rem;
+}
+
 .train-sess-card-title {
-    font-size: 2rem;
+    font-size: 1.6rem;
 }
 
 .train-sess-card-serie {
     display: flex;
     flex-direction: row;
     align-items: center;
+    position: relative;
     justify-content: space-between;
+    padding: 0.2rem;
 }
 
-.train-sess-card-serie-image-container .train-sess-card-serie-num {
+.train-sess-card-serie:hover {
+    border: 1px solid black;
+    border-radius: 1rem;
+}
+
+.train-sess-card-serie-num {
     font-size: 1rem;
     position: absolute;
-    top: 0.2rem;
-    left: 0.7rem;
-    font-weight: bold;
+    top: 0.75rem;
+    left: 0.55rem;
+    color: white;
 }
 
 .train-sess-card-serie span {
@@ -181,15 +216,6 @@
     position: relative;
 }
 
-.train-sess-card-serie-weight-image {
-    width: 2rem;
-    object-fit: cover;
-    height: 2rem;
-    margin: 0 0.3rem;
-    background: black;
-    border-radius: 50%;
-}
-
 .train-sess-card-add-serie {
     all: unset;
     text-align: center;
@@ -202,20 +228,6 @@
 
 .train-sess-card-description {
     margin: 1rem 0.5rem;
-}
-
-.train-sess-card-delete-btn {
-    all: unset;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    margin: 0 0.5rem;
-}
-
-.train-sess-card-delete-btn .trashIcon {
-    height: 1.5rem;
-    width: 1.5rem;
-    object-fit: cover;
 }
 
 .train-sess-card-buttons {
@@ -271,9 +283,9 @@
     /*}*/
 }
 
-/*@media (max-width: 500px) {*/
-/*    .train-sess-card {*/
-/*        width: 20rem;*/
-/*    }*/
-
-/*}*/
+@media (max-width: 370px) {
+    .train-sess-card-general-options button {
+        width: 5rem;
+        height: 2rem;
+    }
+}

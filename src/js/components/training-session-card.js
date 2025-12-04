@@ -1,5 +1,5 @@
 import {fetchTrainingSession} from "../services/api.js";
-import {createExercisePicker} from "./modals/exercise-picker.js";
+import {createExercisePicker} from "../modals/exercise-picker.js";
 
 export async function trainingSessionCard(sessionId) {
 
@@ -14,8 +14,11 @@ export async function trainingSessionCard(sessionId) {
     <div class="train-sess-card-exercise-num">
         <p>1</p>
     </div>
-     <div class="train-sess-card-save-icon">
+    <div class="train-sess-card-icon train-sess-card-save-icon">
         <img src="/assets/icons/save.svg" alt="Icono de guardado" class="saveIcon">
+    </div>
+    <div class="train-sess-card-icon train-sess-card-info-icon">
+        <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
     </div>
     <div class="train-sess-card-header">
         <img src="/assets/images/exercises/pecho/press_banca.png" alt="" class="train-sess-card-image">
@@ -26,16 +29,26 @@ export async function trainingSessionCard(sessionId) {
         </div>
         <div class="train-sess-card-series-list">
             <div class="train-sess-card-serie">
-                <div class="train-sess-card-serie-image-container"> 
-                    <span class="train-sess-card-serie-num">1</span>
-                    <img class="train-sess-card-serie-weight-image" src="../../../favicon.png" alt="" >
-                </div>
+                <span class="train-sess-card-serie-num">1</span>
+                <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
                 <span>Kg</span>
-                <img class="train-sess-card-serie-reps-image" src="" alt="" >
-                <input class="train-sess-card-input-reps" type="number">
+                 <select class="train-sess-card-input-reps"> 
+                  <option value="">…</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                </select>
+                <span>Reps</span>
                 <span>RIR</span>
-                <select class="train-sess-card-input-reps"> 
+                <select class="train-sess-card-input-rir"> 
                   <option value="">…</option>
                   <option>1</option>
                   <option>2</option>
@@ -49,36 +62,43 @@ export async function trainingSessionCard(sessionId) {
                   <option>10</option>
                 </select>
                 <span>@</span>
-                <input class="train-sess-card-input-intensity" type="number">
-                <button class="train-sess-card-delete-btn"><img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon"></button>
+                 <select class="train-sess-card-input-intensity"> 
+                  <option value="">…</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                </select>
             </div>
              <div class="train-sess-card-serie">
-                 <div class="train-sess-card-serie-image-container"> 
-                    <span class="train-sess-card-serie-num">2</span>
-                    <img class="train-sess-card-serie-weight-image" src="../../../favicon.png" alt="" >
-                </div>
+                <span class="train-sess-card-serie-num">2</span>
+                <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
                 <span>Kg</span>
-                <img class="train-sess-card-serie-reps-image" src="" alt="" >
                 <input class="train-sess-card-input-reps" type="number">
+                <span>Reps</span>
                 <span>RIR</span>
                 <input class="train-sess-card-input-rir" type="number">
                 <span>@</span>
                 <input class="train-sess-card-input-intensity" type="number">
-                <button class="train-sess-card-delete-btn"><img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon"></button>
             </div>
              <div class="train-sess-card-serie">
-                <span class="train-sess-card-serie-num">3- </span>
-                <img class="train-sess-card-serie-weight-image" src="../../../favicon.png" alt="" >
+                <span class="train-sess-card-serie-num">3</span>
+                <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
                 <span>Kg</span>
-                <img class="train-sess-card-serie-reps-image" src="" alt="" >
                 <input class="train-sess-card-input-reps" type="number">
+                <span>Reps</span>
                 <span>RIR</span>
                 <input class="train-sess-card-input-rir" type="number">
-                 <span>@</span>
+                <span>@</span>
                 <input class="train-sess-card-input-intensity" type="number">
-                <button class="train-sess-card-delete-btn"><img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon"></button>
             </div>
             <button class="train-sess-card-add-serie">Añadir serie</button>
             <hr>
@@ -100,7 +120,7 @@ export async function trainingSessionCard(sessionId) {
     btnList.textContent = "Ejercicios";
 
     const imgList = document.createElement("img");
-    imgList.src = "/assets/icons/trash.svg";
+    imgList.src = "/assets/icons/list.svg";
     imgList.alt = "Icono de listado";
     imgList.className = "listIcon";
 
@@ -112,7 +132,7 @@ export async function trainingSessionCard(sessionId) {
     btnAdd.textContent = "Añadir ejercicio";
 
     const imgAdd = document.createElement("img");
-    imgAdd.src = "/assets/icons/trash.svg";
+    imgAdd.src = "/assets/icons/add.svg";
     imgAdd.alt = "Icono de añadir";
     imgAdd.className = "addIcon";
 

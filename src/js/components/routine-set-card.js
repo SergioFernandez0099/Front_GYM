@@ -39,7 +39,7 @@ export async function RoutineSetCard(set, routineId) {
         <img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
       </div>
       <div class="icon-container icon-container-arrow ">
-        <img src="/assets/icons/arrow_down.svg" alt="Icono de desplegable" class="arrowIcon">
+        <img src="/assets/icons/arrowDown.svg" alt="Icono de desplegable" class="arrowIcon">
       </div>
     </div>
     <div id="suggestionBox">Press Banca</div>
@@ -84,7 +84,7 @@ export async function RoutineSetCard(set, routineId) {
         <img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
       </div>
       <div class="icon-container icon-container-arrow ">
-        <img src="/assets/icons/arrow_down.svg" alt="Icono de desplegable" class="arrowIcon">
+        <img src="/assets/icons/arrowDown.svg" alt="Icono de desplegable" class="arrowIcon">
       </div>
     </div>
     <div class="default-card">
