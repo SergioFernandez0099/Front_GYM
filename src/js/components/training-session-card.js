@@ -18,7 +18,11 @@ export async function trainingSessionCard(sessionId) {
     <div class="train-sess-card-icon train-sess-card-save-icon">
         <img src="/assets/icons/save.svg" alt="Icono de guardado" class="saveIcon">
     </div>
-    <div class="train-sess-card-icon train-sess-card-info-icon">
+    
+    <div class="train-sess-card-info-tooltip">
+        Información adicional asfañslfkjasñl kasfjñsalkjfñlaskj añlksfj añslkjf 
+    </div>
+    <div id="infoIcon1" class="train-sess-card-icon train-sess-card-info-icon">
         <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
     </div>
     <div class="train-sess-card-header">
@@ -83,6 +87,7 @@ export async function trainingSessionCard(sessionId) {
             </div>
         </div>
     </div>
+   
   `;
 
     const generalOptions = document.createElement("div");
@@ -121,7 +126,6 @@ export async function trainingSessionCard(sessionId) {
     imgDelete.src = "/assets/icons/trash.svg";
     imgDelete.alt = "Icono de borrar";
     imgDelete.className = "trashIcon";
-
 
     btnDelete.appendChild(imgDelete);
     generalOptions.appendChild(btnDelete);

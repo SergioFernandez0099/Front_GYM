@@ -1,7 +1,8 @@
 import {initRouter, loadNavbarAndFooter} from "./router.js";
 import {checkAndSetLogin} from "./store.js";
-import '../styles/index.css';
+import { provideFluentDesignSystem, fluentTooltip, fluentButton } from "@fluentui/web-components";
 
+import '../styles/index.css';
 
 async function initSPA() {
     const isValid = await checkAndSetLogin();
@@ -12,6 +13,12 @@ async function initSPA() {
 
     initRouter();
 }
+
+
+provideFluentDesignSystem().register(
+    fluentTooltip(),
+    fluentButton()
+);
 
 // Iniciar aplicación
 await initSPA();

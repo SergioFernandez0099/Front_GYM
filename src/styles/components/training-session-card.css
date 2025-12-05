@@ -98,6 +98,17 @@
     color: white;
 }
 
+
+.train-sess-card-info-tooltip {
+    position: absolute;
+    top: -1.5rem;
+    right: 0.5rem;
+    background-color: #cc1313;
+    border-radius: 0.6rem;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+}
+
 .train-sess-card-header {
     margin-top: 0.5rem;
     display: flex;
@@ -133,7 +144,7 @@
 }
 
 .train-sess-card-units-container p{
-    font-size: 0.9rem;;
+    font-size: 0.9rem;
 }
 
 .train-sess-card-title {
@@ -147,19 +158,19 @@
     position: relative;
     justify-content: space-between;
     padding: 0.4rem;
-    overflow: hidden;
+    border: 1px solid transparent;
+    border-radius: 1rem;
 }
 
 .train-sess-card-serie:hover {
     border: 1px solid black;
-    border-radius: 1rem;
 }
 
 .train-sess-card-serie-num {
     font-size: 1rem;
     position: absolute;
-    top: 0.95rem;
-    left: 0.85rem;
+    top: 0.9rem;
+    left: 0.9rem;
     color: white;
 }
 
@@ -265,6 +276,7 @@
     padding: 0.3rem 0.5rem;
     text-align: center;
     width: 30%;
+    cursor: pointer;
 }
 
 .train-sess-card-buttons .train-sess-card-buttons-previous {
