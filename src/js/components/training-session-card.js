@@ -33,7 +33,10 @@ export async function trainingSessionCard(sessionId) {
                 <span class="train-sess-card-serie-num">1</span>
                 <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
-                <span>Kg</span>
+                <div class="train-sess-card-units-container">
+                    <p>Kg</p>
+                    <img class="train-sess-card-serie-arrow-image" src="/assets/icons/dropdown.svg" alt="" >
+                </div>
                <input class="train-sess-card-input-reps" type="number">
                 <span>Reps</span>
                 <span>RIR</span>
@@ -45,7 +48,10 @@ export async function trainingSessionCard(sessionId) {
                 <span class="train-sess-card-serie-num">2</span>
                 <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
-                <span>Kg</span>
+                <div class="train-sess-card-units-container">
+                    <p>Kg</p>
+                    <img class="train-sess-card-serie-arrow-image" src="/assets/icons/dropdown.svg" alt="" >
+                </div>
                 <input class="train-sess-card-input-reps" type="number">
                 <span>Reps</span>
                 <span>RIR</span>
@@ -57,13 +63,16 @@ export async function trainingSessionCard(sessionId) {
                 <span class="train-sess-card-serie-num">3</span>
                 <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
-                <span>Kg</span>
+                <div class="train-sess-card-units-container">
+                    <p>Kg</p>
+                    <img class="train-sess-card-serie-arrow-image" src="/assets/icons/dropdown.svg" alt="" >
+                </div>
                 <input class="train-sess-card-input-reps" type="number">
                 <span>Reps</span>
                 <span class="label">RIR</span>
-                 <input class="train-sess-card-input-rir" type="number">
+                <input class="train-sess-card-input-rir" type="number">
                 <span class="label">@</span>
-                 <input class="train-sess-card-input-intensity" type="number">
+                <input class="train-sess-card-input-intensity" type="number">
             </div>
             <button class="train-sess-card-add-serie">Añadir serie</button>
             <hr>
@@ -130,45 +139,31 @@ export async function trainingSessionCard(sessionId) {
     })
 
     const card = trainingSessionCardContainer.querySelector(".train-sess-card");
-    // card.addEventListener("beforeinput", (e) => {
-    //     const element = e.target;
-    //     if (element.classList.contains("train-sess-card-input-intensity") ||
-    //         element.classList.contains("train-sess-card-input-rir")
-    //     ) {
-    //         // e.data puede ser null si se borra
-    //         const inputData = e.data || "";
-    //
-    //         // Simular cuál sería el nuevo valor si se permitiera el input
-    //         const start = element.selectionStart;
-    //         const end = element.selectionEnd;
-    //         const newValue =
-    //             element.value.slice(0, start) +
-    //             inputData +
-    //             element.value.slice(end);
-    //
-    //         // Si está vacío, permitir
-    //         if (newValue === "") return;
-    //
-    //         // Validar: máximo 2 dígitos
-    //         if (!/^\d{1,2}$/.test(newValue)) {
-    //             e.preventDefault();
-    //             return;
-    //         }
-    //
-    //         // Validar que sea un número de 1 o 2 dígitos
-    //         if (!/^\d{1,2}$/.test(newValue)) {
-    //             e.preventDefault();
-    //             return;
-    //         }
-    //
-    //         // Convertir a número y validar rango 1-10
-    //         const num = Number(newValue);
-    //         if (num < 1 || num > 10) {
-    //             e.preventDefault();
-    //         }
-    //     }
-    //
-    // })
+    card.addEventListener("beforeinput", (e) => {
+        const element = e.target;
+        if (element.classList.contains("train-sess-card-input-intensity") ||
+            element.classList.contains("train-sess-card-input-rir")
+        ) {
+            // Valor actual
+            const currentValue = element.value;
+            // Valor que quedaría tras la entrada
+            const newValue =
+                e.inputType === "deleteContentBackward" || e.inputType === "deleteContentForward"
+                    ? currentValue.slice(0, -1)
+                    : currentValue + e.data;
+
+            // Permitir dejar vacío
+            if (newValue === "") return;
+
+            // Validar número del 0 al 10
+            const num = Number(newValue);
+            if (!/^(10|[0-9])$/.test(newValue) || isNaN(num) || num < 0 || num > 10) {
+                e.preventDefault();
+            }
+
+        }
+
+    })
 
 //   try {
 //     const routineDays = await fetchRoutineDays();

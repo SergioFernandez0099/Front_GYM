@@ -118,6 +118,23 @@
     object-fit: cover;
     margin-right: 0.2rem;
 }
+.train-sess-card-serie-arrow-image {
+    margin-top: 0.3rem;
+    height: 0.8rem;
+    width: 0.8rem;
+}
+
+.train-sess-card-units-container {
+    display: flex;
+    gap:0.15rem;
+    align-items: center;
+    justify-content: center;
+    margin: 0rem 0.15rem;
+}
+
+.train-sess-card-units-container p{
+    font-size: 0.9rem;;
+}
 
 .train-sess-card-title {
     font-size: 1.6rem;
@@ -129,7 +146,8 @@
     align-items: center;
     position: relative;
     justify-content: space-between;
-    padding: 0.2rem;
+    padding: 0.4rem;
+    overflow: hidden;
 }
 
 .train-sess-card-serie:hover {
@@ -140,14 +158,14 @@
 .train-sess-card-serie-num {
     font-size: 1rem;
     position: absolute;
-    top: 0.75rem;
-    left: 0.55rem;
+    top: 0.95rem;
+    left: 0.85rem;
     color: white;
 }
 
 .train-sess-card-serie span {
     font-size: 0.9rem;
-    margin: 0 0.3rem;
+    margin: 0 0.15rem;
 }
 
 .train-sess-card-series-list {
@@ -193,22 +211,14 @@
     height: 1.55rem;
 }
 
-.train-sess-card-input-reps,
-.train-sess-card-input-rir,
-.train-sess-card-input-intensity {
-    width: 1.3rem;
-}
-
 .train-sess-card-input-weight {
     width: 2rem;
 }
 
 .train-sess-card-input-reps,
+.train-sess-card-input-rir,
 .train-sess-card-input-intensity {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 1.7rem;
+    width: 1.2rem;
 }
 
 .train-sess-card-input-weight:focus,
