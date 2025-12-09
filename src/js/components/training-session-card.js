@@ -18,11 +18,10 @@ export async function trainingSessionCard(sessionId) {
     <div class="train-sess-card-icon train-sess-card-save-icon">
         <img src="/assets/icons/save.svg" alt="Icono de guardado" class="saveIcon">
     </div>
-    
-    <div class="train-sess-card-info-tooltip">
+    <div class="train-sess-card-info-tooltip hide">
         Información adicional asfañslfkjasñl kasfjñsalkjfñlaskj añlksfj añslkjf 
     </div>
-    <div id="infoIcon1" class="train-sess-card-icon train-sess-card-info-icon">
+    <div id="infoIcon" class="train-sess-card-icon train-sess-card-info-icon">
         <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
     </div>
     <div class="train-sess-card-header">
@@ -30,7 +29,7 @@ export async function trainingSessionCard(sessionId) {
         <h2 class="train-sess-card-title">Press Banca</h2>
     </div>
         <div class="train-sess-card-description-container">
-            <p class="train-sess-card-description">Top set en la primera</p>
+            <textarea maxlength="100" placeholder="Escribe algún detalle..." class="train-sess-card-description">Top set en la primera</textarea>
         </div>
         <div class="train-sess-card-series-list">
             <div class="train-sess-card-serie">
@@ -89,6 +88,13 @@ export async function trainingSessionCard(sessionId) {
     </div>
    
   `;
+
+    const infoIcon = trainingSessionCardContainer.querySelector("#infoIcon");
+    const tooltip = trainingSessionCardContainer.querySelector(".train-sess-card-info-tooltip")
+
+    infoIcon.addEventListener("click", () => {
+        tooltip.classList.toggle("hide")
+    });
 
     const generalOptions = document.createElement("div");
     generalOptions.className = "train-sess-card-general-options";

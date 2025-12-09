@@ -256,8 +256,20 @@
     color: white;
 }
 
+.train-sess-card-description-container {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    margin: 1rem 0rem;
+}
+
 .train-sess-card-description {
-    margin: 1rem 0.5rem;
+    all:unset;
+    display: block;
+    border-radius: 1rem;
+    padding: 0.2rem 0.5rem;
+    background-color: lightcyan;
+    width: 100%;
 }
 
 .train-sess-card-buttons {
