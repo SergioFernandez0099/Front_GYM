@@ -2,89 +2,60 @@ import {fetchTrainingSession} from "../services/api.js";
 import {createExercisePicker} from "../modals/exercise-picker.js";
 import {validarNumero10} from "../../utils/validators.js";
 
+
 export async function trainingSessionCard(sessionId) {
 
     const trainingSessionData = await fetchTrainingSession(sessionId);
-    console.log(trainingSessionData);
+    let indiceEjercicio = 0;
 
     const trainingSessionCardContainer = document.createElement("div");
     trainingSessionCardContainer.className = "train-sess-card-container";
 
-    trainingSessionCardContainer.innerHTML = `
+    function renderCard() {
+        const exerciseData =
+            trainingSessionData.sessionExercises[indiceEjercicio];
+
+        const seriesHTML = exerciseData.series
+            .map((serie, index) => renderSerie(serie, index))
+            .join("");
+
+        trainingSessionCardContainer.innerHTML = `
   <div class="train-sess-card">
     <div class="train-sess-card-exercise-num">
-        <p>1</p>
+        <p>${indiceEjercicio + 1}</p>
     </div>
     <div class="train-sess-card-icon train-sess-card-save-icon">
         <img src="/assets/icons/save.svg" alt="Icono de guardado" class="saveIcon">
     </div>
     <div class="train-sess-card-info-tooltip hide">
-        Información adicional asfañslfkjasñl kasfjñsalkjfñlaskj añlksfj añslkjf 
+        Para borrar una serie tan solo manten pulsado el número de esta. 
+        Para cambiar las unidades simplemente pulsa sobre ellas
     </div>
     <div id="infoIcon" class="train-sess-card-icon train-sess-card-info-icon">
         <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
     </div>
     <div class="train-sess-card-header">
-        <img src="/assets/images/exercises/pecho/press_banca.png" alt="" class="train-sess-card-image">
-        <h2 class="train-sess-card-title">Press Banca</h2>
+        <img src="${trainingSessionData.sessionExercises[indiceEjercicio].exercise.imageUrl}" alt="" class="train-sess-card-image">
+        <h2 class="train-sess-card-title">${trainingSessionData.sessionExercises[indiceEjercicio].exercise.name}</h2>
     </div>
         <div class="train-sess-card-description-container">
             <textarea maxlength="100" placeholder="Escribe algún detalle..." class="train-sess-card-description">Top set en la primera</textarea>
         </div>
         <div class="train-sess-card-series-list">
-            <div class="train-sess-card-serie">
-                <span class="train-sess-card-serie-num">1</span>
-                <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
-                <input class="train-sess-card-input-weight" type="number">
-                <div class="train-sess-card-units-container">
-                    <p class="train-sess-card-units" data-unit="Kg">Kg</p>
-                </div>
-               <input class="train-sess-card-input-reps" type="number">
-                <span>Reps</span>
-                <span>RIR</span>
-                <input class="train-sess-card-input-rir" type="number">
-                <span>@</span>
-                <input class="train-sess-card-input-intensity" type="number">
-            </div>
-             <div class="train-sess-card-serie">
-                <span class="train-sess-card-serie-num">2</span>
-                <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
-                <input class="train-sess-card-input-weight" type="number">
-                <div class="train-sess-card-units-container">
-                    <p class="train-sess-card-units" data-unit="Kg">Kg</p>
-                </div>
-                <input class="train-sess-card-input-reps" type="number">
-                <span>Reps</span>
-                <span>RIR</span>
-                <input class="train-sess-card-input-rir" type="number">
-                <span>@</span>
-                <input class="train-sess-card-input-intensity" type="number">
-            </div>
-             <div class="train-sess-card-serie">
-                <span class="train-sess-card-serie-num">3</span>
-                <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
-                <input class="train-sess-card-input-weight" type="number">
-                <div class="train-sess-card-units-container">
-                    <p class="train-sess-card-units" data-unit="Kg">Kg</p>
-                </div>
-                <input class="train-sess-card-input-reps" type="number">
-                <span>Reps</span>
-                <span class="label">RIR</span>
-                <input class="train-sess-card-input-rir" type="number">
-                <span class="label">@</span>
-                <input class="train-sess-card-input-intensity" type="number">
-            </div>
+            ${seriesHTML}
             <button class="train-sess-card-add-serie">Añadir serie</button>
             <hr>
             <div class="train-sess-card-buttons">
-                <button class="train-sess-card-buttons-previous">Anterior</button>
-                <button class="train-sess-card-buttons-delete">Borrar ejercicio</button>
-                <button class="train-sess-card-buttons-next">Siguiente</button>
+                <button class="train-sess-card-buttons-previous" data-action="previous">Anterior</button>
+                <button class="train-sess-card-buttons-delete" data-action="delete">Borrar ejercicio</button>
+                <button class="train-sess-card-buttons-next" data-action="next">Siguiente</button>
             </div>
         </div>
     </div>
-   
   `;
+    }
+
+    renderCard();
 
     const infoIcon = trainingSessionCardContainer.querySelector("#infoIcon");
     const tooltip = trainingSessionCardContainer.querySelector(".train-sess-card-info-tooltip")
@@ -188,6 +159,40 @@ export async function trainingSessionCard(sessionId) {
 
     })
 
+    const buttons = trainingSessionCardContainer.querySelector(".train-sess-card-buttons");
+    Array.from(buttons.children).forEach((button) => {
+        button.addEventListener("click", (event) => {
+            console.log(3)
+            const elemento = event.target;
+            switch (elemento.dataset.action) {
+                case "next": {
+                    if (indiceEjercicio === trainingSessionData.sessionExercises.length - 1) {
+                        indiceEjercicio = 0;
+                        break;
+                    }
+                    indiceEjercicio++;
+                    break;
+                }
+                case "previous": {
+                    if (indiceEjercicio === 0) {
+                        indiceEjercicio = trainingSessionData.sessionExercises.length -1;
+                        return
+                    }
+                    indiceEjercicio--;
+                    break;
+                }
+                case "delete":{
+                    break;
+                }
+                default: {
+                    return;
+                }
+            }
+            console.log(indiceEjercicio);
+            renderCard()
+        })
+    })
+
 //   try {
 //     const routineDays = await fetchRoutineDays();
 //     const fragment = document.createDocumentFragment();
@@ -209,4 +214,38 @@ export async function trainingSessionCard(sessionId) {
 //   routineList.appendChild(addCard);
 
     return trainingSessionCardContainer;
+}
+
+function renderSerie(serie, index) {
+    return `
+    <div class="train-sess-card-serie">
+      <span class="train-sess-card-serie-num">${index + 1}</span>
+
+      <img class="train-sess-card-serie-weight-image"
+           src="/assets/icons/kettlebell.svg" alt="">
+
+      <input class="train-sess-card-input-weight"
+             type="number"
+             value="${serie.weight ?? ''}">
+
+      <div class="train-sess-card-units-container">
+        <p class="train-sess-card-units" data-unit="Kg">Kg</p>
+      </div>
+
+      <input class="train-sess-card-input-reps"
+             type="number"
+             value="${serie.reps ?? ''}">
+      <span>Reps</span>
+
+      <span>RIR</span>
+      <input class="train-sess-card-input-rir"
+             type="number"
+             value="${serie.rir ?? ''}">
+
+      <span>@</span>
+      <input class="train-sess-card-input-intensity"
+             type="number"
+             value="${serie.intensity ?? ''}">
+    </div>
+  `;
 }
