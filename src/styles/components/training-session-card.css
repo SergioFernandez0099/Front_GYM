@@ -83,12 +83,11 @@
     top: 0.5rem;
     right: 0.5rem;
     background: deepskyblue;
-    padding: 0.17rem;
 }
 
 .infoIcon {
-    height: 1.5rem;
-    width: 1.5rem;
+    height: 1.8rem;
+    width: 1.8rem;
     color: white;
 }
 
@@ -98,10 +97,9 @@
     color: white;
 }
 
-
 .train-sess-card-info-tooltip {
     position: absolute;
-    top: -1.5rem;
+    top: -2.8rem;
     right: 0.5rem;
     background-color: #cc1313;
     border-radius: 0.6rem;
@@ -136,11 +134,20 @@
 }
 
 .train-sess-card-units-container {
+    margin: 0 0.15rem;
+    cursor: pointer;
+    width: 1.5rem;
+}
+
+.train-sess-card-units {
+    height: 1.45rem;
+    width: 1.45rem;
+    background-color: white;
     display: flex;
-    gap:0.15rem;
     align-items: center;
     justify-content: center;
-    margin: 0rem 0.15rem;
+    border-radius: 100%;
+    font-weight:600;
 }
 
 .train-sess-card-units-container p{
@@ -177,6 +184,7 @@
 .train-sess-card-serie span {
     font-size: 0.9rem;
     margin: 0 0.15rem;
+    font-weight: 600;
 }
 
 .train-sess-card-series-list {

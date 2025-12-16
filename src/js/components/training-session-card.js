@@ -37,8 +37,7 @@ export async function trainingSessionCard(sessionId) {
                 <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
                 <div class="train-sess-card-units-container">
-                    <p>Kg</p>
-                    <img class="train-sess-card-serie-arrow-image" src="/assets/icons/dropdown.svg" alt="" >
+                    <p class="train-sess-card-units" data-unit="Kg">Kg</p>
                 </div>
                <input class="train-sess-card-input-reps" type="number">
                 <span>Reps</span>
@@ -52,8 +51,7 @@ export async function trainingSessionCard(sessionId) {
                 <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
                 <div class="train-sess-card-units-container">
-                    <p>Kg</p>
-                    <img class="train-sess-card-serie-arrow-image" src="/assets/icons/dropdown.svg" alt="" >
+                    <p class="train-sess-card-units" data-unit="Kg">Kg</p>
                 </div>
                 <input class="train-sess-card-input-reps" type="number">
                 <span>Reps</span>
@@ -67,8 +65,7 @@ export async function trainingSessionCard(sessionId) {
                 <img class="train-sess-card-serie-weight-image" src="/assets/icons/kettlebell.svg" alt="" >
                 <input class="train-sess-card-input-weight" type="number">
                 <div class="train-sess-card-units-container">
-                    <p>Kg</p>
-                    <img class="train-sess-card-serie-arrow-image" src="/assets/icons/dropdown.svg" alt="" >
+                    <p class="train-sess-card-units" data-unit="Kg">Kg</p>
                 </div>
                 <input class="train-sess-card-input-reps" type="number">
                 <span>Reps</span>
@@ -95,6 +92,22 @@ export async function trainingSessionCard(sessionId) {
     infoIcon.addEventListener("click", () => {
         tooltip.classList.toggle("hide")
     });
+
+    const unitsButton = trainingSessionCardContainer.querySelectorAll(".train-sess-card-units");
+
+    Array.from(unitsButton).forEach((unit) => {
+        console.log(unit)
+        unit.addEventListener("click", (event) => {
+            const elemento = event.target;
+            if (elemento.dataset.unit === "Kg") {
+                elemento.dataset.unit = "Lb";
+                elemento.textContent = "Lb"
+            } else {
+                elemento.dataset.unit = "Kg";
+                elemento.textContent = "Kg"
+            }
+        })
+    })
 
     const generalOptions = document.createElement("div");
     generalOptions.className = "train-sess-card-general-options";
