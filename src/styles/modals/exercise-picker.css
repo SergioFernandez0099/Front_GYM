@@ -25,13 +25,14 @@
     background: #fff;
     border-radius: 8px;
     max-height: 300px;
-    width: 140px;
     overflow-y: auto;
     text-align: center;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    width: 15rem;
 }
 
-.exercise-list {
+.exercise-picker-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -49,4 +50,64 @@
 
 .exercise-item.dragging {
     opacity: 0.4;
+}
+
+.exercise-item-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.exercise-span{
+    cursor: pointer;
+    opacity: 0;                /* invisible al inicio */
+    transform: translateX(-10px); /* opcional: un pequeño slide desde la izquierda */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.exercise-span.show {
+    opacity: 1;                /* visible */
+    transform: translateX(0);  /* posición final */
+}
+
+.reorder-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.label-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.exercise-picker-save {
+    padding: 6px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    display: block;
+    transform: translateX(-100%); /* empieza fuera a la izquierda */
+    opacity: 0; /* invisible al inicio */
+    transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+/* Oculto completamente */
+.exercise-picker-save.hide {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+/* Mostrar con slide */
+.exercise-picker-save.show {
+    display: block; /* primero debe estar en block */
+    transform: translateX(0); /* se mueve a su posición final */
+    opacity: 1;
 }

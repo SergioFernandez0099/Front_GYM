@@ -14,6 +14,7 @@
     justify-content: center;
     width: 100%;
     gap: 0.3rem;
+    margin-top: 1.3rem;
 }
 
 .train-sess-card-general-options button {
@@ -47,6 +48,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
     width: 100%;
+    max-height: 30rem;
 }
 
 .train-sess-card-exercise-num {
@@ -99,12 +101,15 @@
 
 .train-sess-card-info-tooltip {
     position: absolute;
-    top: -2.8rem;
-    right: 0.5rem;
+    top: -3.6rem;
+    right: 0.1rem;
     background-color: #cc1313;
     border-radius: 0.6rem;
     padding: 0.2rem 0.4rem;
     font-size: 0.8rem;
+    line-height: 1.2rem;
+    text-align: center;
+    font-weight: 600;
 }
 
 .train-sess-card-header {
@@ -191,6 +196,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    overflow: scroll;
 }
 
 .train-sess-card option {
@@ -268,7 +274,8 @@
     width: 100%;
     overflow: hidden;
     display: flex;
-    margin: 1rem 0rem;
+    margin: 1rem 0;
+    min-height: 3.6rem;
 }
 
 .train-sess-card-description {

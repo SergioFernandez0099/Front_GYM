@@ -8,6 +8,8 @@ export async function trainingSessionCard(sessionId) {
     const trainingSessionData = await fetchTrainingSession(sessionId);
     let indiceEjercicio = 0;
 
+    const exercisesPicker = createExercisePicker(trainingSessionData.sessionExercises)
+
     const trainingSessionCardContainer = document.createElement("div");
     trainingSessionCardContainer.className = "train-sess-card-container";
 
@@ -20,178 +22,159 @@ export async function trainingSessionCard(sessionId) {
             .join("");
 
         trainingSessionCardContainer.innerHTML = `
-  <div class="train-sess-card">
-    <div class="train-sess-card-exercise-num">
-        <p>${indiceEjercicio + 1}</p>
-    </div>
-    <div class="train-sess-card-icon train-sess-card-save-icon">
-        <img src="/assets/icons/save.svg" alt="Icono de guardado" class="saveIcon">
-    </div>
-    <div class="train-sess-card-info-tooltip hide">
-        Para borrar una serie tan solo manten pulsado el número de esta. 
-        Para cambiar las unidades simplemente pulsa sobre ellas
-    </div>
-    <div id="infoIcon" class="train-sess-card-icon train-sess-card-info-icon">
-        <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
-    </div>
-    <div class="train-sess-card-header">
-        <img src="${trainingSessionData.sessionExercises[indiceEjercicio].exercise.imageUrl}" alt="" class="train-sess-card-image">
-        <h2 class="train-sess-card-title">${trainingSessionData.sessionExercises[indiceEjercicio].exercise.name}</h2>
-    </div>
-        <div class="train-sess-card-description-container">
-            <textarea maxlength="100" placeholder="Escribe algún detalle..." class="train-sess-card-description">Top set en la primera</textarea>
-        </div>
-        <div class="train-sess-card-series-list">
-            ${seriesHTML}
-            <button class="train-sess-card-add-serie">Añadir serie</button>
+            <div class="train-sess-card-general-options">
+                <button class="train-sess-card-general-options-list" data-action="list">
+                    Ejercicios
+                    <img src="/assets/icons/list.svg" alt="Icono de listado" class="listIcon">
+                </button>
+        
+                <button class="train-sess-card-general-options-add" data-action="add-exercise">
+                    Añadir ejercicio
+                    <img src="/assets/icons/add.svg" alt="Icono de añadir" class="addIcon">
+                </button>
+        
+                <button class="train-sess-card-general-options-del" data-action="delete-routine">
+                    Borrar rutina
+                    <img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
+                </button>
+            </div>
+
+          <div class="train-sess-card">
+            <div class="train-sess-card-exercise-num">
+                <p>${indiceEjercicio + 1}</p>
+            </div>
+            <div class="train-sess-card-icon train-sess-card-save-icon">
+                <img src="/assets/icons/save.svg" alt="Icono de guardado" class="saveIcon">
+            </div>
+            <div class="train-sess-card-info-tooltip hide">
+                Para borrar una serie tan solo manten pulsado el número de esta. 
+                Para cambiar las unidades simplemente pulsa sobre ellas
+            </div>
+            <div data-action="info" class="train-sess-card-icon train-sess-card-info-icon">
+                <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
+            </div>
+            <div class="train-sess-card-header">
+                <img src="${trainingSessionData.sessionExercises[indiceEjercicio].exercise.imageUrl}" alt="" class="train-sess-card-image">
+                <h2 class="train-sess-card-title">${trainingSessionData.sessionExercises[indiceEjercicio].exercise.name}</h2>
+            </div>
+            <div class="train-sess-card-description-container">
+                <textarea maxlength="100" placeholder="Escribe algún detalle..." class="train-sess-card-description">Top set en la primera</textarea>
+            </div>
+            <div class="train-sess-card-series-list">
+                ${seriesHTML}
+            </div>
+            <button class="train-sess-card-add-serie" data-action="serie">Añadir serie</button>
             <hr>
             <div class="train-sess-card-buttons">
                 <button class="train-sess-card-buttons-previous" data-action="previous">Anterior</button>
                 <button class="train-sess-card-buttons-delete" data-action="delete">Borrar ejercicio</button>
                 <button class="train-sess-card-buttons-next" data-action="next">Siguiente</button>
             </div>
-        </div>
-    </div>
+          </div>
   `;
     }
 
     renderCard();
 
-    const infoIcon = trainingSessionCardContainer.querySelector("#infoIcon");
-    const tooltip = trainingSessionCardContainer.querySelector(".train-sess-card-info-tooltip")
+    trainingSessionCardContainer.addEventListener("beforeinput", (e) => {
+        const element = e.target;
 
-    infoIcon.addEventListener("click", () => {
-        tooltip.classList.toggle("hide")
+        if (
+            !element.classList.contains("train-sess-card-input-intensity") &&
+            !element.classList.contains("train-sess-card-input-rir")
+        ) {
+            return;
+        }
+
+        const currentValue = element.value;
+
+        const newValue =
+            e.inputType === "deleteContentBackward" ||
+            e.inputType === "deleteContentForward"
+                ? currentValue.slice(0, -1)
+                : currentValue + (e.data ?? "");
+
+        if (newValue === "") return;
+
+        if (!/^(10|[0-9])$/.test(newValue)) {
+            e.preventDefault();
+        }
     });
 
-    const unitsButton = trainingSessionCardContainer.querySelectorAll(".train-sess-card-units");
-
-    Array.from(unitsButton).forEach((unit) => {
-        console.log(unit)
-        unit.addEventListener("click", (event) => {
-            const elemento = event.target;
-            if (elemento.dataset.unit === "Kg") {
-                elemento.dataset.unit = "Lb";
-                elemento.textContent = "Lb"
-            } else {
-                elemento.dataset.unit = "Kg";
-                elemento.textContent = "Kg"
+    trainingSessionCardContainer.addEventListener("click", (event) => {
+        const elemento = event.target.closest("[data-action]");
+        if (!elemento) return;
+        switch (elemento.dataset.action) {
+            case "list": {
+                exercisesPicker.show();
+                break;
             }
-        })
-    })
-
-    const generalOptions = document.createElement("div");
-    generalOptions.className = "train-sess-card-general-options";
-    trainingSessionCardContainer.appendChild(generalOptions);
-
-    const btnList = document.createElement("button");
-    btnList.className = "train-sess-card-general-options-list";
-    btnList.textContent = "Ejercicios";
-
-    const imgList = document.createElement("img");
-    imgList.src = "/assets/icons/list.svg";
-    imgList.alt = "Icono de listado";
-    imgList.className = "listIcon";
-
-    btnList.appendChild(imgList);
-    generalOptions.appendChild(btnList);
-
-    const btnAdd = document.createElement("button");
-    btnAdd.className = "train-sess-card-general-options-add";
-    btnAdd.textContent = "Añadir ejercicio";
-
-    const imgAdd = document.createElement("img");
-    imgAdd.src = "/assets/icons/add.svg";
-    imgAdd.alt = "Icono de añadir";
-    imgAdd.className = "addIcon";
-
-    btnAdd.appendChild(imgAdd);
-    generalOptions.appendChild(btnAdd);
-
-    const btnDelete = document.createElement("button");
-    btnDelete.className = "train-sess-card-general-options-del";
-    btnDelete.textContent = "Borrar rutina";
-
-    const imgDelete = document.createElement("img");
-    imgDelete.src = "/assets/icons/trash.svg";
-    imgDelete.alt = "Icono de borrar";
-    imgDelete.className = "trashIcon";
-
-    btnDelete.appendChild(imgDelete);
-    generalOptions.appendChild(btnDelete);
-
-    trainingSessionCardContainer.prepend(generalOptions);
-
-    const exercisesPicker = createExercisePicker(trainingSessionData.sessionExercises)
-
-    generalOptions.addEventListener('click', (e) => {
-        const element = e.target;
-
-        if (element.classList.contains('train-sess-card-general-options-list')) {
-            exercisesPicker.show();
+            case "info": {
+                const tooltip = trainingSessionCardContainer.querySelector(".train-sess-card-info-tooltip")
+                tooltip.classList.toggle("hide")
+                break;
+            }
+            case "next": {
+                goToExercise("next")
+                break;
+            }
+            case "previous": {
+                goToExercise("previous")
+                break;
+            }
+            case "delete": {
+                break;
+            }
+            case "unit": {
+                toogleUnit(elemento);
+                break;
+            }
+            case "serie": {
+                addSerie();
+                break;
+            }
+            default: {
+                return;
+            }
         }
     })
 
-    const card = trainingSessionCardContainer.querySelector(".train-sess-card");
-    card.addEventListener("beforeinput", (e) => {
-        const element = e.target;
-        if (element.classList.contains("train-sess-card-input-intensity") ||
-            element.classList.contains("train-sess-card-input-rir")
-        ) {
-            // Valor actual
-            const currentValue = element.value;
-            // Valor que quedaría tras la entrada
-            const newValue =
-                e.inputType === "deleteContentBackward" || e.inputType === "deleteContentForward"
-                    ? currentValue.slice(0, -1)
-                    : currentValue + e.data;
+    function goToExercise(direction) {
+        const max = trainingSessionData.sessionExercises.length - 1;
 
-            // Permitir dejar vacío
-            if (newValue === "") return;
+        indiceEjercicio =
+            direction === "next"
+                ? indiceEjercicio === max ? 0 : indiceEjercicio + 1
+                : indiceEjercicio === 0 ? max : indiceEjercicio - 1;
+        renderCard()
+    }
 
-            // Validar número del 0 al 10
-            const num = Number(newValue);
-            if (!/^(10|[0-9])$/.test(newValue) || isNaN(num) || num < 0 || num > 10) {
-                e.preventDefault();
+    function addSerie() {
+        const exercise = trainingSessionData.sessionExercises[indiceEjercicio];
+
+        exercise.series.push({
+            weight: null,
+            reps: null,
+            rir: null,
+            intensity: null
+        });
+        renderCard()
+        focusLastWeightInput()
+    }
+
+    function focusLastWeightInput() {
+        // Esperamos al siguiente repaint del DOM
+        requestAnimationFrame(() => {
+            const weightInputs = trainingSessionCardContainer.querySelectorAll(
+                ".train-sess-card-input-weight"
+            );
+
+            const lastInput = weightInputs[weightInputs.length - 1];
+            if (lastInput) {
+                lastInput.focus();
             }
-
-        }
-
-    })
-
-    const buttons = trainingSessionCardContainer.querySelector(".train-sess-card-buttons");
-    Array.from(buttons.children).forEach((button) => {
-        button.addEventListener("click", (event) => {
-            console.log(3)
-            const elemento = event.target;
-            switch (elemento.dataset.action) {
-                case "next": {
-                    if (indiceEjercicio === trainingSessionData.sessionExercises.length - 1) {
-                        indiceEjercicio = 0;
-                        break;
-                    }
-                    indiceEjercicio++;
-                    break;
-                }
-                case "previous": {
-                    if (indiceEjercicio === 0) {
-                        indiceEjercicio = trainingSessionData.sessionExercises.length -1;
-                        return
-                    }
-                    indiceEjercicio--;
-                    break;
-                }
-                case "delete":{
-                    break;
-                }
-                default: {
-                    return;
-                }
-            }
-            console.log(indiceEjercicio);
-            renderCard()
-        })
-    })
+        });
+    }
 
 //   try {
 //     const routineDays = await fetchRoutineDays();
@@ -229,7 +212,7 @@ function renderSerie(serie, index) {
              value="${serie.weight ?? ''}">
 
       <div class="train-sess-card-units-container">
-        <p class="train-sess-card-units" data-unit="Kg">Kg</p>
+        <p class="train-sess-card-units" data-action="unit" data-unit="Kg">Kg</p>
       </div>
 
       <input class="train-sess-card-input-reps"
@@ -248,4 +231,14 @@ function renderSerie(serie, index) {
              value="${serie.intensity ?? ''}">
     </div>
   `;
+}
+
+function toogleUnit(elemento) {
+    if (elemento.dataset.unit === "Kg") {
+        elemento.dataset.unit = "Lb";
+        elemento.textContent = "Lb"
+    } else {
+        elemento.dataset.unit = "Kg";
+        elemento.textContent = "Kg"
+    }
 }
