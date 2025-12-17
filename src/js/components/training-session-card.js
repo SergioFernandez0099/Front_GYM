@@ -1,14 +1,17 @@
-import {fetchTrainingSession} from "../services/api.js";
-import {createExercisePicker} from "../modals/exercise-picker.js";
+import {fetchExercises, fetchTrainingSession} from "../services/api.js";
+import {createExerciseSort} from "../modals/exercise-sort.js";
 import {validarNumero10} from "../../utils/validators.js";
+import {createExercisePicker} from "../modals/exercise-picker.js";
 
 
 export async function trainingSessionCard(sessionId) {
 
     const trainingSessionData = await fetchTrainingSession(sessionId);
+    const exercisesData = await fetchExercises();
     let indiceEjercicio = 0;
 
-    const exercisesPicker = createExercisePicker(trainingSessionData.sessionExercises)
+    const exercisesSort = createExerciseSort(trainingSessionData.sessionExercises)
+    const exercisePicker = createExercisePicker(exercisesData);
 
     const trainingSessionCardContainer = document.createElement("div");
     trainingSessionCardContainer.className = "train-sess-card-container";
@@ -28,7 +31,7 @@ export async function trainingSessionCard(sessionId) {
                     <img src="/assets/icons/list.svg" alt="Icono de listado" class="listIcon">
                 </button>
         
-                <button class="train-sess-card-general-options-add" data-action="add-exercise">
+                <button class="train-sess-card-general-options-add" data-action="exercise">
                     Añadir ejercicio
                     <img src="/assets/icons/add.svg" alt="Icono de añadir" class="addIcon">
                 </button>
@@ -106,7 +109,11 @@ export async function trainingSessionCard(sessionId) {
         if (!elemento) return;
         switch (elemento.dataset.action) {
             case "list": {
-                exercisesPicker.show();
+                exercisesSort.show();
+                break;
+            }
+            case "exercise": {
+                exercisePicker.show();
                 break;
             }
             case "info": {

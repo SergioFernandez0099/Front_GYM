@@ -20,4 +20,5 @@
 @import './components/routine-set-card.css';
 @import './components/training-session-card.css';
 @import 'modals/year-picker.css';
+@import 'modals/exercise-sort.css';
 @import 'modals/exercise-picker.css';

@@ -1,156 +1,121 @@
 export function createExercisePicker(exercises) {
+
+    console.log(exercises);
+    // ===== Modal =====
     const modal = document.createElement('div');
     modal.className = 'exercise-picker-modal';
 
-    const container = document.createElement('div');
-    container.className = 'exercise-picker-container';
-    modal.appendChild(container);
+    modal.innerHTML = `
+    <div class="exercise-picker-container">
 
-    // Checkbox para activar ordenación
-    const reorderLabel = document.createElement('label');
-    reorderLabel.className = 'reorder-label';
+      <h3>Seleccionar ejercicio</h3>
 
-    const labelContainer = document.createElement('div');
-    labelContainer.className = 'label-container';
+      <div class="exercise-search">
+        <input
+          type="text"
+          class="exercise-input"
+          placeholder="Nombre del ejercicio..."
+          autocomplete="off"
+        />
+        <div class="exercise-suggestions hide"></div>
+      </div>
 
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.id = 'enable-reorder';
+    </div>
+  `;
 
-    reorderLabel.appendChild(checkbox);
-    reorderLabel.append('Ordenar');
+    document.body.appendChild(modal);
 
-    const saveButton = document.createElement('button');
-    saveButton.className = 'exercise-picker-save hide ';
-    saveButton.textContent = 'Guardar';
+    // ===== Elementos =====
+    const input = modal.querySelector('.exercise-input');
+    const suggestions = modal.querySelector('.exercise-suggestions');
 
-    labelContainer.appendChild(reorderLabel);
-    labelContainer.appendChild(saveButton);
+    // ===== Lógica de búsqueda =====
+    input.addEventListener('input', () => {
+        const value = input.value.trim().toLowerCase();
 
-    container.appendChild(labelContainer);
-
-    // Lista de ejercicios
-    const list = document.createElement('div');
-    list.className = 'exercise-picker-list';
-    container.appendChild(list);
-
-    exercises.forEach(exercise => {
-        const itemContainer = document.createElement('div');
-        itemContainer.className = 'exercise-item-container';
-        const item = document.createElement('div');
-        const span = document.createElement('span');
-        span.className = 'exercise-span';
-        span.textContent = "☰";
-        item.className = 'exercise-item';
-        item.textContent = exercise.exercise.name;
-        item.draggable = false;
-        itemContainer.appendChild(span);
-        itemContainer.appendChild(item);
-        list.appendChild(itemContainer);
-    });
-
-    // Activar / desactivar drag
-    checkbox.addEventListener('change', () => {
-        const items = list.querySelectorAll('.exercise-item-container');
-        items.forEach(item => {
-            console.log(item)
-            item.draggable = checkbox.checked
-            item.querySelector(".exercise-span").classList.toggle('show');
-            if (checkbox.checked) {
-                showSaveButton();
-            } else {
-                hideSaveButton();
-            }
-        });
-    });
-
-    function showSaveButton() {
-        saveButton.classList.remove('hide');
-        void saveButton.offsetWidth; // forzar reflow
-        saveButton.classList.add('show');
-    }
-
-    function hideSaveButton() {
-        saveButton.classList.remove('show');
-
-        // Esperar a que termine la transición antes de ocultar completamente
-        saveButton.addEventListener('transitionend', function handler() {
-            saveButton.classList.add('hide'); // ahora ya queda fuera de la vista
-            saveButton.removeEventListener('transitionend', handler);
-        });
-    }
-
-    // Drag & drop
-    let dragged = null;
-
-    list.addEventListener('dragstart', e => {
-        if (!checkbox.checked) return;
-
-        dragged = e.target;
-        e.dataTransfer.setData('text/plain', '');
-        e.dataTransfer.effectAllowed = 'move';
-
-        dragged.classList.add('dragging');
-    });
-
-    list.addEventListener('dragend', () => {
-        if (!dragged) return;
-
-        dragged.classList.remove('dragging');
-        dragged = null;
-    });
-
-    list.addEventListener('dragover', e => {
-        if (!checkbox.checked || !dragged) return;
-
-        e.preventDefault();
-        const after = getDragAfterElement(list, e.clientY);
-
-        if (after == null) {
-            list.appendChild(dragged);
-        } else {
-            list.insertBefore(dragged, after);
+        if (!value) {
+            hideSuggestions();
+            return;
         }
+
+        const matches = exercises
+            .filter(e => e.name.toLowerCase().includes(value))
+            .slice(0, 5);
+
+        if (matches.length === 0) {
+            hideSuggestions();
+            return;
+        }
+
+        showSuggestions(matches);
     });
 
-    function getDragAfterElement(container, y) {
-        const elements = [
-            ...container.querySelectorAll('.exercise-item-container:not(.dragging)')
-        ];
+    // ===== Click en sugerencia =====
+    suggestions.addEventListener('click', e => {
+        if (!e.target.classList.contains('exercise-suggestion')) return;
 
-        return elements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
+        input.value = e.target.textContent;
+        hideSuggestions();
+    });
 
-            if (offset < 0 && offset > closest.offset) {
-                return {offset, element: child};
-            }
-            return closest;
-        }, {offset: Number.NEGATIVE_INFINITY}).element;
-    }
+    // ===== Ocultar al perder foco =====
+    input.addEventListener('blur', () => {
+        setTimeout(hideSuggestions, 150);
+    });
 
+    // ===== Mostrar / ocultar modal =====
     function show() {
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
-        document.body.style.pointerEvents = 'none';
-        modal.style.pointerEvents = 'auto';
     }
 
     function hide() {
         modal.classList.remove('show');
         document.body.style.overflow = '';
-        document.body.style.pointerEvents = '';
+        hideSuggestions();
+        input.value = '';
+    }
+
+    function showSuggestions(items) {
+        suggestions.classList.remove('hide');
+
+        suggestions.innerHTML = items
+            .map(e => `
+            <div 
+              class="exercise-suggestion" 
+              data-id="${e.id}"
+            >
+              ${e.name}
+            </div>
+        `)
+            .join('');
+
+        // Reset forzado
+        suggestions.classList.remove('show');
+        void suggestions.offsetHeight;
+
+        suggestions.classList.add('show');
+    }
+
+    function hideSuggestions() {
+        if (!suggestions.classList.contains('show')) return;
+
+        suggestions.classList.remove('show');
+
+        const handler = () => {
+            suggestions.classList.add('hide');
+            suggestions.innerHTML = '';
+            suggestions.removeEventListener('transitionend', handler);
+        };
+
+        suggestions.addEventListener('transitionend', handler);
     }
 
     modal.addEventListener('click', e => {
         if (e.target === modal) {
-            hide()
-            checkbox.checked = false;
-            hideSaveButton();
+            hide();
         }
     });
-
-    document.body.appendChild(modal);
 
     return {
         container: modal,
