@@ -101,34 +101,34 @@ export function hideLoader() {
     document.getElementById("loader-overlay").classList.add("hidden");
 }
 
-export function openConfirmModal(title, onConfirm) {
-    const modal = document.getElementById("confirmModal");
-
-    const cancelBtn = modal.querySelector(".btn-cancel");
-    const confirmBtn = modal.querySelector(".btn-delete");
-    const modelTitle = modal.querySelector(".modal-title");
-
-    modelTitle.textContent = title;
-
-    modal.classList.add("show");
-
-    // Cerrar si se hace clic fuera del modal
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) closeConfirmModal();
-    });
-
-    cancelBtn.onclick = closeConfirmModal;
-
-    confirmBtn.onclick = async () => {
-        closeConfirmModal();
-        await onConfirm();
-    };
-}
-
-function closeConfirmModal() {
-    const modal = document.getElementById("confirmModal");
-    modal.classList.remove("show");
-}
+// export function openConfirmModal(title, onConfirm) {
+//     const modal = document.getElementById("confirmModal");
+//
+//     const cancelBtn = modal.querySelector(".btn-cancel");
+//     const confirmBtn = modal.querySelector(".btn-delete");
+//     const modelTitle = modal.querySelector(".modal-title");
+//
+//     modelTitle.textContent = title;
+//
+//     modal.classList.add("show");
+//
+//     // Cerrar si se hace clic fuera del modal
+//     modal.addEventListener("click", (e) => {
+//         if (e.target === modal) closeConfirmModal();
+//     });
+//
+//     cancelBtn.onclick = closeConfirmModal;
+//
+//     confirmBtn.onclick = async () => {
+//         closeConfirmModal();
+//         await onConfirm();
+//     };
+// }
+//
+// function closeConfirmModal() {
+//     const modal = document.getElementById("confirmModal");
+//     modal.classList.remove("show");
+// }
 
 export function adjustAppHeight() {
     requestAnimationFrame(() => {

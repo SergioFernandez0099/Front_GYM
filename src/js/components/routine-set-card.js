@@ -2,7 +2,6 @@ import {
     clearErrorBorder,
     findImageByName,
     glowEffect,
-    openConfirmModal,
     shakeEffect,
     showErrorBorder,
     toggleEditIcon
@@ -229,8 +228,10 @@ function setUpSetCard(article, set) {
         trashButton.addEventListener("click", async () => {
             // Evita doble clics
             trashButton.disabled = true;
+            const confirmDialog = createConfirmDialog();
 
-            openConfirmModal("¿Eliminar ejercicio?", async () => {
+            const confirmed = await confirmDialog.show("¿Eliminar ejercicio?");
+            if (confirmed) {
                 try {
                     const setId = set.id; // Suponiendo que tus cards existentes tengan un data-id
                     if (!setId) {
@@ -252,7 +253,7 @@ function setUpSetCard(article, set) {
                     shakeEffect(article);
                     trashButton.disabled = false;
                 }
-            });
+            }
             trashButton.disabled = false;
         });
     }

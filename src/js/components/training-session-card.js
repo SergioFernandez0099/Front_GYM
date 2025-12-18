@@ -1,7 +1,13 @@
-import {createTrainingSessionExercise, fetchExercises, fetchTrainingSession} from "../services/api.js";
+import {
+    createTrainingSessionExercise,
+    deleteTrainingSessionExercise,
+    fetchExercises,
+    fetchTrainingSession
+} from "../services/api.js";
 import {createExerciseSort} from "../modals/exercise-sort.js";
 import {validarNumero10} from "../../utils/validators.js";
 import {createExercisePicker} from "../modals/exercise-picker.js";
+import {createConfirmDialog} from "../modals/confirmation-dialog.js";
 
 
 export async function trainingSessionCard(sessionId) {
@@ -20,7 +26,7 @@ export async function trainingSessionCard(sessionId) {
 
     function renderCard() {
         const exerciseData =
-            trainingSessionData.sessionExercises[indiceEjercicio];
+            getExercise();
 
         const seriesHTML = exerciseData.series
             .map((serie, index) => renderSerie(serie, index))
@@ -59,8 +65,8 @@ export async function trainingSessionCard(sessionId) {
                 <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
             </div>
             <div class="train-sess-card-header">
-                <img src="${trainingSessionData.sessionExercises[indiceEjercicio].exercise.imageUrl}" alt="" class="train-sess-card-image">
-                <h2 class="train-sess-card-title">${trainingSessionData.sessionExercises[indiceEjercicio].exercise.name}</h2>
+                <img src="${getExercise().exercise.imageUrl}" alt="" class="train-sess-card-image">
+                <h2 class="train-sess-card-title">${getExercise().exercise.name}</h2>
             </div>
             <div class="train-sess-card-description-container">
                 <textarea maxlength="100" placeholder="Escribe algún detalle..." class="train-sess-card-description">Top set en la primera</textarea>
@@ -72,7 +78,7 @@ export async function trainingSessionCard(sessionId) {
             <hr>
             <div class="train-sess-card-buttons">
                 <button class="train-sess-card-buttons-previous" data-action="previous">Anterior</button>
-                <button class="train-sess-card-buttons-delete" data-action="delete">Borrar ejercicio</button>
+                <button class="train-sess-card-buttons-delete" data-action="delete-exercise">Borrar ejercicio</button>
                 <button class="train-sess-card-buttons-next" data-action="next">Siguiente</button>
             </div>
           </div>
@@ -112,7 +118,7 @@ export async function trainingSessionCard(sessionId) {
         }
     });
 
-    trainingSessionCardContainer.addEventListener("click", (event) => {
+    trainingSessionCardContainer.addEventListener("click", async (event) => {
         const elemento = event.target.closest("[data-action]");
         if (!elemento) return;
         switch (elemento.dataset.action) {
@@ -137,7 +143,8 @@ export async function trainingSessionCard(sessionId) {
                 goToExercise("previous")
                 break;
             }
-            case "delete": {
+            case "delete-exercise": {
+                await deleteExercise()
                 break;
             }
             case "unit": {
@@ -164,8 +171,12 @@ export async function trainingSessionCard(sessionId) {
         renderCard()
     }
 
+    function deleteSerie() {
+
+    }
+
     function addSerie() {
-        const exercise = trainingSessionData.sessionExercises[indiceEjercicio];
+        const exercise = getExercise();
 
         exercise.series.push({
             weight: null,
@@ -175,6 +186,36 @@ export async function trainingSessionCard(sessionId) {
         });
         renderCard()
         focusLastWeightInput()
+    }
+
+    function deleteSession(){
+
+    }
+
+    async function deleteExercise(){
+        const confirmDialog = createConfirmDialog();
+        console.log(3)
+
+        const confirmed = await confirmDialog.show("¿Estás seguro de borrar este ejercicio?");
+        if (confirmed) {
+            console.log(3)
+            const exercise = getExercise();
+            console.log(exercise.id);
+            const result =  await deleteTrainingSessionExercise(sessionId, exercise.id);
+
+            if (result && result.ok) {
+                await reloadData();
+                renderCard()
+            } else {
+                console.warn("No se pudo añadir el ejercicio", result);
+            }
+        } else {
+            console.log("Acción cancelada");
+        }
+    }
+
+    function getExercise() {
+        return trainingSessionData.sessionExercises[indiceEjercicio];
     }
 
     function focusLastWeightInput() {

@@ -213,9 +213,12 @@ export async function createTrainingSessionExercise(sessionId,setData) {
   );
 }
 
-
-
-
+export async function deleteTrainingSessionExercise(sessionId,exerciseInSessionId) {
+  return await fetchSend(
+      `/users/${getCurrentUserId()}/sessions/${sessionId}/exercises/${exerciseInSessionId}`,
+      "DELETE",
+  );
+}
 
 // ---------------------
 // GETs sin cache para rutinas
