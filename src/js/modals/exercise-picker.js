@@ -1,6 +1,5 @@
-export function createExercisePicker(exercises) {
+export function createExercisePicker(exercises, addExercise) {
 
-    console.log(exercises);
     // ===== Modal =====
     const modal = document.createElement('div');
     modal.className = 'exercise-picker-modal';
@@ -8,7 +7,7 @@ export function createExercisePicker(exercises) {
     modal.innerHTML = `
     <div class="exercise-picker-container">
 
-      <h3>Seleccionar ejercicio</h3>
+      <h3 class="exercise-picker-label">Selecciona un ejercicio</h3>
 
       <div class="exercise-search">
         <input
@@ -54,8 +53,8 @@ export function createExercisePicker(exercises) {
     suggestions.addEventListener('click', e => {
         if (!e.target.classList.contains('exercise-suggestion')) return;
 
-        input.value = e.target.textContent;
-        hideSuggestions();
+        addExercise(e.target.dataset.id);
+        hide();
     });
 
     // ===== Ocultar al perder foco =====
@@ -67,6 +66,7 @@ export function createExercisePicker(exercises) {
     function show() {
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
+        input.focus();
     }
 
     function hide() {

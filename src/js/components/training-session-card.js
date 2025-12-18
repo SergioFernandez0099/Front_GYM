@@ -1,4 +1,4 @@
-import {fetchExercises, fetchTrainingSession} from "../services/api.js";
+import {createTrainingSessionExercise, fetchExercises, fetchTrainingSession} from "../services/api.js";
 import {createExerciseSort} from "../modals/exercise-sort.js";
 import {validarNumero10} from "../../utils/validators.js";
 import {createExercisePicker} from "../modals/exercise-picker.js";
@@ -6,12 +6,14 @@ import {createExercisePicker} from "../modals/exercise-picker.js";
 
 export async function trainingSessionCard(sessionId) {
 
-    const trainingSessionData = await fetchTrainingSession(sessionId);
+    let trainingSessionData = await fetchTrainingSession(sessionId);
     const exercisesData = await fetchExercises();
     let indiceEjercicio = 0;
 
-    const exercisesSort = createExerciseSort(trainingSessionData.sessionExercises)
-    const exercisePicker = createExercisePicker(exercisesData);
+    console.log(trainingSessionData)
+
+    let exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, moveToExercise)
+    const exercisePicker = createExercisePicker(exercisesData, addExercise);
 
     const trainingSessionCardContainer = document.createElement("div");
     trainingSessionCardContainer.className = "train-sess-card-container";
@@ -78,6 +80,12 @@ export async function trainingSessionCard(sessionId) {
     }
 
     renderCard();
+
+    async function reloadData() {
+        trainingSessionData = await fetchTrainingSession(sessionId);
+        exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, moveToExercise)
+        renderCard()
+    }
 
     trainingSessionCardContainer.addEventListener("beforeinput", (e) => {
         const element = e.target;
@@ -181,6 +189,29 @@ export async function trainingSessionCard(sessionId) {
                 lastInput.focus();
             }
         });
+    }
+
+    async function addExercise(id) {
+        try {
+            const result = await createTrainingSessionExercise(sessionId, {
+                exerciseId: Number(id),
+            });
+
+            if (result && result.ok) {
+                indiceEjercicio = trainingSessionData.sessionExercises.length;
+                await reloadData();
+            } else {
+                console.warn("No se pudo añadir el ejercicio", result);
+            }
+        } catch (error) {
+            console.error("Error al añadir el ejercicio:", error);
+        }
+    }
+
+    function moveToExercise(id) {
+        console.log(99)
+        indiceEjercicio = trainingSessionData.sessionExercises.findIndex(x => x.id === id);;
+        renderCard()
     }
 
 //   try {

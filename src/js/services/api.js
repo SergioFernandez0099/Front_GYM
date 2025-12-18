@@ -205,6 +205,17 @@ export async function createTrainingSession(setData) {
     );
 }
 
+export async function createTrainingSessionExercise(sessionId,setData) {
+  return await fetchSend(
+      `/users/${getCurrentUserId()}/sessions/${sessionId}/exercises`,
+      "POST",
+      setData
+  );
+}
+
+
+
+
 
 // ---------------------
 // GETs sin cache para rutinas
@@ -238,4 +249,5 @@ export async function fetchTrainingSessions() {
 export async function fetchTrainingSession(sessionId) {
     return await fetchGet(`/users/${getCurrentUserId()}/sessions/${sessionId}`);
 }
+
 

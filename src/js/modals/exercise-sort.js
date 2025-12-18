@@ -1,4 +1,4 @@
-export function createExerciseSort(exercises) {
+export function createExerciseSort(exercises, moveToExercise) {
     const modal = document.createElement('div');
     modal.className = 'exercise-sort-modal';
 
@@ -34,9 +34,14 @@ export function createExerciseSort(exercises) {
     list.className = 'exercise-sort-list';
     container.appendChild(list);
 
+    const initialOrder = exercises.map(e => e.order);
+
+    console.log(exercises)
+
     exercises.forEach(exercise => {
         const itemContainer = document.createElement('div');
         itemContainer.className = 'exercise-item-container';
+        itemContainer.setAttribute('data-id', exercise.id);
         const item = document.createElement('div');
         const span = document.createElement('span');
         span.className = 'exercise-span';
@@ -112,6 +117,41 @@ export function createExerciseSort(exercises) {
             list.insertBefore(dragged, after);
         }
     });
+
+    list.addEventListener('click', (e) => {
+        // Solo actuar si no estamos en modo ordenar
+        if (!checkbox.checked) {
+            // Buscar el contenedor del ejercicio clicado
+            const itemContainer = e.target.closest('.exercise-item-container');
+            if (!itemContainer) return;
+
+            const exercise = exercises.find(e => e.id === Number(itemContainer.dataset.id));
+            if (exercise) {
+                moveToExercise(exercise.id); // tu función para seleccionar ejercicio
+                hide()
+            }
+        }
+    });
+
+    saveButton.addEventListener('click', () => {
+        const currentOrder = [...list.querySelectorAll('.exercise-item')].map(
+            item => exercises.find(e => e.exercise.name === item.textContent).order
+        );
+
+        // Verificar si hubo cambios
+        const changed = currentOrder.some((id, i) => id !== initialOrder[i]);
+        if (changed) {
+            actualizarOrden(currentOrder); // tu función para actualizar el orden
+        }
+
+        // Desactivar ordenación
+        checkbox.checked = false;
+        hideSaveButton();
+    });
+
+    function actualizarOrden(currentOrder) {
+        console.log(34)
+    }
 
     function getDragAfterElement(container, y) {
         const elements = [

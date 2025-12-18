@@ -29,6 +29,7 @@
 
 .exercise-search {
     position: relative;
+    margin-top: 0.5rem;
 }
 
 .exercise-input {
@@ -80,4 +81,8 @@
 
 .exercise-suggestion:hover {
     background: #f0f0f0;
+}
+
+.exercise-picker-label {
+    text-align: center;
 }
