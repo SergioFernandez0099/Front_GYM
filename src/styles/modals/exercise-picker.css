@@ -40,10 +40,6 @@
     border: 2px solid gray;
 }
 
-.exercise-input:focus {
-
-}
-
 .exercise-suggestions {
     margin-top: 0.6rem;
     display: flex;

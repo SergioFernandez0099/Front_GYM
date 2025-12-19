@@ -205,6 +205,13 @@ export async function createTrainingSession(setData) {
     );
 }
 
+export async function deleteTrainingSession(sessionId) {
+  return await fetchSend(
+      `/users/${getCurrentUserId()}/sessions/${sessionId}`,
+      "DELETE",
+  );
+}
+
 export async function createTrainingSessionExercise(sessionId,setData) {
   return await fetchSend(
       `/users/${getCurrentUserId()}/sessions/${sessionId}/exercises`,

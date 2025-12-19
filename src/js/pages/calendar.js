@@ -3,10 +3,18 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import esLocale from "@fullcalendar/core/locales/es";
 import {createYearPicker} from "../modals/year-picker.js";
-import {createTrainingSession, fetchTrainingSessions} from "../services/api.js";
+import {
+    createTrainingSession,
+    deleteTrainingSession,
+    fetchRoutineDays,
+    fetchTrainingSessions
+} from "../services/api.js";
 import {safeNavigate} from "../router.js";
+import {createRoutinePicker} from "../modals/routine-picker.js";
+import {openConfirmModal} from "../../utils/helpers.js";
 
 export async function trainingSchedule() {
+
 
     const calendarContainer = document.createElement("div");
     calendarContainer.className = "calendar-container";
@@ -16,6 +24,11 @@ export async function trainingSchedule() {
     calendarContainer.appendChild(calendarEl);
 
     const sessionsData = await fetchTrainingSessions();
+    const routinesData = await fetchRoutineDays();
+
+    let dateSelected = null;
+
+    const routinePicker = createRoutinePicker(routinesData, createSession)
 
     const sessionEvents = sessionsData.map(session => ({
         id: session.id,
@@ -24,6 +37,7 @@ export async function trainingSchedule() {
         extendedProps: {imageUrl: "favicon.png"},
     }));
 
+    console.log(sessionEvents);
     const calendar = new Calendar(calendarEl, {
         plugins: [dayGridPlugin, interactionPlugin],
         initialView: "dayGridMonth",
@@ -42,10 +56,9 @@ export async function trainingSchedule() {
 
             // Inicio del press
             info.el.addEventListener("mousedown", () => {
-                info._pressTimer = setTimeout(() => {
+                info._pressTimer = setTimeout(async () => {
                     info._longPress = true;
-                    // TODO mostrar modal de borrado
-                    alert("LONG PRESS en evento " + info.event.id);
+                    await deleteSession(info.event.id)
                 }, 600);
             });
 
@@ -75,8 +88,8 @@ export async function trainingSchedule() {
             safeNavigate(`/sessions/${sessionId}`);
         },
         dateClick: async function (info) {
-            const sessionId = await crearSessionEntrenamiento(1, info.dateStr);
-            safeNavigate(`/sessions/${sessionId}`);
+            dateSelected = info.dateStr;
+            await routinePicker.show()
         }
     });
 
@@ -108,19 +121,37 @@ export async function trainingSchedule() {
         }
     }
 
+    async function createSession(routineId) {
+        const data = {
+            routineId: Number(routineId),
+            date: dateSelected,
+        }
+        const result = await createTrainingSession(data)
+
+        if (result && result.ok) {
+            safeNavigate(`/sessions/${result.id}`);
+        }
+        console.error("No se ha podido crear la sesión")
+    }
+
+    async function deleteSession(sessionId) {
+        const confirmed = await openConfirmModal("¿Estás seguro de borrar esta sesión?");
+        if (confirmed) {
+            const result = await deleteTrainingSession(sessionId);
+
+            if (result && result.ok) {
+                safeNavigate('/sessions')
+            } else {
+                console.warn("No se pudo borrar el ejercicio", result);
+            }
+        } else {
+            console.log("Acción cancelada");
+        }
+    }
+
     calendar.setOption("datesSet", attachTitleClick);
     attachTitleClick();
 
     return calendarContainer;
 }
 
-async function crearSessionEntrenamiento(routineId, date) {
-
-    const data = {
-        routineId: routineId,
-        date: date,
-    }
-    const result = await createTrainingSession(routineId, data)
-
-    return result.id;
-}

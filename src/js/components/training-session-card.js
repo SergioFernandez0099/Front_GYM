@@ -1,13 +1,14 @@
 import {
     createTrainingSessionExercise,
+    deleteTrainingSession,
     deleteTrainingSessionExercise,
     fetchExercises,
     fetchTrainingSession
 } from "../services/api.js";
 import {createExerciseSort} from "../modals/exercise-sort.js";
-import {validarNumero10} from "../../utils/validators.js";
 import {createExercisePicker} from "../modals/exercise-picker.js";
-import {createConfirmDialog} from "../modals/confirmation-dialog.js";
+import {openConfirmModal} from "../../utils/helpers.js";
+import {safeNavigate} from "../router.js";
 
 
 export async function trainingSessionCard(sessionId) {
@@ -16,9 +17,14 @@ export async function trainingSessionCard(sessionId) {
     const exercisesData = await fetchExercises();
     let indiceEjercicio = 0;
 
-    console.log(trainingSessionData)
+    let exercisesSort = null;
+    let pressTimer;
 
-    let exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, moveToExercise)
+    console.log(trainingSessionData)
+    if (trainingSessionData.sessionExercises.length !== 0) {
+        exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, moveToExercise)
+    }
+
     const exercisePicker = createExercisePicker(exercisesData, addExercise);
 
     const trainingSessionCardContainer = document.createElement("div");
@@ -28,13 +34,16 @@ export async function trainingSessionCard(sessionId) {
         const exerciseData =
             getExercise();
 
-        const seriesHTML = exerciseData.series
-            .map((serie, index) => renderSerie(serie, index))
-            .join("");
+        let seriesHTML = null;
+        if (exercisesSort) {
+            seriesHTML = exerciseData.series
+                .map((serie, index) => renderSerie(serie, index))
+                .join("");
+        }
 
         trainingSessionCardContainer.innerHTML = `
             <div class="train-sess-card-general-options">
-                <button class="train-sess-card-general-options-list" data-action="list">
+                <button class="train-sess-card-general-options-list" ${exercisesSort ? 'enabled' : "disabled"} data-action="list">
                     Ejercicios
                     <img src="/assets/icons/list.svg" alt="Icono de listado" class="listIcon">
                 </button>
@@ -44,15 +53,15 @@ export async function trainingSessionCard(sessionId) {
                     <img src="/assets/icons/add.svg" alt="Icono de añadir" class="addIcon">
                 </button>
         
-                <button class="train-sess-card-general-options-del" data-action="delete-routine">
-                    Borrar rutina
+                <button class="train-sess-card-general-options-del" data-action="delete-session">
+                    Borrar sesión
                     <img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
                 </button>
             </div>
 
           <div class="train-sess-card">
-            <div class="train-sess-card-exercise-num">
-                <p>${indiceEjercicio + 1}</p>
+            <div class="train-sess-card-exercise-num ${exercisesSort ? '' : 'hide'}">
+                <p>${getExercise()?.order ?? ''}</p>
             </div>
             <div class="train-sess-card-icon train-sess-card-save-icon">
                 <img src="/assets/icons/save.svg" alt="Icono de guardado" class="saveIcon">
@@ -65,21 +74,21 @@ export async function trainingSessionCard(sessionId) {
                 <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
             </div>
             <div class="train-sess-card-header">
-                <img src="${getExercise().exercise.imageUrl}" alt="" class="train-sess-card-image">
-                <h2 class="train-sess-card-title">${getExercise().exercise.name}</h2>
+                <img src="${getExercise()?.exercise.imageUrl ?? '/assets/images/snorlax.png'}" alt="" class="train-sess-card-image">
+                <h2 class="train-sess-card-title">${getExercise()?.exercise.name ?? "Añade un ejercicio"}</h2>
             </div>
             <div class="train-sess-card-description-container">
                 <textarea maxlength="100" placeholder="Escribe algún detalle..." class="train-sess-card-description">Top set en la primera</textarea>
             </div>
             <div class="train-sess-card-series-list">
-                ${seriesHTML}
+                ${seriesHTML ?? ""}
             </div>
-            <button class="train-sess-card-add-serie" data-action="serie">Añadir serie</button>
+            <button class="train-sess-card-add-serie" ${exercisesSort ? 'enabled' : "disabled"}  data-action="serie">Añadir serie</button>
             <hr>
             <div class="train-sess-card-buttons">
-                <button class="train-sess-card-buttons-previous" data-action="previous">Anterior</button>
-                <button class="train-sess-card-buttons-delete" data-action="delete-exercise">Borrar ejercicio</button>
-                <button class="train-sess-card-buttons-next" data-action="next">Siguiente</button>
+                <button class="train-sess-card-buttons-previous" ${exercisesSort ? 'enabled' : "disabled"}  data-action="previous">Anterior</button>
+                <button class="train-sess-card-buttons-delete" ${exercisesSort ? 'enabled' : "disabled"} data-action="delete-exercise">Borrar ejercicio</button>
+                <button class="train-sess-card-buttons-next" ${exercisesSort ? 'enabled' : "disabled"}  data-action="next">Siguiente</button>
             </div>
           </div>
   `;
@@ -89,9 +98,42 @@ export async function trainingSessionCard(sessionId) {
 
     async function reloadData() {
         trainingSessionData = await fetchTrainingSession(sessionId);
-        exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, moveToExercise)
+        exercisesSort = trainingSessionData.sessionExercises.length !== 0
+            ? createExerciseSort(trainingSessionData.sessionExercises, moveToExercise)
+            : null;
+
         renderCard()
     }
+
+
+    const startPress = (target) => {
+        pressTimer = setTimeout(() => {
+            const id = target.closest(".train-sess-card-serie").dataset.id;
+            console.log(id)
+            deleteSerie(id)
+        }, 600);
+    };
+
+    const cancelPress = () => {
+        clearTimeout(pressTimer);
+    };
+
+    trainingSessionCardContainer.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains('train-sess-card-serie') || e.target.classList.contains('train-sess-card-serie')
+            || e.target.classList.contains('train-sess-card-serie-num') || e.target.tagName === 'SPAN') {
+            startPress(e.target);
+        }
+    });
+    trainingSessionCardContainer.addEventListener('mouseup', cancelPress);
+    trainingSessionCardContainer.addEventListener('mouseleave', cancelPress);
+
+    trainingSessionCardContainer.addEventListener('touchstart', (e) => {
+        if (e.target.classList.contains('train-sess-card-serie')) {
+            startPress(e.target);
+        }
+    });
+    trainingSessionCardContainer.addEventListener('touchend', cancelPress);
+    trainingSessionCardContainer.addEventListener('touchcancel', cancelPress);
 
     trainingSessionCardContainer.addEventListener("beforeinput", (e) => {
         const element = e.target;
@@ -147,6 +189,10 @@ export async function trainingSessionCard(sessionId) {
                 await deleteExercise()
                 break;
             }
+            case "delete-session": {
+                await deleteSession();
+                break;
+            }
             case "unit": {
                 toogleUnit(elemento);
                 break;
@@ -171,12 +217,17 @@ export async function trainingSessionCard(sessionId) {
         renderCard()
     }
 
-    function deleteSerie() {
-
+    // TODO
+    function deleteSerie(id) {
+        exerciseData.series = exerciseData.series.filter(serie => serie.id !== id);
+        renderCard()
     }
 
+    // TODO
     function addSerie() {
         const exercise = getExercise();
+
+        if (!exercise) return;
 
         exercise.series.push({
             weight: null,
@@ -188,20 +239,28 @@ export async function trainingSessionCard(sessionId) {
         focusLastWeightInput()
     }
 
-    function deleteSession(){
+    async function deleteSession() {
+        const confirmed = await openConfirmModal("¿Estás seguro de borrar esta sesión?");
+        if (confirmed) {
+            const result = await deleteTrainingSession(sessionId);
 
+            if (result && result.ok) {
+                safeNavigate('/sessions')
+            } else {
+                console.warn("No se pudo borrar el ejercicio", result);
+            }
+        } else {
+            console.log("Acción cancelada");
+        }
     }
 
-    async function deleteExercise(){
-        const confirmDialog = createConfirmDialog();
-        console.log(3)
+    async function deleteExercise() {
+        const exercise = getExercise();
 
-        const confirmed = await confirmDialog.show("¿Estás seguro de borrar este ejercicio?");
+        if (!exercise) return;
+        const confirmed = await openConfirmModal("¿Estás seguro de borrar este ejercicio?");
         if (confirmed) {
-            console.log(3)
-            const exercise = getExercise();
-            console.log(exercise.id);
-            const result =  await deleteTrainingSessionExercise(sessionId, exercise.id);
+            const result = await deleteTrainingSessionExercise(sessionId, exercise.id);
 
             if (result && result.ok) {
                 await reloadData();
@@ -251,7 +310,7 @@ export async function trainingSessionCard(sessionId) {
 
     function moveToExercise(id) {
         console.log(99)
-        indiceEjercicio = trainingSessionData.sessionExercises.findIndex(x => x.id === id);;
+        indiceEjercicio = trainingSessionData.sessionExercises.findIndex(x => x.id === id);
         renderCard()
     }
 
@@ -280,7 +339,7 @@ export async function trainingSessionCard(sessionId) {
 
 function renderSerie(serie, index) {
     return `
-    <div class="train-sess-card-serie">
+    <div class="train-sess-card-serie" data-id="${serie.id}">
       <span class="train-sess-card-serie-num">${index + 1}</span>
 
       <img class="train-sess-card-serie-weight-image"

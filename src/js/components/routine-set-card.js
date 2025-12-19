@@ -2,6 +2,7 @@ import {
     clearErrorBorder,
     findImageByName,
     glowEffect,
+    openConfirmModal,
     shakeEffect,
     showErrorBorder,
     toggleEditIcon
@@ -228,9 +229,8 @@ function setUpSetCard(article, set) {
         trashButton.addEventListener("click", async () => {
             // Evita doble clics
             trashButton.disabled = true;
-            const confirmDialog = createConfirmDialog();
 
-            const confirmed = await confirmDialog.show("¿Eliminar ejercicio?");
+            const confirmed = await openConfirmModal("¿Eliminar ejercicio?");
             if (confirmed) {
                 try {
                     const setId = set.id; // Suponiendo que tus cards existentes tengan un data-id

@@ -124,6 +124,7 @@
     width: 5rem;
     height: 5rem;
     object-fit: cover;
+    overflow: visible;
 }
 
 .train-sess-card-serie-weight-image {
@@ -196,7 +197,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 .train-sess-card option {
@@ -268,6 +269,7 @@
     padding: 0.2rem;
     margin: 0.3rem 0.8rem 0 0.8rem;
     color: white;
+    cursor: pointer;
 }
 
 .train-sess-card-description-container {

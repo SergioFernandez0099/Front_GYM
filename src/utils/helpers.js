@@ -101,34 +101,45 @@ export function hideLoader() {
     document.getElementById("loader-overlay").classList.add("hidden");
 }
 
-// export function openConfirmModal(title, onConfirm) {
-//     const modal = document.getElementById("confirmModal");
-//
-//     const cancelBtn = modal.querySelector(".btn-cancel");
-//     const confirmBtn = modal.querySelector(".btn-delete");
-//     const modelTitle = modal.querySelector(".modal-title");
-//
-//     modelTitle.textContent = title;
-//
-//     modal.classList.add("show");
-//
-//     // Cerrar si se hace clic fuera del modal
-//     modal.addEventListener("click", (e) => {
-//         if (e.target === modal) closeConfirmModal();
-//     });
-//
-//     cancelBtn.onclick = closeConfirmModal;
-//
-//     confirmBtn.onclick = async () => {
-//         closeConfirmModal();
-//         await onConfirm();
-//     };
-// }
-//
-// function closeConfirmModal() {
-//     const modal = document.getElementById("confirmModal");
-//     modal.classList.remove("show");
-// }
+export function openConfirmModal(title) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById("confirmModal");
+        const cancelBtn = modal.querySelector(".btn-cancel");
+        const confirmBtn = modal.querySelector(".btn-delete");
+        const modalTitle = modal.querySelector(".modal-title");
+
+        modalTitle.textContent = title;
+        modal.classList.add("show");
+
+        const closeModal = () => {
+            modal.classList.remove("show");
+            // Limpiar eventos para evitar duplicados
+            cancelBtn.onclick = null;
+            confirmBtn.onclick = null;
+            modal.removeEventListener("click", outsideClick);
+        };
+
+        const outsideClick = (e) => {
+            if (e.target === modal) {
+                closeModal();
+                resolve(false);
+            }
+        };
+
+        modal.addEventListener("click", outsideClick);
+
+        cancelBtn.onclick = () => {
+            closeModal();
+            resolve(false);
+        };
+
+        confirmBtn.onclick = () => {
+            closeModal();
+            resolve(true);
+        };
+    });
+}
+
 
 export function adjustAppHeight() {
     requestAnimationFrame(() => {

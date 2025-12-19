@@ -1,8 +1,14 @@
 import {router} from "../router";
-import {clearErrorBorder, glowEffect, shakeEffect, showErrorBorder, toggleEditIcon,} from "../../utils/helpers";
+import {
+    clearErrorBorder,
+    glowEffect,
+    openConfirmModal,
+    shakeEffect,
+    showErrorBorder,
+    toggleEditIcon,
+} from "../../utils/helpers";
 import {validaYSanitiza} from "../../utils/validators";
 import {createRoutine, deleteRoutine, updateRoutine} from "../services/api";
-import {createConfirmDialog} from "../modals/confirmation-dialog.js";
 
 export function RoutineDayCard(day) {
     const article = document.createElement("article");
@@ -98,9 +104,8 @@ export function attachRoutineDayCardEvents(article, day) {
 
     elements.trashButton.addEventListener("click", async (e) => {
         e.stopPropagation();
-        const confirmDialog = createConfirmDialog();
 
-        const confirmed = await confirmDialog.show("¿Eliminar set?");
+        const confirmed = await openConfirmModal("¿Eliminar set?");
         if (confirmed) {
             try {
                 if (!day.id) {
