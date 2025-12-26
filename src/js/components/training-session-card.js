@@ -1,9 +1,12 @@
 import {
     createTrainingSessionExercise,
+    createTrainingSessionSerie,
     deleteTrainingSession,
     deleteTrainingSessionExercise,
+    deleteTrainingSessionSerie,
     fetchExercises,
-    fetchTrainingSession
+    fetchTrainingSession,
+    updateTrainingSessionSerie
 } from "../services/api.js";
 import {createExerciseSort} from "../modals/exercise-sort.js";
 import {createExercisePicker} from "../modals/exercise-picker.js";
@@ -15,14 +18,30 @@ export async function trainingSessionCard(sessionId) {
 
     let trainingSessionData = await fetchTrainingSession(sessionId);
     const exercisesData = await fetchExercises();
+    let originalSeries = new Map();
+
     let indiceEjercicio = 0;
+
+    getExercise().series.forEach((serie) => {
+        originalSeries.set(serie.id, {
+            reps: serie.reps,
+            weight: serie.weight,
+            intensity: serie.intensity,
+            rir: serie.rir,
+            unitId: serie.unit ? serie.unit.id : null
+        });
+    });
+
+    originalSeries.forEach((serie) => {
+        console.log(serie);
+    })
 
     let exercisesSort = null;
     let pressTimer;
 
     console.log(trainingSessionData)
     if (trainingSessionData.sessionExercises.length !== 0) {
-        exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, moveToExercise)
+        exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, sessionId, moveToExercise)
     }
 
     const exercisePicker = createExercisePicker(exercisesData, addExercise);
@@ -63,7 +82,7 @@ export async function trainingSessionCard(sessionId) {
             <div class="train-sess-card-exercise-num ${exercisesSort ? '' : 'hide'}">
                 <p>${getExercise()?.order ?? ''}</p>
             </div>
-            <div class="train-sess-card-icon train-sess-card-save-icon">
+            <div data-action="save" class="train-sess-card-icon train-sess-card-save-icon">
                 <img src="/assets/icons/save.svg" alt="Icono de guardado" class="saveIcon">
             </div>
             <div class="train-sess-card-info-tooltip hide">
@@ -98,8 +117,17 @@ export async function trainingSessionCard(sessionId) {
 
     async function reloadData() {
         trainingSessionData = await fetchTrainingSession(sessionId);
+        getExercise().series.forEach((serie) => {
+            originalSeries.set(serie.id, {
+                reps: serie.reps,
+                weight: serie.weight,
+                intensity: serie.intensity,
+                rir: serie.rir,
+                unitId: serie.unit ? serie.unit.id : null
+            });
+        });
         exercisesSort = trainingSessionData.sessionExercises.length !== 0
-            ? createExerciseSort(trainingSessionData.sessionExercises, moveToExercise)
+            ? createExerciseSort(trainingSessionData.sessionExercises, sessionId, moveToExercise)
             : null;
 
         renderCard()
@@ -109,7 +137,6 @@ export async function trainingSessionCard(sessionId) {
     const startPress = (target) => {
         pressTimer = setTimeout(() => {
             const id = target.closest(".train-sess-card-serie").dataset.id;
-            console.log(id)
             deleteSerie(id)
         }, 600);
     };
@@ -177,6 +204,11 @@ export async function trainingSessionCard(sessionId) {
                 tooltip.classList.toggle("hide")
                 break;
             }
+            case "save": {
+                await guardarSeries();
+                await reloadData()
+                break;
+            }
             case "next": {
                 goToExercise("next")
                 break;
@@ -198,7 +230,7 @@ export async function trainingSessionCard(sessionId) {
                 break;
             }
             case "serie": {
-                addSerie();
+                await addSerie();
                 break;
             }
             default: {
@@ -207,6 +239,61 @@ export async function trainingSessionCard(sessionId) {
         }
     })
 
+    function getSerieFromDOM(serieEl) {
+        const repsValue = serieEl.querySelector(".train-sess-card-input-reps").value;
+        const weightValue = serieEl.querySelector(".train-sess-card-input-weight").value;
+        const intensityValue = serieEl.querySelector(".train-sess-card-input-intensity").value;
+        const rirValue = serieEl.querySelector(".train-sess-card-input-rir").value;
+
+        return {
+            id: Number(serieEl.dataset.id),
+            reps: repsValue !== "" ? Number(repsValue) : null,
+            weight: weightValue !== "" ? Number(weightValue) : null,
+            rir: rirValue !== "" ? Number(rirValue) : null,
+            intensity: intensityValue !== "" ? Number(intensityValue) : null,
+            unitId: getUnitIdFromDOM(serieEl)
+        };
+    }
+
+
+    function getSerieDiff(original, current) {
+        const diff = {id: current.id};
+
+        if (original.reps !== current.reps) diff.reps = current.reps;
+        if (original.weight !== current.weight) diff.weight = current.weight;
+        if (original.intensity !== current.intensity) diff.intensity = current.intensity;
+        if (original.rir !== current.rir) diff.rir = current.rir;
+        if (original.unitId !== current.unitId) diff.unitId = current.unitId;
+
+        // Si solo tiene id → no hay cambios
+        return Object.keys(diff).length > 1 ? diff : null;
+    }
+
+    function collectModifiedSeries() {
+        const seriesEls = document.querySelectorAll(".train-sess-card-serie");
+        const modified = [];
+
+        seriesEls.forEach((serieEl) => {
+            const current = getSerieFromDOM(serieEl);
+            const original = originalSeries.get(current.id);
+
+            if (!original) return; // serie nueva → otro endpoint
+
+            const diff = getSerieDiff(original, current);
+            if (diff) {
+                console.log(JSON.stringify(diff, null, 2));
+                modified.push(diff);
+            }
+        });
+
+        return modified;
+    }
+
+    function getUnitIdFromDOM(serieEl) {
+        const unitEl = serieEl.querySelector(".train-sess-card-units");
+        return unitEl ? Number(unitEl.dataset.unitId) : null;
+    }
+
     function goToExercise(direction) {
         const max = trainingSessionData.sessionExercises.length - 1;
 
@@ -214,29 +301,76 @@ export async function trainingSessionCard(sessionId) {
             direction === "next"
                 ? indiceEjercicio === max ? 0 : indiceEjercicio + 1
                 : indiceEjercicio === 0 ? max : indiceEjercicio - 1;
+
+        getExercise().series.forEach((serie) => {
+            originalSeries.set(serie.id, {
+                reps: serie.reps,
+                weight: serie.weight,
+                intensity: serie.intensity,
+                rir: serie.rir,
+                unitId: serie.unit ? serie.unit.id : null
+            });
+        });
         renderCard()
     }
 
-    // TODO
-    function deleteSerie(id) {
-        exerciseData.series = exerciseData.series.filter(serie => serie.id !== id);
-        renderCard()
-    }
+    async function guardarSeries() {
+        const modifiedSeries = collectModifiedSeries();
 
-    // TODO
-    function addSerie() {
+        if (modifiedSeries.length === 0) {
+            console.log("No hay cambios");
+            return;
+        }
         const exercise = getExercise();
 
         if (!exercise) return;
 
-        exercise.series.push({
-            weight: null,
-            reps: null,
-            rir: null,
-            intensity: null
-        });
-        renderCard()
-        focusLastWeightInput()
+        const data = {
+            series: modifiedSeries
+        };
+
+        console.log(data);
+
+        const result = await updateTrainingSessionSerie(sessionId, exercise.id, data);
+
+        if (result && result.ok) {
+            console.log("Series guardadas correctamente");
+        } else {
+            console.warn("No se pudo borrar la serie", result);
+        }
+    }
+
+    async function deleteSerie(id) {
+        const confirmed = await openConfirmModal("¿Estás seguro de borrar esta serie?");
+        if (confirmed) {
+            const exercise = getExercise();
+            if (!exercise) return;
+
+            const result = await deleteTrainingSessionSerie(sessionId, exercise.id, Number(id));
+
+            if (result && result.ok) {
+                await reloadData()
+            } else {
+                console.warn("No se pudo borrar la serie", result);
+            }
+        } else {
+            console.log("Acción cancelada");
+        }
+    }
+
+    async function addSerie() {
+        const exercise = getExercise();
+
+        if (!exercise) return;
+
+        const result = await createTrainingSessionSerie(sessionId, exercise.id);
+
+        if (result && result.ok) {
+            await reloadData()
+            focusLastWeightInput()
+        } else {
+            console.warn("No se pudo crear la serie", result);
+        }
     }
 
     async function deleteSession() {
@@ -264,7 +398,6 @@ export async function trainingSessionCard(sessionId) {
 
             if (result && result.ok) {
                 await reloadData();
-                renderCard()
             } else {
                 console.warn("No se pudo añadir el ejercicio", result);
             }
@@ -350,7 +483,7 @@ function renderSerie(serie, index) {
              value="${serie.weight ?? ''}">
 
       <div class="train-sess-card-units-container">
-        <p class="train-sess-card-units" data-action="unit" data-unit="Kg">Kg</p>
+       <p class="train-sess-card-units" data-action="unit" data-unit-id="${serie.unit ? serie.unit.id : ''}">${serie.unit ? serie.unit.symbol : ''}</p>
       </div>
 
       <input class="train-sess-card-input-reps"
@@ -372,11 +505,11 @@ function renderSerie(serie, index) {
 }
 
 function toogleUnit(elemento) {
-    if (elemento.dataset.unit === "Kg") {
-        elemento.dataset.unit = "Lb";
+    if (elemento.dataset.unitId === "1") {
+        elemento.dataset.unitId = "2";
         elemento.textContent = "Lb"
     } else {
-        elemento.dataset.unit = "Kg";
+        elemento.dataset.unitId = "1";
         elemento.textContent = "Kg"
     }
 }

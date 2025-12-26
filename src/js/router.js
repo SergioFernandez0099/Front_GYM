@@ -99,7 +99,7 @@ export function initRouter() {
             "/sessions/:sessionId",
             requireLogin(({data}) => {
                 const sessionId = parseInt(data.sessionId);
-                routeHandlers["/trainingSessionCard"] = () =>
+                routeHandlers[`/sessions/${sessionId}`] = () =>
                     render(trainingSessionCard(sessionId));
                 render(trainingSessionCard(sessionId));
             })

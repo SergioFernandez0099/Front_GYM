@@ -227,6 +227,38 @@ export async function deleteTrainingSessionExercise(sessionId,exerciseInSessionI
   );
 }
 
+export async function createTrainingSessionSerie(sessionId,exerciseInSessionId) {
+  return await fetchSend(
+      `/users/${getCurrentUserId()}/sessions/${sessionId}/exercises/${exerciseInSessionId}/series`,
+      "POST"
+  );
+}
+
+export async function updateTrainingSessionSerie(sessionId,exerciseInSessionId, uptData) {
+  return await fetchSend(
+      `/users/${getCurrentUserId()}/sessions/${sessionId}/exercises/${exerciseInSessionId}/series`,
+      "PATCH",
+      uptData
+  );
+}
+
+export async function updateTrainingSessionExerciseOrder(sessionId, uptData) {
+  return await fetchSend(
+      `/users/${getCurrentUserId()}/sessions/${sessionId}/exercises/order`,
+      "PATCH",
+      uptData
+  );
+}
+
+
+
+export async function deleteTrainingSessionSerie(sessionId,exerciseInSessionId, serieId) {
+  return await fetchSend(
+      `/users/${getCurrentUserId()}/sessions/${sessionId}/exercises/${exerciseInSessionId}/series/${serieId}`,
+      "DELETE",
+  );
+}
+
 // ---------------------
 // GETs sin cache para rutinas
 // ---------------------

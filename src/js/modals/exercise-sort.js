@@ -1,4 +1,7 @@
-export function createExerciseSort(exercises, moveToExercise) {
+import {updateTrainingSessionExerciseOrder} from "../services/api.js";
+import {safeNavigate} from "../router.js";
+
+export function createExerciseSort(exercises, sessionId, moveToExercise) {
     const modal = document.createElement('div');
     modal.className = 'exercise-sort-modal';
 
@@ -34,7 +37,10 @@ export function createExerciseSort(exercises, moveToExercise) {
     list.className = 'exercise-sort-list';
     container.appendChild(list);
 
-    const initialOrder = exercises.map(e => e.order);
+    const originalOrder = exercises.map(e => ({
+        id: e.id,
+        order: e.order
+    }));
 
     console.log(exercises)
 
@@ -58,7 +64,6 @@ export function createExerciseSort(exercises, moveToExercise) {
     checkbox.addEventListener('change', () => {
         const items = list.querySelectorAll('.exercise-item-container');
         items.forEach(item => {
-            console.log(item)
             item.draggable = checkbox.checked
             item.querySelector(".exercise-span").classList.toggle('show');
             if (checkbox.checked) {
@@ -68,6 +73,26 @@ export function createExerciseSort(exercises, moveToExercise) {
             }
         });
     });
+
+    function getCurrentOrderFromDOM() {
+        return [...list.querySelectorAll('.exercise-item-container')].map(
+            (el, index) => ({
+                id: Number(el.dataset.id),
+                order: index + 1
+            })
+        );
+    }
+
+    function getOrderDiff(original, current) {
+        const originalMap = new Map(
+            original.map(item => [item.id, item.order])
+        );
+
+        return current.filter(item => {
+            return originalMap.get(item.id) !== item.order;
+        });
+    }
+
 
     function showSaveButton() {
         saveButton.classList.remove('hide');
@@ -133,24 +158,43 @@ export function createExerciseSort(exercises, moveToExercise) {
         }
     });
 
-    saveButton.addEventListener('click', () => {
-        const currentOrder = [...list.querySelectorAll('.exercise-item')].map(
-            item => exercises.find(e => e.exercise.name === item.textContent).order
-        );
+    saveButton.addEventListener('click', async () => {
+        const currentOrder = getCurrentOrderFromDOM();
+        const diff = getOrderDiff(originalOrder, currentOrder);
 
-        // Verificar si hubo cambios
-        const changed = currentOrder.some((id, i) => id !== initialOrder[i]);
-        if (changed) {
-            actualizarOrden(currentOrder); // tu función para actualizar el orden
+        if (diff.length === 0) {
+            console.log("No hay cambios de orden");
+            checkbox.checked = false;
+            hideSaveButton();
+            return;
         }
 
-        // Desactivar ordenación
+        console.log("Cambios detectados:", diff);
+
+        await actualizarOrden(currentOrder);
+
+        originalOrder.length = 0;
+        currentOrder.forEach(o => originalOrder.push(o));
+
         checkbox.checked = false;
         hideSaveButton();
     });
 
-    function actualizarOrden(currentOrder) {
-        console.log(34)
+
+    async function actualizarOrden(currentOrder) {
+        const data = currentOrder.map(e => e.id);
+
+        console.log(data)
+        const result = await updateTrainingSessionExerciseOrder(sessionId, data);
+        if (result && result.ok) {
+            hide()
+            checkbox.checked = false;
+            hideSaveButton();
+            safeNavigate(`/sessions/${sessionId}`)
+            console.log("Orden actualizado correctamente");
+        } else {
+            console.warn("No se pudo actualizar el orden", result);
+        }
     }
 
     function getDragAfterElement(container, y) {
