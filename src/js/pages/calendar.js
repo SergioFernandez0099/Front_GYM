@@ -12,6 +12,7 @@ import {
 import {safeNavigate} from "../router.js";
 import {createRoutinePicker} from "../modals/routine-picker.js";
 import {openConfirmModal} from "../../utils/helpers.js";
+import {showSnackbar} from "../components/snackbar.js";
 
 export async function trainingSchedule() {
 
@@ -23,8 +24,18 @@ export async function trainingSchedule() {
     calendarEl.id = "calendar";
     calendarContainer.appendChild(calendarEl);
 
-    const sessionsData = await fetchTrainingSessions();
-    const routinesData = await fetchRoutineDays();
+
+    let sessionsData;
+    let routinesData;
+
+    try {
+        sessionsData = await fetchTrainingSessions();
+        routinesData = await fetchRoutineDays();
+    } catch (error) {
+        showSnackbar("error", "Error al cargar las sesiones");
+        safeNavigate("/error");
+        return null;
+    }
 
     let dateSelected = null;
 

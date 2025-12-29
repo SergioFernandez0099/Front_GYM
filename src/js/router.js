@@ -13,11 +13,13 @@ import {Login} from "./pages/login.js";
 import {Footer} from "./components/footer.js";
 import {trainingSessionCard} from "./components/training-session-card.js";
 import {trainingSchedule} from "./pages/calendar.js";
+import {errorPage} from "./pages/errorPage.js";
 
 export const router = new Navigo("/");
 
 // Guardamos los callbacks de cada ruta
 const routeHandlers = {};
+let previousRoute = null;
 
 // Inicializa el router después de que el DOM cargue
 export function initRouter() {
@@ -29,6 +31,14 @@ export function initRouter() {
                 render(Home());
             })
         )
+        .on("/error", requireLogin(() => {
+            routeHandlers["/error"] = () => render(errorPage("Error al cargar la página", () => {
+                safeNavigate(previousRoute || "/");
+            }));
+            render(errorPage("Error al cargar la página", () => {
+                safeNavigate(previousRoute || "/");
+            }));
+        }))
         .on("/login", () => {
             routeHandlers["/login"] = () => {
                 const navbarContainer = document.getElementById("navbar");
@@ -129,7 +139,8 @@ export function initRouter() {
 // Función para navegar de manera segura
 export function safeNavigate(path) {
     // Si ya estamos en la misma ruta, ejecutamos el callback manualmente
-    if (window.location.pathname === path && routeHandlers[path]) {
+    previousRoute = window.location.pathname;
+    if (previousRoute === path && routeHandlers[path]) {
         routeHandlers[path]();
     } else {
         router.navigate(path);

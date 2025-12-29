@@ -1,6 +1,8 @@
 import {adjustAppHeight} from "../../utils/helpers";
 import {ExerciseCard} from "../components/exercise-card";
 import {fetchExercises, fetchMuscleGroups} from "../services/api";
+import {showSnackbar} from "../components/snackbar.js";
+import {safeNavigate} from "../router.js";
 
 export async function Exercises() {
 
@@ -10,7 +12,16 @@ export async function Exercises() {
     const filtersContainer = document.createElement("div");
     filtersContainer.className = "filters-container";
 
-    const muscleGroupsData = await fetchMuscleGroups();
+    let exercisesData;
+    let muscleGroupsData;
+    try {
+        muscleGroupsData = await fetchMuscleGroups();
+        exercisesData = await fetchExercises();
+    } catch (error) {
+        showSnackbar("error", "Error al cargar los ejercicios")
+        safeNavigate("/error");
+        return null;
+    }
 
     muscleGroupsData.forEach((muscleGroup) => {
         const p = document.createElement("p");
@@ -72,8 +83,6 @@ export async function Exercises() {
     }, {passive: false});
 
     section.appendChild(exerciseList);
-
-    const exercisesData = await fetchExercises();
 
     exercisesData.forEach((exercise) => {
         exerciseList.appendChild(ExerciseCard(exercise));

@@ -1,5 +1,6 @@
 import {updateTrainingSessionExerciseOrder} from "../services/api.js";
 import {safeNavigate} from "../router.js";
+import {showSnackbar} from "../components/snackbar.js";
 
 export function createExerciseSort(exercises, sessionId, moveToExercise) {
     const modal = document.createElement('div');
@@ -184,16 +185,18 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     async function actualizarOrden(currentOrder) {
         const data = currentOrder.map(e => e.id);
 
-        console.log(data)
-        const result = await updateTrainingSessionExerciseOrder(sessionId, data);
-        if (result && result.ok) {
+        try {
+            await updateTrainingSessionExerciseOrder(sessionId, data);
+
             hide()
             checkbox.checked = false;
             hideSaveButton();
+
             safeNavigate(`/sessions/${sessionId}`)
-            console.log("Orden actualizado correctamente");
-        } else {
-            console.warn("No se pudo actualizar el orden", result);
+            showSnackbar("success", "Orden actualizado correctamente");
+        } catch (error) {
+            console.warn("No se pudo actualizar el orden", error);
+            showSnackbar("error", "No se pudo actualizar el orden");
         }
     }
 

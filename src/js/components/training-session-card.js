@@ -12,13 +12,24 @@ import {createExerciseSort} from "../modals/exercise-sort.js";
 import {createExercisePicker} from "../modals/exercise-picker.js";
 import {openConfirmModal} from "../../utils/helpers.js";
 import {safeNavigate} from "../router.js";
+import {showSnackbar} from "./snackbar.js";
 
 
 export async function trainingSessionCard(sessionId) {
 
-    let trainingSessionData = await fetchTrainingSession(sessionId);
-    const exercisesData = await fetchExercises();
+    let trainingSessionData;
+    let exercisesData;
+
+    try {
+        trainingSessionData = await fetchTrainingSession(sessionId);
+        exercisesData = await fetchExercises();
+    } catch (error) {
+        showSnackbar("error", "Error al cargar las sesiones de entrenamiento")
+        safeNavigate("/error")
+        return null;
+    }
     let originalSeries = new Map();
+    console.log(trainingSessionData)
 
     let indiceEjercicio = 0;
 
@@ -32,14 +43,10 @@ export async function trainingSessionCard(sessionId) {
         });
     });
 
-    originalSeries.forEach((serie) => {
-        console.log(serie);
-    })
-
     let exercisesSort = null;
     let pressTimer;
 
-    console.log(trainingSessionData)
+
     if (trainingSessionData.sessionExercises.length !== 0) {
         exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, sessionId, moveToExercise)
     }
@@ -116,7 +123,13 @@ export async function trainingSessionCard(sessionId) {
     renderCard();
 
     async function reloadData() {
-        trainingSessionData = await fetchTrainingSession(sessionId);
+        try {
+            trainingSessionData = await fetchTrainingSession(sessionId);
+        } catch (error) {
+            showSnackbar("error","Error al cargar las sesiones de entrenamiento");
+            safeNavigate("/error");
+            return null
+        }
         getExercise().series.forEach((serie) => {
             originalSeries.set(serie.id, {
                 reps: serie.reps,
@@ -211,6 +224,7 @@ export async function trainingSessionCard(sessionId) {
             }
             case "next": {
                 goToExercise("next")
+                showSnackbar("success", "Datos guardados correctamente");
                 break;
             }
             case "previous": {
@@ -329,80 +343,81 @@ export async function trainingSessionCard(sessionId) {
             series: modifiedSeries
         };
 
-        console.log(data);
-
-        const result = await updateTrainingSessionSerie(sessionId, exercise.id, data);
-
-        if (result && result.ok) {
-            console.log("Series guardadas correctamente");
-        } else {
-            console.warn("No se pudo borrar la serie", result);
+        try {
+            await updateTrainingSessionSerie(sessionId, exercise.id, data);
+            showSnackbar("success", "Datos guardados correctamente");
+        } catch (error) {
+            console.error("No se pudo guardar los datos: ", error);
+            const message = "No se pudo guardar los datos";
+            showSnackbar("error", message);
         }
     }
 
     async function deleteSerie(id) {
         const confirmed = await openConfirmModal("¿Estás seguro de borrar esta serie?");
-        if (confirmed) {
-            const exercise = getExercise();
-            if (!exercise) return;
+        if (!confirmed) return;
 
-            const result = await deleteTrainingSessionSerie(sessionId, exercise.id, Number(id));
+        const exercise = getExercise();
+        if (!exercise) return;
 
-            if (result && result.ok) {
-                await reloadData()
-            } else {
-                console.warn("No se pudo borrar la serie", result);
-            }
-        } else {
-            console.log("Acción cancelada");
+        try {
+            await deleteTrainingSessionSerie(sessionId, exercise.id, Number(id));
+            showSnackbar("success", "Serie eliminada correctamente");
+            await reloadData()
+        } catch (error) {
+            console.error("No se pudo borrar la serie: ", error);
+            const message = "No se pudo borrar la serie";
+            showSnackbar("error", message);
         }
     }
 
     async function addSerie() {
         const exercise = getExercise();
-
         if (!exercise) return;
 
-        const result = await createTrainingSessionSerie(sessionId, exercise.id);
-
-        if (result && result.ok) {
+        try {
+            await createTrainingSessionSerie(sessionId, exercise.id);
             await reloadData()
             focusLastWeightInput()
-        } else {
-            console.warn("No se pudo crear la serie", result);
+        } catch (error) {
+            console.error("No se pudo crear la serie", error);
+            const message = "No se pudo añadir la nueva serie";
+            showSnackbar("error", message);
         }
     }
 
     async function deleteSession() {
         const confirmed = await openConfirmModal("¿Estás seguro de borrar esta sesión?");
-        if (confirmed) {
-            const result = await deleteTrainingSession(sessionId);
+        if (!confirmed) {
+            return;
+        }
 
-            if (result && result.ok) {
-                safeNavigate('/sessions')
-            } else {
-                console.warn("No se pudo borrar el ejercicio", result);
-            }
-        } else {
-            console.log("Acción cancelada");
+        try {
+            await deleteTrainingSession(sessionId);
+            showSnackbar("success", "Sesión eliminada correctamente");
+            safeNavigate('/sessions')
+        } catch (error) {
+            console.error("Error eliminando la sesión:", error);
+            const message = "No se pudo eliminar la sesión";
+            showSnackbar("error", message);
         }
     }
 
     async function deleteExercise() {
         const exercise = getExercise();
-
         if (!exercise) return;
-        const confirmed = await openConfirmModal("¿Estás seguro de borrar este ejercicio?");
-        if (confirmed) {
-            const result = await deleteTrainingSessionExercise(sessionId, exercise.id);
 
-            if (result && result.ok) {
-                await reloadData();
-            } else {
-                console.warn("No se pudo añadir el ejercicio", result);
-            }
-        } else {
-            console.log("Acción cancelada");
+        const confirmed = await openConfirmModal("¿Estás seguro de borrar este ejercicio?");
+        if (!confirmed) return;
+
+        try {
+            await deleteTrainingSessionExercise(sessionId, exercise.id);
+            showSnackbar("success", "Ejercicio eliminado correctamente");
+            await reloadData();
+        } catch (error) {
+            console.error("Error eliminando el ejercicio:", error);
+            const message = "No se pudo eliminar el ejercicio";
+            showSnackbar("error", message);
         }
     }
 

@@ -1,4 +1,5 @@
 import {login} from "../services/api.js";
+import {showSnackbar} from "../components/snackbar.js";
 
 class FormUtils {
     // Validación de contraseña
@@ -306,6 +307,7 @@ class LoginForm {
 
         try {
             const data = await login(user, pin);
+            showSnackbar("success", `Bienvenido ${data.message.user.name}`);
             this.onLogin(); // Llama al callback de éxito
         } catch (error) {
             // Muestra mensaje de error y agita
