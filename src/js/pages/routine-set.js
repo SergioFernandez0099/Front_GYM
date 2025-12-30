@@ -1,5 +1,7 @@
 import {RoutineSetCard,} from "../components/routine-set-card";
 import {fetchRoutineSets} from "../services/api";
+import {showSnackbar} from "../components/snackbar.js";
+import {safeNavigate} from "../router.js";
 
 export async function RoutineSet(routineId) {
     const routineSetContainer = document.createElement("div");
@@ -15,7 +17,15 @@ export async function RoutineSet(routineId) {
 
     routineSetContainer.appendChild(section);
 
-    const setData = await fetchRoutineSets(routineId);
+    let setData;
+
+    try {
+        setData = await fetchRoutineSets(routineId);
+    } catch (error) {
+        showSnackbar("error", "Error al cargar los sets");
+        safeNavigate("/error");
+        return null;
+    }
 
     // Si tienes muchos sets y quieres crearlos todos en paralelo (sin esperar uno por uno):
     const cards = await Promise.all(setData.map(set => RoutineSetCard(set, routineId)));

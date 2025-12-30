@@ -307,7 +307,8 @@ class LoginForm {
 
         try {
             const data = await login(user, pin);
-            showSnackbar("success", `Bienvenido ${data.message.user.name}`);
+            console.log(data)
+            showSnackbar("success", `Bienvenido ${data.user.name}`);
             this.onLogin(); // Llama al callback de éxito
         } catch (error) {
             // Muestra mensaje de error y agita

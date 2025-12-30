@@ -13,7 +13,7 @@ const TYPES = {
     success: {
         className: "success",
         gif: "/assets/gifs/success1.gif",
-        duration: 300000,
+        duration: 3000,
     },
     warning: {
         className: "warning",

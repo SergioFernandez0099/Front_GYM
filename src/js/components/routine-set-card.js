@@ -8,6 +8,8 @@ import {
     toggleEditIcon
 } from "../../utils/helpers";
 import {createRoutineSet, deleteRoutineSet, fetchExercises, updateRoutineSet} from "../services/api.js";
+import {showSnackbar} from "./snackbar.js";
+import {safeNavigate} from "../router.js";
 
 let exercises = [];
 let routineIdGlobal;
@@ -240,16 +242,13 @@ function setUpSetCard(article, set) {
                         return;
                     }
 
-                    const response = await deleteRoutineSet(routineIdGlobal, setId)
+                    await deleteRoutineSet(routineIdGlobal, setId)
 
-                    if (!response) throw new Error("Error al borrar el set");
-
+                    showSnackbar("success", "Set borrado correctamente");
                     article.classList.add("fade-out-inward");
                     setTimeout(() => article.remove(), 300);
-
                 } catch (error) {
-                    console.error("Error al borrar el set:", error);
-                    alert("No se pudo borrar el set. Inténtalo de nuevo.");
+                    showSnackbar("error", "Error al borrar el set");
                     shakeEffect(article);
                     trashButton.disabled = false;
                 }
@@ -271,10 +270,14 @@ async function setUpSetNewCard(article) {
     const trashButton = article.querySelector(".icon-container-trash");
     const editIcon = article.querySelector(".editIcon");
 
-    // Optimizado con memoria caché
-    const resultado = await fetchExercises();
-    if (resultado) {
-        exercises = resultado;
+    let data;
+    try {
+        data = await fetchExercises();
+        exercises = data;
+    } catch (error) {
+        showSnackbar("error", "Error al cargar los ejercicios del set")
+        safeNavigate("/error")
+        return null;
     }
 
     article.classList.add("fade-in-up");
@@ -300,14 +303,16 @@ async function setUpSetNewCard(article) {
         if (matches.length > 0) {
             suggestionBox.textContent = matches[0].name;
             suggestionBox.setAttribute("data-exercise", `${matches[0].id}`);
+        }
+    });
 
-            suggestionBox.addEventListener("click", () => {
-                titleInput.value = matches[0].name;
-                titleInput.style.border = "2px solid green";
-                suggestionBox.classList.remove("visible");
-                suggestionBox.innerHTML = "";
-                seriesInput.focus();
-            });
+    suggestionBox.addEventListener("click", () => {
+        if (suggestionBox.textContent.trim() !== "") {
+            titleInput.value = suggestionBox.textContent;
+            titleInput.style.border = "2px solid green";
+            suggestionBox.classList.remove("visible");
+            suggestionBox.innerHTML = "";
+            seriesInput.focus();
         }
     });
 
@@ -501,15 +506,15 @@ export async function guardarSet(article, set) {
                 repetitions: parseInt(repsInput.value),
                 description: textarea.value,
             };
-            const result = await createRoutineSet(routineIdGlobal, setData);
-            if (result) {
+            try {
+                const result = await createRoutineSet(routineIdGlobal, setData);
                 cargarEjercicio(titleInput, image);
                 article.removeAttribute("data-new-set");
                 Object.assign(set, result);
                 delete set.isNew;
-            } else {
+            } catch (error) {
                 shakeEffect(article);
-                console.log(result)
+                showSnackbar("error", "Error al crear el set")
                 return false;
             }
         } else {
@@ -519,11 +524,11 @@ export async function guardarSet(article, set) {
                 repetitions: parseInt(repsInput.value),
                 description: textarea.value,
             };
-            const result = await updateRoutineSet(routineIdGlobal, parseInt(set.id), setData);
-            if (result) {
-            } else {
+            try {
+                await updateRoutineSet(routineIdGlobal, parseInt(set.id), setData);
+            } catch (error) {
+                showSnackbar("error", "Error al actualizar el set")
                 shakeEffect(article);
-                console.log(result)
                 return false;
             }
         }

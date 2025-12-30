@@ -141,6 +141,7 @@
     pointer-events: none;
     font-size: 0.8rem;
     opacity: 0;
+    cursor: pointer;
     transition: opacity 0.3s ease;
 }
 

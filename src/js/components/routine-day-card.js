@@ -9,6 +9,7 @@ import {
 } from "../../utils/helpers";
 import {validaYSanitiza} from "../../utils/validators";
 import {createRoutine, deleteRoutine, updateRoutine} from "../services/api";
+import {showSnackbar} from "./snackbar.js";
 
 export function RoutineDayCard(day) {
     const article = document.createElement("article");
@@ -106,31 +107,37 @@ export function attachRoutineDayCardEvents(article, day) {
         e.stopPropagation();
 
         const confirmed = await openConfirmModal("¿Eliminar set?");
-        if (confirmed) {
-            try {
-                if (!day.id) {
-                    article.classList.add("fade-out-inward");
-                    setTimeout(() => article.remove(), 300);
-                    return;
-                }
-                const result = await deleteRoutine(day.id);
-                if (result) {
-                    article.classList.add("fade-out-inward");
-                    setTimeout(() => article.remove(), 300);
-                } else shakeEffect(article);
-            } catch (err) {
-                console.error("Error al borrar set:", err);
-                shakeEffect(article);
+        if (!confirmed) return;
+        try {
+            console.log(day)
+            if (!day.id) {
+                article.classList.add("fade-out-inward");
+                setTimeout(() => article.remove(), 300);
+                return;
             }
-        } else {
-            console.log("Acción cancelada");
+            await deleteRoutine(day.id);
+            showSnackbar("success", "Rutina borrada correctamente")
+            article.classList.add("fade-out-inward");
+            setTimeout(() => article.remove(), 300);
+        } catch (err) {
+            showSnackbar("error", "Error al borrar la rutina");
+            shakeEffect(article);
         }
+
     });
 
     if (day.isNew) {
         article.setAttribute("data-new-day", "true");
         article.scrollIntoView({behavior: "smooth", block: "center"});
-        requestAnimationFrame(() => elements.inputTitle.focus());
+        requestAnimationFrame(() => {
+            elements.inputTitle.focus()
+            const range = document.createRange();
+            range.selectNodeContents(elements.inputTitle);
+
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        });
         setTimeout(() => closeAllEditingCards(article), 100);
     }
 }
@@ -140,6 +147,7 @@ async function saveDay(article, day, isNew = false) {
     const {valid, sanitized} = validaYSanitiza(inputTitle.textContent, {allowSpecial: false, maxLength: 50});
     if (!valid) {
         showErrorBorder(inputTitle);
+        shakeEffect(article);
         return false;
     }
 
@@ -149,12 +157,13 @@ async function saveDay(article, day, isNew = false) {
     try {
         result = isNew ? await createRoutine(routineData) : await updateRoutine(day.id, routineData);
     } catch (err) {
-        console.error("Error guardando día:", err);
+        showSnackbar("error", "Error guardando la rutina");
         shakeEffect(article);
         return false;
     }
 
     if (result) {
+        isNew ? showSnackbar("success", "Rutina creada correctamente") : showSnackbar("success", "Rutina actualizada correctamente")
         inputTitle.textContent = sanitized;
         article.removeAttribute("data-new-day");
         closeEditableRoutineCard(article);
@@ -164,6 +173,7 @@ async function saveDay(article, day, isNew = false) {
         return true;
     }
 
+    showSnackbar("error", "Error guardando la rutina");
     shakeEffect(article);
     return false;
 }
@@ -179,6 +189,14 @@ export function openEditableRoutineCard(article) {
     toggleEditIcon("tick", editIcon, editButton, "1.45rem", "1.85rem");
     inputTitle.setAttribute("contenteditable", "true");
     inputTitle.focus();
+    requestAnimationFrame(() => {
+        const range = document.createRange();
+        range.selectNodeContents(inputTitle);
+
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    });
 }
 
 export function closeEditableRoutineCard(article) {

@@ -29,7 +29,6 @@ export async function trainingSessionCard(sessionId) {
         return null;
     }
     let originalSeries = new Map();
-    console.log(trainingSessionData)
 
     let indiceEjercicio = 0;
 
@@ -295,7 +294,6 @@ export async function trainingSessionCard(sessionId) {
 
             const diff = getSerieDiff(original, current);
             if (diff) {
-                console.log(JSON.stringify(diff, null, 2));
                 modified.push(diff);
             }
         });
@@ -457,7 +455,6 @@ export async function trainingSessionCard(sessionId) {
     }
 
     function moveToExercise(id) {
-        console.log(99)
         indiceEjercicio = trainingSessionData.sessionExercises.findIndex(x => x.id === id);
         renderCard()
     }

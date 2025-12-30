@@ -17,8 +17,7 @@ export async function login(name, pin) {
             name: name,
             pin: pin,
         });
-
-        setCurrentUserId(result.message.user.id);
+        setCurrentUserId(result.user.id);
 
         return result;
     } catch (error) {
@@ -96,7 +95,7 @@ async function fetchSend(path, method, body) {
         }
     }
 
-    return await result.json();
+    return (await result.json()).message;
 }
 
 // ---------------------

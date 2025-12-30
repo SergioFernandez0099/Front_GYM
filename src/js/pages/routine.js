@@ -1,5 +1,7 @@
 import {attachRoutineDayCardEvents, handleAddRoutine, RoutineDayCard} from "../components/routine-day-card";
 import {fetchRoutineDays} from "../services/api";
+import {showSnackbar} from "../components/snackbar.js";
+import {safeNavigate} from "../router.js";
 
 export async function Routine() {
 
@@ -15,8 +17,9 @@ export async function Routine() {
     section.appendChild(routineList);
     routineContainer.appendChild(section);
 
+    let routineDays;
     try {
-        const routineDays = await fetchRoutineDays();
+        routineDays = await fetchRoutineDays();
         const fragment = document.createDocumentFragment();
 
         routineDays.forEach(day => {
@@ -27,8 +30,9 @@ export async function Routine() {
 
         routineList.appendChild(fragment);
     } catch (error) {
-        console.error("Error cargando rutinas:", error);
-        routineList.textContent = "No se pudieron cargar las rutinas.";
+        showSnackbar("error", "Error cargando rutinas");
+        safeNavigate("/error");
+        return null;
     }
 
     const addCard = RoutineDayCard("add");
