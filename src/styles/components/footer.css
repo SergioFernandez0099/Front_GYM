@@ -1,6 +1,6 @@
 .footer {
     width: 100vw;
-    height: 7vh;
+    height: 2.5rem;
     border-top: 1px solid #ccc;
     display: flex;
     flex-direction: row;
@@ -44,13 +44,17 @@
 }
 
 .footer-info {
+    font-size: 1rem;
     user-select: none;
 }
 
 @media (max-width: 600px) {
     .footer {
         font-size: 0.9rem;
-        height: 12vh;
+    }
+
+    .footer-info {
+        font-size: 0.9rem;
     }
 
     .github-link, .github-icon {

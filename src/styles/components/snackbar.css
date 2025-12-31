@@ -16,7 +16,7 @@
 
     color: white;
     transition: all 0.3s ease;
-    z-index: 1000;
+    z-index: 1000000000000;
 }
 
 /* Tipos */
@@ -26,11 +26,13 @@
 }
 
 .snackbar.warning {
-    background-color: #ed6c02;
+    border: 2px solid #ed6c02;
+    background-color: rgba(150, 70, 2, 0.76);
 }
 
 .snackbar.error {
-    background-color: #d32f2f;
+    border: 2px solid #d32f2f;
+    background-color: rgba(148, 33, 33, 0.76);
 }
 
 .snackbar.show {

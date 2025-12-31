@@ -6,11 +6,11 @@ import {
     deleteTrainingSessionSerie,
     fetchExercises,
     fetchTrainingSession,
-    updateTrainingSessionSerie
+    updateTrainingSession
 } from "../services/api.js";
 import {createExerciseSort} from "../modals/exercise-sort.js";
 import {createExercisePicker} from "../modals/exercise-picker.js";
-import {openConfirmModal} from "../../utils/helpers.js";
+import {capitalize, openConfirmModal, shakeEffect} from "../../utils/helpers.js";
 import {safeNavigate} from "../router.js";
 import {showSnackbar} from "./snackbar.js";
 
@@ -23,6 +23,7 @@ export async function trainingSessionCard(sessionId) {
     try {
         trainingSessionData = await fetchTrainingSession(sessionId);
         exercisesData = await fetchExercises();
+        console.log("trainingSessionData: ", trainingSessionData);
     } catch (error) {
         showSnackbar("error", "Error al cargar las sesiones de entrenamiento")
         safeNavigate("/error")
@@ -32,7 +33,9 @@ export async function trainingSessionCard(sessionId) {
 
     let indiceEjercicio = 0;
 
-    getExercise().series.forEach((serie) => {
+    let originalDescription = getExercise()?.description ?? "";
+
+    getExercise()?.series.forEach((serie) => {
         originalSeries.set(serie.id, {
             reps: serie.reps,
             weight: serie.weight,
@@ -103,20 +106,27 @@ export async function trainingSessionCard(sessionId) {
                 <h2 class="train-sess-card-title">${getExercise()?.exercise.name ?? "Añade un ejercicio"}</h2>
             </div>
             <div class="train-sess-card-description-container">
-                <textarea maxlength="100" placeholder="Escribe algún detalle..." class="train-sess-card-description">Top set en la primera</textarea>
+                <textarea maxlength="100" placeholder="Escribe algún detalle..." ${exercisesSort ? '' : 'readonly'} class="train-sess-card-description">${getExercise()?.description ?? ""}</textarea>
             </div>
             <div class="train-sess-card-series-list">
                 ${seriesHTML ?? ""}
             </div>
-            <button class="train-sess-card-add-serie" ${exercisesSort ? 'enabled' : "disabled"}  data-action="serie">Añadir serie</button>
+            <button class="train-sess-card-add-serie" data-action="serie">Añadir serie</button>
             <hr>
             <div class="train-sess-card-buttons">
-                <button class="train-sess-card-buttons-previous" ${exercisesSort ? 'enabled' : "disabled"}  data-action="previous">Anterior</button>
-                <button class="train-sess-card-buttons-delete" ${exercisesSort ? 'enabled' : "disabled"} data-action="delete-exercise">Borrar ejercicio</button>
-                <button class="train-sess-card-buttons-next" ${exercisesSort ? 'enabled' : "disabled"}  data-action="next">Siguiente</button>
+                <button class="train-sess-card-buttons-previous" data-action="previous">Anterior</button>
+                <button class="train-sess-card-buttons-delete" data-action="delete-exercise">Borrar ejercicio</button>
+                <button class="train-sess-card-buttons-next" data-action="next">Siguiente</button>
             </div>
           </div>
   `;
+
+        trainingSessionCardContainer
+            .querySelectorAll(".train-sess-card-serie-weight-image")
+            .forEach(imagen => {
+                imagen.addEventListener('contextmenu', (e) => e.preventDefault());
+            });
+
     }
 
     renderCard();
@@ -124,27 +134,30 @@ export async function trainingSessionCard(sessionId) {
     async function reloadData() {
         try {
             trainingSessionData = await fetchTrainingSession(sessionId);
+            if (getExercise()) {
+                getExercise()?.series.forEach((serie) => {
+                    originalSeries.set(serie.id, {
+                        reps: serie.reps,
+                        weight: serie.weight,
+                        intensity: serie.intensity,
+                        rir: serie.rir,
+                        unitId: serie.unit ? serie.unit.id : null
+                    });
+                });
+                originalDescription = getExercise()?.description ?? "";
+            } else {
+                indiceEjercicio = 0;
+            }
+            exercisesSort = trainingSessionData.sessionExercises.length !== 0
+                ? createExerciseSort(trainingSessionData.sessionExercises, sessionId, moveToExercise)
+                : null;
+            renderCard()
         } catch (error) {
-            showSnackbar("error","Error al cargar las sesiones de entrenamiento");
+            showSnackbar("error", "Error al cargar las sesiones de entrenamiento");
             safeNavigate("/error");
             return null
         }
-        getExercise().series.forEach((serie) => {
-            originalSeries.set(serie.id, {
-                reps: serie.reps,
-                weight: serie.weight,
-                intensity: serie.intensity,
-                rir: serie.rir,
-                unitId: serie.unit ? serie.unit.id : null
-            });
-        });
-        exercisesSort = trainingSessionData.sessionExercises.length !== 0
-            ? createExerciseSort(trainingSessionData.sessionExercises, sessionId, moveToExercise)
-            : null;
-
-        renderCard()
     }
-
 
     const startPress = (target) => {
         pressTimer = setTimeout(() => {
@@ -157,21 +170,20 @@ export async function trainingSessionCard(sessionId) {
         clearTimeout(pressTimer);
     };
 
-    trainingSessionCardContainer.addEventListener('mousedown', (e) => {
-        if (e.target.classList.contains('train-sess-card-serie') || e.target.classList.contains('train-sess-card-serie')
-            || e.target.classList.contains('train-sess-card-serie-num') || e.target.tagName === 'SPAN') {
-            startPress(e.target);
+    const handlePressStart = (e) => {
+        const serieElement = e.target.closest('.train-sess-card-serie');
+        if (serieElement) {
+            startPress(serieElement);
         }
-    });
+    };
+
+    trainingSessionCardContainer.addEventListener('mousedown', handlePressStart);
     trainingSessionCardContainer.addEventListener('mouseup', cancelPress);
     trainingSessionCardContainer.addEventListener('mouseleave', cancelPress);
 
-    trainingSessionCardContainer.addEventListener('touchstart', (e) => {
-        if (e.target.classList.contains('train-sess-card-serie')) {
-            startPress(e.target);
-        }
-    });
+    trainingSessionCardContainer.addEventListener('touchstart', handlePressStart, {passive: true});
     trainingSessionCardContainer.addEventListener('touchend', cancelPress);
+    trainingSessionCardContainer.addEventListener('touchmove', cancelPress, {passive: true});
     trainingSessionCardContainer.addEventListener('touchcancel', cancelPress);
 
     trainingSessionCardContainer.addEventListener("beforeinput", (e) => {
@@ -201,6 +213,12 @@ export async function trainingSessionCard(sessionId) {
 
     trainingSessionCardContainer.addEventListener("click", async (event) => {
         const elemento = event.target.closest("[data-action]");
+        if (!getExercise() && elemento?.dataset.action !== "exercise") {
+            event.stopPropagation();
+            const addButton = trainingSessionCardContainer.querySelector('.train-sess-card-general-options-add');
+            shakeEffect(addButton);
+            return;
+        }
         if (!elemento) return;
         switch (elemento.dataset.action) {
             case "list": {
@@ -217,7 +235,7 @@ export async function trainingSessionCard(sessionId) {
                 break;
             }
             case "save": {
-                await guardarSeries();
+                await guardarSeriesYDescripcion();
                 await reloadData()
                 break;
             }
@@ -227,6 +245,7 @@ export async function trainingSessionCard(sessionId) {
                 break;
             }
             case "previous": {
+                showSnackbar("error", "Error al cargar las sesiones de entrenamiento");
                 goToExercise("previous")
                 break;
             }
@@ -326,11 +345,12 @@ export async function trainingSessionCard(sessionId) {
         renderCard()
     }
 
-    async function guardarSeries() {
+    async function guardarSeriesYDescripcion() {
         const modifiedSeries = collectModifiedSeries();
 
-        if (modifiedSeries.length === 0) {
-            console.log("No hay cambios");
+        const currentDescription = document.querySelector(".train-sess-card-description").value;
+        if (modifiedSeries.length === 0 && originalDescription === currentDescription) {
+            showSnackbar("warning", "Realiza alguna modificación antes de guardar")
             return;
         }
         const exercise = getExercise();
@@ -338,11 +358,13 @@ export async function trainingSessionCard(sessionId) {
         if (!exercise) return;
 
         const data = {
-            series: modifiedSeries
+            ...(modifiedSeries.length !== 0 && {series: modifiedSeries}),
+            ...(originalDescription !== currentDescription && {description: currentDescription}),
         };
 
+        console.log(data)
         try {
-            await updateTrainingSessionSerie(sessionId, exercise.id, data);
+            await updateTrainingSession(sessionId, exercise.id, data);
             showSnackbar("success", "Datos guardados correctamente");
         } catch (error) {
             console.error("No se pudo guardar los datos: ", error);
@@ -386,9 +408,7 @@ export async function trainingSessionCard(sessionId) {
 
     async function deleteSession() {
         const confirmed = await openConfirmModal("¿Estás seguro de borrar esta sesión?");
-        if (!confirmed) {
-            return;
-        }
+        if (!confirmed) return;
 
         try {
             await deleteTrainingSession(sessionId);
@@ -411,6 +431,7 @@ export async function trainingSessionCard(sessionId) {
         try {
             await deleteTrainingSessionExercise(sessionId, exercise.id);
             showSnackbar("success", "Ejercicio eliminado correctamente");
+            if (indiceEjercicio > 0) indiceEjercicio--
             await reloadData();
         } catch (error) {
             console.error("Error eliminando el ejercicio:", error);
@@ -439,18 +460,17 @@ export async function trainingSessionCard(sessionId) {
 
     async function addExercise(id) {
         try {
-            const result = await createTrainingSessionExercise(sessionId, {
+            await createTrainingSessionExercise(sessionId, {
                 exerciseId: Number(id),
             });
 
-            if (result && result.ok) {
-                indiceEjercicio = trainingSessionData.sessionExercises.length;
-                await reloadData();
-            } else {
-                console.warn("No se pudo añadir el ejercicio", result);
-            }
+            indiceEjercicio = trainingSessionData.sessionExercises.length;
+
+            showSnackbar("success", "Ejercicio añadido correctamente")
+            await reloadData();
+
         } catch (error) {
-            console.error("Error al añadir el ejercicio:", error);
+            showSnackbar("error", "Error al añadir el ejercicio")
         }
     }
 
@@ -459,43 +479,26 @@ export async function trainingSessionCard(sessionId) {
         renderCard()
     }
 
-//   try {
-//     const routineDays = await fetchRoutineDays();
-//     const fragment = document.createDocumentFragment();
-
-//     routineDays.forEach((day) => {
-//       const dayCard = RoutineDayCard(day);
-//       attachRoutineDayCardEvents(dayCard, day);
-//       fragment.appendChild(dayCard);
-//     });
-
-//     routineList.appendChild(fragment);
-//   } catch (error) {
-//     console.error("Error cargando rutinas:", error);
-//     routineList.textContent = "No se pudieron cargar las rutinas.";
-//   }
-
-//   const addCard = RoutineDayCard("add");
-//   addCard.addEventListener("click", () => handleAddRoutine(routineList));
-//   routineList.appendChild(addCard);
-
     return trainingSessionCardContainer;
 }
 
 function renderSerie(serie, index) {
     return `
     <div class="train-sess-card-serie" data-id="${serie.id}">
-      <span class="train-sess-card-serie-num">${index + 1}</span>
+    
+      <div class="train-sess-card-serie-image-container">
+            <span class="train-sess-card-serie-num">${index + 1}</span>
 
-      <img class="train-sess-card-serie-weight-image"
-           src="/assets/icons/kettlebell.svg" alt="">
+            <img class="train-sess-card-serie-weight-image"
+                src="/assets/icons/kettlebell.svg" alt="Imágen de pesa rusa">
+      </div>
 
       <input class="train-sess-card-input-weight"
              type="number"
              value="${serie.weight ?? ''}">
 
       <div class="train-sess-card-units-container">
-       <p class="train-sess-card-units" data-action="unit" data-unit-id="${serie.unit ? serie.unit.id : ''}">${serie.unit ? serie.unit.symbol : ''}</p>
+       <p class="train-sess-card-units" data-action="unit" data-unit-id="${serie.unit ? serie.unit.id : ''}">${serie.unit ? capitalize(serie.unit.symbol) : ''}</p>
       </div>
 
       <input class="train-sess-card-input-reps"

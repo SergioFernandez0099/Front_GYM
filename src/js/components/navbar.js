@@ -61,6 +61,11 @@ export function Navbar() {
     const mainContainer = document.querySelector("main");
     const reloadBtn = nav.querySelector("#reload");
     const overlay = nav.querySelector(".overlay");
+    const logo = nav.querySelector(".container-logo");
+
+    logo.addEventListener("click", (e) => {
+        safeNavigate("/")
+    })
 
     let angle = 0;
     let animationFrame;
@@ -157,10 +162,10 @@ export function updateReloadButton(reloadBtn) {
     }
 
     const currentRoute = Array.isArray(last) ? last[last.length - 1]?.url : last?.url;
-    if (currentRoute === "login" || currentRoute === "home" || currentRoute === "" || currentRoute === undefined) {
+    if (currentRoute === "login" || currentRoute === "home" || currentRoute === "error" || currentRoute === "" || currentRoute === undefined) {
         reloadBtn.parentNode.style.display = "none";
     } else {
-        if (currentRoute.includes("sessions")) {
+        if (currentRoute.includes("sessions") && window.innerWidth < 768) {
             reloadContainer.style.top = "1.5rem";
             reloadContainer.style.left = "4.5rem";
         } else {

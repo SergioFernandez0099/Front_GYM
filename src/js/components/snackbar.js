@@ -12,7 +12,7 @@ let timeoutId = null;
 const TYPES = {
     success: {
         className: "success",
-        gif: "/assets/gifs/success1.gif",
+        gif: "/assets/gifs/success.gif",
         duration: 3000,
     },
     warning: {

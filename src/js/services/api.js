@@ -76,7 +76,7 @@ async function fetchGet(path) {
     return (await result.json()).message;
 }
 
-// Función helper para POST/PUT con cookie
+// Función helper para POST/PUT/PATCH con cookie
 async function fetchSend(path, method, body) {
     const result = await fetch(`${API_BASE}${path}`, {
         method,
@@ -159,7 +159,7 @@ export async function fetchMuscleGroups() {
 }
 
 // ---------------------
-// POSTs, PUTs, DELETEs
+// POSTs, PUTs, DELETEs, PATCHs
 // ---------------------
 
 export async function createRoutine(routineData) {
@@ -177,7 +177,7 @@ export async function createRoutineSet(routineId, setData) {
 export async function updateRoutine(routineId, updatedData) {
     return await fetchSend(
         `/users/${getCurrentUserId()}/routines/${routineId}`,
-        "PUT",
+        "PATCH",
         updatedData
     );
 }
@@ -185,7 +185,7 @@ export async function updateRoutine(routineId, updatedData) {
 export async function updateRoutineSet(routineId, setId, updatedData) {
     return await fetchSend(
         `/users/${getCurrentUserId()}/routines/${routineId}/sets/${setId}`,
-        "PUT",
+        "PATCH",
         updatedData
     );
 }
@@ -238,9 +238,9 @@ export async function createTrainingSessionSerie(sessionId, exerciseInSessionId)
     );
 }
 
-export async function updateTrainingSessionSerie(sessionId, exerciseInSessionId, uptData) {
+export async function updateTrainingSession(sessionId, exerciseInSessionId, uptData) {
     return await fetchSend(
-        `/users/${getCurrentUserId()}/sessions/${sessionId}/exercises/${exerciseInSessionId}/series`,
+        `/users/${getCurrentUserId()}/sessions/${sessionId}/exercises/${exerciseInSessionId}`,
         "PATCH",
         uptData
     );

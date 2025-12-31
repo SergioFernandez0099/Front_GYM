@@ -101,6 +101,8 @@ export function hideLoader() {
     document.getElementById("loader-overlay").classList.add("hidden");
 }
 
+export const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+
 export function openConfirmModal(title) {
     return new Promise((resolve) => {
         const modal = document.getElementById("confirmModal");

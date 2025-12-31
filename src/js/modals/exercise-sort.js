@@ -43,8 +43,6 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
         order: e.order
     }));
 
-    console.log(exercises)
-
     exercises.forEach(exercise => {
         const itemContainer = document.createElement('div');
         itemContainer.className = 'exercise-item-container';
@@ -62,18 +60,41 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     });
 
     // Activar / desactivar drag
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener('change', (event) => {
+        if (exercises.length === 1) {
+            checkbox.checked = false;
+            showSnackbar("warning", "Añade más ejercicios para cambiar el orden")
+            return;
+        }
+        if (checkbox.checked) {
+            showSaveButton()
+            showItemsSpan()
+        } else {
+            const currentOrder = getCurrentOrderFromDOM();
+            const diff = getOrderDiff(originalOrder, currentOrder);
+
+            if (diff.length !== 0) restoreOriginalOrder()
+
+            hideSaveButton()
+            hideItemsSpan()
+        }
+    });
+
+    function showItemsSpan() {
         const items = list.querySelectorAll('.exercise-item-container');
         items.forEach(item => {
             item.draggable = checkbox.checked
-            item.querySelector(".exercise-span").classList.toggle('show');
-            if (checkbox.checked) {
-                showSaveButton();
-            } else {
-                hideSaveButton();
-            }
+            item.querySelector(".exercise-span").classList.add('show');
         });
-    });
+    }
+
+    function hideItemsSpan() {
+        const items = list.querySelectorAll('.exercise-item-container');
+        items.forEach(item => {
+            item.draggable = checkbox.checked
+            item.querySelector(".exercise-span").classList.remove('show');
+        });
+    }
 
     function getCurrentOrderFromDOM() {
         return [...list.querySelectorAll('.exercise-item-container')].map(
@@ -93,7 +114,6 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
             return originalMap.get(item.id) !== item.order;
         });
     }
-
 
     function showSaveButton() {
         saveButton.classList.remove('hide');
@@ -146,16 +166,16 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
 
     list.addEventListener('click', (e) => {
         // Solo actuar si no estamos en modo ordenar
-        if (!checkbox.checked) {
-            // Buscar el contenedor del ejercicio clicado
-            const itemContainer = e.target.closest('.exercise-item-container');
-            if (!itemContainer) return;
+        if (checkbox.checked) return;
 
-            const exercise = exercises.find(e => e.id === Number(itemContainer.dataset.id));
-            if (exercise) {
-                moveToExercise(exercise.id); // tu función para seleccionar ejercicio
-                hide()
-            }
+        // Buscar el contenedor del ejercicio clicado
+        const itemContainer = e.target.closest('.exercise-item-container');
+        if (!itemContainer) return;
+
+        const exercise = exercises.find(e => e.id === Number(itemContainer.dataset.id));
+        if (exercise) {
+            moveToExercise(exercise.id); // tu función para seleccionar ejercicio
+            hide()
         }
     });
 
@@ -164,39 +184,49 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
         const diff = getOrderDiff(originalOrder, currentOrder);
 
         if (diff.length === 0) {
-            console.log("No hay cambios de orden");
+            showSnackbar("warning", "No hay cambios de orden")
             checkbox.checked = false;
             hideSaveButton();
             return;
         }
 
-        console.log("Cambios detectados:", diff);
-
         await actualizarOrden(currentOrder);
-
-        originalOrder.length = 0;
-        currentOrder.forEach(o => originalOrder.push(o));
-
-        checkbox.checked = false;
-        hideSaveButton();
     });
 
+    function restoreOriginalOrder() {
+        const sortedOriginal = [...originalOrder].sort((a, b) => a.order - b.order);
+        const fragment = document.createDocumentFragment();
+
+        sortedOriginal.forEach(item => {
+            const element = list.querySelector(`[data-id="${item.id}"]`);
+            if (element) {
+                fragment.appendChild(element);
+            }
+        });
+
+        list.innerHTML = ''; // Limpiar la lista
+        list.appendChild(fragment); // Agregar todos en el orden correcto
+    }
 
     async function actualizarOrden(currentOrder) {
         const data = currentOrder.map(e => e.id);
-
         try {
             await updateTrainingSessionExerciseOrder(sessionId, data);
+            originalOrder.length = 0;
+            currentOrder.forEach(o => originalOrder.push(o));
+            showSnackbar("success", "Orden actualizado correctamente");
 
             hide()
-            checkbox.checked = false;
-            hideSaveButton();
 
             safeNavigate(`/sessions/${sessionId}`)
-            showSnackbar("success", "Orden actualizado correctamente");
         } catch (error) {
             console.warn("No se pudo actualizar el orden", error);
             showSnackbar("error", "No se pudo actualizar el orden");
+
+            restoreOriginalOrder();
+            checkbox.checked = false;
+            hideSaveButton();
+            hideItemsSpan();
         }
     }
 
@@ -224,17 +254,18 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     }
 
     function hide() {
+        if (checkbox.checked) {
+            checkbox.checked = false;
+            hideItemsSpan();
+            hideSaveButton();
+        }
         modal.classList.remove('show');
         document.body.style.overflow = '';
         document.body.style.pointerEvents = '';
     }
 
     modal.addEventListener('click', e => {
-        if (e.target === modal) {
-            hide()
-            checkbox.checked = false;
-            hideSaveButton();
-        }
+        if (e.target === modal) hide();
     });
 
     document.body.appendChild(modal);

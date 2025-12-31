@@ -48,7 +48,6 @@ export async function trainingSchedule() {
         extendedProps: {imageUrl: "favicon.png"},
     }));
 
-    console.log(sessionEvents);
     const calendar = new Calendar(calendarEl, {
         plugins: [dayGridPlugin, interactionPlugin],
         initialView: "dayGridMonth",
@@ -64,29 +63,55 @@ export async function trainingSchedule() {
         eventLongPressDelay: 600,
         eventDidMount(info) {
             info._longPress = false;
+            info._pressTimer = null;
 
-            // Inicio del press
-            info.el.addEventListener("mousedown", () => {
+            // Función para iniciar el long press
+            const startLongPress = () => {
                 info._pressTimer = setTimeout(async () => {
                     info._longPress = true;
-                    await deleteSession(info.event.id)
+                    await deleteSession(info.event.id);
                 }, 600);
-            });
+            };
 
-            // Fin del press
-            info.el.addEventListener("mouseup", (e) => {
-                clearTimeout(info._pressTimer);
+            // Función para cancelar el long press
+            const cancelLongPress = () => {
+                if (info._pressTimer) {
+                    clearTimeout(info._pressTimer);
+                    info._pressTimer = null;
+                }
+            };
+
+            // Función para finalizar el long press
+            const endLongPress = (e) => {
+                cancelLongPress();
 
                 if (info._longPress) {
                     e.stopImmediatePropagation(); // Evita que dispare eventClick
+                    e.preventDefault();
                     info._longPress = false;
                 }
+            };
+
+            // --- EVENTOS DESKTOP (Mouse) ---
+            info.el.addEventListener("mousedown", startLongPress);
+            info.el.addEventListener("mouseup", endLongPress);
+            info.el.addEventListener("mouseleave", cancelLongPress);
+
+            // --- EVENTOS MÓVIL (Touch) ---
+            info.el.addEventListener("touchstart", (e) => {
+                startLongPress();
+            }, {passive: true});
+
+            info.el.addEventListener("touchend", (e) => {
+                endLongPress(e);
             });
 
-            // Si el ratón sale, cancelar
-            info.el.addEventListener("mouseleave", () => {
-                clearTimeout(info._pressTimer);
-            });
+            info.el.addEventListener("touchmove", (e) => {
+                // Si el usuario mueve el dedo, cancelar el long press
+                cancelLongPress();
+            }, {passive: true});
+
+            info.el.addEventListener("touchcancel", cancelLongPress);
         },
         eventContent: function (info) {
             const img = document.createElement("img");
@@ -100,7 +125,7 @@ export async function trainingSchedule() {
         },
         dateClick: async function (info) {
             dateSelected = info.dateStr;
-            await routinePicker.show()
+            await routinePicker.show();
         }
     });
 
@@ -133,30 +158,30 @@ export async function trainingSchedule() {
     }
 
     async function createSession(routineId) {
-        const data = {
-            routineId: Number(routineId),
-            date: dateSelected,
-        }
-        const result = await createTrainingSession(data)
+        try {
+            const data = {
+                routineId: Number(routineId),
+                date: dateSelected,
+            }
+            
+            const result = await createTrainingSession(data);
 
-        if (result && result.ok) {
+            showSnackbar("success", "Sesión creada correctamente")
             safeNavigate(`/sessions/${result.id}`);
+        } catch (error) {
+            showSnackbar("error", "Error al crear la sesión");
         }
-        console.error("No se ha podido crear la sesión")
     }
 
     async function deleteSession(sessionId) {
         const confirmed = await openConfirmModal("¿Estás seguro de borrar esta sesión?");
-        if (confirmed) {
-            const result = await deleteTrainingSession(sessionId);
-
-            if (result && result.ok) {
-                safeNavigate('/sessions')
-            } else {
-                console.warn("No se pudo borrar el ejercicio", result);
-            }
-        } else {
-            console.log("Acción cancelada");
+        if (!confirmed) return
+        try {
+            await deleteTrainingSession(sessionId);
+            showSnackbar("success", "Sesión de entrenamiento borrada correctamente")
+            safeNavigate('/sessions')
+        } catch (error) {
+            showSnackbar("error", "No se pudo borrar la sesión de entrenamiento")
         }
     }
 

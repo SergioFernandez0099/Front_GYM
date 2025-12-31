@@ -4,8 +4,9 @@
     flex-direction: column;
     align-items: center;
     margin: 0.7rem;
-    height: 80vh;
+    max-height: 40rem;
     gap: 0.5rem;
+    margin-bottom: 3.4rem;
 }
 
 .train-sess-card-general-options {
@@ -14,7 +15,7 @@
     justify-content: center;
     width: 100%;
     gap: 0.3rem;
-    margin-top: 1.3rem;
+    margin-top: 3rem;
 }
 
 .train-sess-card-general-options button {
@@ -36,7 +37,6 @@
 .train-sess-card-general-options img {
     height: 1.2rem;
     width: 1.2rem;
-
 }
 
 .train-sess-card {
@@ -55,15 +55,21 @@
     position: absolute;
     top: 0.5rem;
     left: 0.5rem;
-    border-radius: 50%;
-    background: red;
 }
 
 .train-sess-card-exercise-num p {
     padding: 0.1rem 0.6em;
     color: white;
-    font-weight: bold;
     font-size: 0.9rem;
+    background-color: red;
+    border-radius: 50%;
+    text-align: center;
+    font-weight: bold;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .train-sess-card-icon {
@@ -121,18 +127,25 @@
 }
 
 .train-sess-card-image {
+    position: relative;
     width: 5rem;
     height: 5rem;
     object-fit: cover;
     overflow: visible;
 }
 
+.train-sess-card-serie-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .train-sess-card-serie-weight-image {
     height: 1.8rem;
     width: 1.8rem;
     object-fit: cover;
-    margin-right: 0.2rem;
 }
+
 .train-sess-card-serie-arrow-image {
     margin-top: 0.3rem;
     height: 0.8rem;
@@ -153,10 +166,10 @@
     align-items: center;
     justify-content: center;
     border-radius: 100%;
-    font-weight:600;
+    font-weight: 600;
 }
 
-.train-sess-card-units-container p{
+.train-sess-card-units-container p {
     font-size: 0.9rem;
 }
 
@@ -182,8 +195,7 @@
 .train-sess-card-serie-num {
     font-size: 1rem;
     position: absolute;
-    top: 0.9rem;
-    left: 0.9rem;
+    top: 0.38rem;
     color: white;
 }
 
@@ -281,7 +293,7 @@
 }
 
 .train-sess-card-description {
-    all:unset;
+    all: unset;
     display: block;
     border-radius: 1rem;
     padding: 0.2rem 0.5rem;
@@ -325,22 +337,70 @@
     background: black;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 750px) {
 
-    /*.train-sess-card-title {*/
-    /*    font-size: 2rem;*/
-    /*}*/
-    .train-sess-card-image {
-        width: 10rem;
-        height: 10rem;
+    .train-sess-card {
+        max-width: 40rem;
+        max-height: 37rem;
     }
 
-    /*.train-sess-card-input-weight,*/
-    /*.train-sess-card-input-reps,*/
-    /*.train-sess-card-input-intensity {*/
-    /*    font-size: 1rem;*/
-    /*    padding: 0.50rem 0.75rem;*/
-    /*}*/
+    .train-sess-card-general-options button {
+        font-size: 1.1rem;
+    }
+
+    .train-sess-card-serie span {
+        font-size: 1rem;
+    }
+
+    .train-sess-card-input-weight, .train-sess-card-input-reps, .train-sess-card-input-rir, .train-sess-card-input-intensity {
+        font-size: 1.1rem;
+    }
+
+    .train-sess-card-serie-num {
+        top: 0.55rem;
+    }
+
+    .train-sess-card-exercise-num p {
+        font-size: 1.1rem;
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .train-sess-card-serie-weight-image {
+        height: 2.2rem;
+        width: 2.2rem;
+    }
+
+    .train-sess-card-units-container {
+        width: 1.8rem;
+    }
+
+    .train-sess-card-units-container p {
+        font-size: 1rem;
+    }
+
+    .train-sess-card-units {
+        height: 1.6rem;
+        width: 1.6rem;
+    }
+
+    .saveIcon {
+        height: 1.1rem;
+        width: 1.1rem;
+    }
+
+    .infoIcon {
+        height: 2rem;
+        width: 2rem;
+    }
+
+}
+
+@media (min-width: 900px) {
+    .train-sess-card-image {
+        width: 8rem;
+        height: 8rem;
+    }
 }
 
 @media (max-width: 370px) {
