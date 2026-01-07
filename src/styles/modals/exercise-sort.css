@@ -24,7 +24,7 @@
 .exercise-sort-container {
     background: #fff;
     border-radius: 8px;
-    max-height: 300px;
+    max-height: 27rem;
     overflow-y: auto;
     text-align: center;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -64,10 +64,12 @@
     opacity: 0;                /* invisible al inicio */
     transform: translateX(-10px); /* opcional: un pequeño slide desde la izquierda */
     transition: opacity 0.3s ease, transform 0.3s ease;
+    width: 0;
 }
 
 .exercise-span.show {
     opacity: 1;                /* visible */
+    width: auto;
     transform: translateX(0);  /* posición final */
 }
 

@@ -1,6 +1,5 @@
 import {
     clearErrorBorder,
-    findImageByName,
     glowEffect,
     openConfirmModal,
     shakeEffect,
@@ -114,7 +113,7 @@ export async function RoutineSetCard(set, routineId) {
     readonly
     enterkeyhint="done"
     placeholder="Descripción del ejercicio"
-    oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')">${set.description}</textarea>
+    oninput="this.value = this.value.replace(/<[^>]*>?/gm, '')">${set.description ?? ''}</textarea>
 </div>
   `;
         setUpSetCard(article, set);
@@ -135,10 +134,10 @@ function setUpSetCard(article, set) {
     const editIcon = article.querySelector(".editIcon");
 
     if (arrowButton) {
-        arrowButton.addEventListener("click", () => {
+        arrowButton.addEventListener("click", async () => {
             if (article.hasAttribute("data-new-set")) {
                 // Faltan validaciones
-                guardarSet(article, set);
+                await guardarSet(article, set);
                 return;
             }
 
@@ -146,7 +145,7 @@ function setUpSetCard(article, set) {
             const existe = document.querySelector("[data-new-set]") !== null;
             if (existe) {
                 const newArticle = document.querySelector("[data-new-set]");
-                guardarSet(newArticle, set);
+                await guardarSet(newArticle, set);
                 return;
             }
 
@@ -171,12 +170,12 @@ function setUpSetCard(article, set) {
     }
 
     if (editButton) {
-        editButton.addEventListener("click", () => {
+        editButton.addEventListener("click", async () => {
             if (editButton.dataset.editable === "false") {
                 showEditableCard(textarea, seriesInput, repsInput);
                 toggleEditIcon("tick", editIcon, editButton, "1.65rem", "2rem");
             } else {
-                guardarSet(article, set);
+                await guardarSet(article, set);
             }
         });
     }
@@ -220,9 +219,9 @@ function setUpSetCard(article, set) {
     }
 
     if (textarea) {
-        textarea.addEventListener("keydown", (event) => {
+        textarea.addEventListener("keydown", async (event) => {
             if (event.key === "Enter") {
-                guardarSet(article, set);
+                await guardarSet(article, set);
             }
         });
     }
@@ -447,20 +446,16 @@ function validarSeriesYReps(input) {
     return true;
 }
 
-async function cargarEjercicio(titleInput, image) {
-    const nombre = titleInput.value.trim();
+function cargarEjercicio(exerciseId, image) {
 
-    const resultado = await findImageByName(nombre);
-
+    const exercise = exercises.find(ex => ex.id === Number(exerciseId));
     image.classList.add("fade-out");
     setTimeout(() => {
-        if (resultado) {
-            image.src = resultado.url;
-            image.alt = "Imagen de " + resultado.alt;
-        } else {
-            image.src = "/assets/images/snorlax.png";
-            image.alt = "Imagen default";
-        }
+        image.src = exercise?.imageUrl ?? "/assets/images/snorlax.png";
+        image.alt = exercise
+            ? `Imagen de ${exercise.name}`
+            : "Imagen default";
+
 
         // Cuando la nueva imagen se cargue, vuelve a mostrarla
         image.onload = () => {
@@ -469,14 +464,14 @@ async function cargarEjercicio(titleInput, image) {
     }, 200); // 200 ms para el efecto de salida
 
     const h2 = document.createElement("h2");
-    h2.textContent = nombre;
+    h2.textContent = exercise.name;
     h2.className = "routine-set-title";
 
     titleInput.parentNode.replaceChild(h2, titleInput);
 }
 
 export async function guardarSet(article, set) {
-    // Verificar que ha habido cambios
+    // Verificar que ha habido cambios (será añadido en un futuro)
     if (true) {
         const image = article.querySelector(".routine-set-image");
         const titleInput = article.querySelector("#titleInput");
@@ -508,10 +503,11 @@ export async function guardarSet(article, set) {
             };
             try {
                 const result = await createRoutineSet(routineIdGlobal, setData);
-                cargarEjercicio(titleInput, image);
+                cargarEjercicio(suggestionBox.dataset.exercise, image);
                 article.removeAttribute("data-new-set");
                 Object.assign(set, result);
                 delete set.isNew;
+                showSnackbar("success", "Set creado correctamente")
             } catch (error) {
                 shakeEffect(article);
                 showSnackbar("error", "Error al crear el set")
@@ -526,6 +522,7 @@ export async function guardarSet(article, set) {
             };
             try {
                 await updateRoutineSet(routineIdGlobal, parseInt(set.id), setData);
+                showSnackbar("success", "Set actualizado correctamente")
             } catch (error) {
                 showSnackbar("error", "Error al actualizar el set")
                 shakeEffect(article);

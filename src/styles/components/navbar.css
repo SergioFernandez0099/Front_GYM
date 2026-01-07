@@ -159,20 +159,20 @@
     100% { transform: rotate(360deg) scale(1); }
 }
 
-/*.navbar .reload-container #reload:hover {*/
-/*    animation: spin 1s linear infinite;*/
-/*}*/
-
 @media (max-width: 768px) {
     .navbar {
         opacity: 0.95;
-        width: 150px;
+        width: 50px;
         left: 3px;
         top: 1.5rem;
         background-color: transparent;
         box-shadow: none;
-        transition: top 0.3s linear;
+        transition: top 0.3s linear, width 0.9s ease ;
         z-index: 9999;
+    }
+
+    .navbar:has(#menu-toggle:checked) {
+        width: 150px;
     }
 
 

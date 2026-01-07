@@ -241,11 +241,9 @@ export async function trainingSessionCard(sessionId) {
             }
             case "next": {
                 goToExercise("next")
-                showSnackbar("success", "Datos guardados correctamente");
                 break;
             }
             case "previous": {
-                showSnackbar("error", "Error al cargar las sesiones de entrenamiento");
                 goToExercise("previous")
                 break;
             }

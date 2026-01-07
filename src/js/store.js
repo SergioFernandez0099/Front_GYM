@@ -17,8 +17,8 @@ export function setCurrentUserId(id) {
 }
 
 export function clearCurrentUserId() {
-    userId = null;
-    localStorage.removeItem("userId");
+    // userId = null;
+    // localStorage.removeItem("userId");
 }
 
 export function setForceNoCache(value) {
