@@ -248,12 +248,20 @@
 }
 
 @media (min-width: 768px) {
+    .routine-set-card {
+        height: 14rem;
+    }
+
+    .routine-set-card.accordion {
+        height: 20.5rem;
+    }
+
     .routine-set-title {
         font-size: 1.5rem;
     }
 
     .routine-set-text {
         color: white;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 }

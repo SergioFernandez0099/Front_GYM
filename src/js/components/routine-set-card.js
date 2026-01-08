@@ -154,12 +154,7 @@ function setUpSetCard(article, set) {
 
             if (article.classList.contains("accordion")) {
                 if (editButton.dataset.editable === "true") {
-                    if (Number(seriesInput.value) !== Number(set.series)) {
-                        seriesInput.value = set.series;
-                    }
-                    if (Number(repsInput.value) !== Number(set.repetitions)) {
-                        repsInput.value = set.repetitions;
-                    }
+                    resetInfoFields(seriesInput, repsInput,textarea, set);
                     closeEditableCard(textarea, seriesInput, repsInput);
                     toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
                 }
@@ -588,23 +583,22 @@ function closeAllOpenedCards(article) {
         if (card !== article) {
             const desc = card.querySelector(".description");
             const arrow = card.querySelector(".arrowIcon");
-            const edit = card.querySelector(".icon-container-edit");
+            const editButton = card.querySelector(".icon-container-edit");
+            const editIcon = card.querySelector(".editIcon");
             const trash = card.querySelector(".icon-container-trash");
 
             if (card.classList.contains("accordion")) {
-                if (edit.dataset.editable === "true") {
+                if (editButton.dataset.editable === "true") {
                     const set = getSet(card.dataset.id);
-                    const series = card.querySelector("#series");
-                    const reps = card.querySelector("#reps");
+                    const seriesInput = card.querySelector("#series");
+                    const repsInput = card.querySelector("#reps");
+                    const textarea = article.querySelector("#description-text");
 
-                    if (Number(series.value) !== Number(set.series)){
-                        series.value = set.series;
-                    }
-                    if (Number(reps.value) !== Number(set.repetitions)){
-                        reps.value = set.repetitions;
-                    }
+                    resetInfoFields(seriesInput, repsInput,textarea, set);
+                    closeEditableCard(textarea, seriesInput, repsInput);
+                    toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
                 }
-                closeAccordion(card, desc, arrow, trash, edit);
+                closeAccordion(card, desc, arrow, trash, editButton);
             }
         }
     });
@@ -627,4 +621,16 @@ export function getEditingCard() {
     }
 
     return null; // No hay ninguna en edición
+}
+
+function resetInfoFields(seriesInput, repsInput, textarea, set) {
+    if (Number(seriesInput.value) !== Number(set.series)) {
+        seriesInput.value = set.series;
+    }
+    if (Number(repsInput.value) !== Number(set.repetitions)) {
+        repsInput.value = set.repetitions;
+    }
+    if (textarea.value !== set.description){
+        textarea.value = set.description;
+    }
 }
