@@ -9,6 +9,7 @@ import {
 import {createRoutineSet, deleteRoutineSet, fetchExercises, updateRoutineSet} from "../services/api.js";
 import {showSnackbar} from "./snackbar.js";
 import {safeNavigate} from "../router.js";
+import {getSet} from "../pages/routine-set.js";
 
 let exercises = [];
 let routineIdGlobal;
@@ -75,6 +76,7 @@ export async function RoutineSetCard(set, routineId) {
         setUpSetCard(article, set);
         await setUpSetNewCard(article);
     } else {
+        article.dataset.id = set.id;
         article.className = "routine-set-card";
         article.innerHTML = `
     <div class="routine-set-options">
@@ -142,17 +144,22 @@ function setUpSetCard(article, set) {
             }
 
             // Valiamos que no haya una card nueva abierta
-            const existe = document.querySelector("[data-new-set]") !== null;
-            if (existe) {
-                const newArticle = document.querySelector("[data-new-set]");
-                await guardarSet(newArticle, set);
+            const cardAbierta = document.querySelector("[data-new-set]");
+            if (cardAbierta) {
+                cardAbierta.scrollIntoView({behavior: "smooth", block: "center"});
                 return;
             }
 
-            if (!closeAllOpenedCards(article)) return;
+            closeAllOpenedCards(article)
 
             if (article.classList.contains("accordion")) {
                 if (editButton.dataset.editable === "true") {
+                    if (Number(seriesInput.value) !== Number(set.series)) {
+                        seriesInput.value = set.series;
+                    }
+                    if (Number(repsInput.value) !== Number(set.repetitions)) {
+                        repsInput.value = set.repetitions;
+                    }
                     closeEditableCard(textarea, seriesInput, repsInput);
                     toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
                 }
@@ -522,6 +529,9 @@ export async function guardarSet(article, set) {
             };
             try {
                 await updateRoutineSet(routineIdGlobal, parseInt(set.id), setData);
+                set.series = parseInt(seriesInput.value);
+                set.repetitions = parseInt(repsInput.value);
+                set.description = textarea.value;
                 showSnackbar("success", "Set actualizado correctamente")
             } catch (error) {
                 showSnackbar("error", "Error al actualizar el set")
@@ -580,24 +590,41 @@ function closeAllOpenedCards(article) {
             const arrow = card.querySelector(".arrowIcon");
             const edit = card.querySelector(".icon-container-edit");
             const trash = card.querySelector(".icon-container-trash");
-            const seriesInput = card.querySelector("#series");
-            const repsInput = card.querySelector("#reps");
-            const textarea = card.querySelector("#description-text");
-            const editButton = card.querySelector(".icon-container-edit");
-            const editIcon = card.querySelector(".editIcon");
 
             if (card.classList.contains("accordion")) {
-                if (editButton.dataset.editable === "true") {
-                    if (validarSeriesYReps(seriesInput) || validarSeriesYReps(repsInput)) {
-                        card.scrollIntoView({behavior: "smooth", block: "center"});
-                        return false;
+                if (edit.dataset.editable === "true") {
+                    const set = getSet(card.dataset.id);
+                    const series = card.querySelector("#series");
+                    const reps = card.querySelector("#reps");
+
+                    if (Number(series.value) !== Number(set.series)){
+                        series.value = set.series;
                     }
-                    closeEditableCard(textarea, seriesInput, repsInput, editButton);
-                    toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
+                    if (Number(reps.value) !== Number(set.repetitions)){
+                        reps.value = set.repetitions;
+                    }
                 }
                 closeAccordion(card, desc, arrow, trash, edit);
             }
         }
     });
     return true;
+}
+
+export function getEditingCard() {
+    const allCards = document.querySelectorAll(".routine-set-card");
+
+    for (const card of allCards) {
+        const editButton = card.querySelector(".icon-container-edit");
+
+        if (
+            card.classList.contains("accordion") &&
+            editButton &&
+            editButton.dataset.editable === "true"
+        ) {
+            return card; // Hay una card siendo editada
+        }
+    }
+
+    return null; // No hay ninguna en edición
 }

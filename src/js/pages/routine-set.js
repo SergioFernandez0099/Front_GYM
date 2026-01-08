@@ -1,8 +1,9 @@
-import {RoutineSetCard,} from "../components/routine-set-card";
+import {getEditingCard, RoutineSetCard,} from "../components/routine-set-card";
 import {fetchRoutineSets} from "../services/api";
 import {showSnackbar} from "../components/snackbar.js";
 import {safeNavigate} from "../router.js";
 
+let setData = []
 export async function RoutineSet(routineId) {
     const routineSetContainer = document.createElement("div");
     routineSetContainer.className = "routine-container";
@@ -16,8 +17,6 @@ export async function RoutineSet(routineId) {
     section.appendChild(routineList);
 
     routineSetContainer.appendChild(section);
-
-    let setData;
 
     try {
         setData = await fetchRoutineSets(routineId);
@@ -48,6 +47,15 @@ export async function RoutineSet(routineId) {
             return;
         }
 
+        const editingSet = getEditingCard()
+        if (editingSet) {
+            editingSet.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+            return;
+        }
+
         const newSet = {
             isNew: true,
             exerciseId: null,
@@ -61,6 +69,10 @@ export async function RoutineSet(routineId) {
         newArticle.scrollIntoView({behavior: "smooth", block: "center"});
     });
 
-
     return routineSetContainer;
 }
+
+export function getSet(setId) {
+    return setData.find(set => Number(set.id) === Number(setId));
+}
+
