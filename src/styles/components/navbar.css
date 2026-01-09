@@ -111,9 +111,11 @@
     transition: width 0.4s ease;
 }
 
-.navbar .menu-items-container .menu-items a:hover::before {
+.navbar .menu-items-container .menu-items a:hover::before,
+.navbar .menu-items-container .menu-items a.active::before {
     width: 100%;
 }
+
 
 .navbar .reload-container {
     display: flex;

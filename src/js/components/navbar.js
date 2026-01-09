@@ -138,16 +138,34 @@ export function Navbar() {
     });
 
     const menuLinks = nav.querySelectorAll("a");
+
+    function updateActiveLink() {
+        const currentPath = window.location.pathname;
+
+        menuLinks.forEach(link => {
+            if (link.getAttribute("href") === currentPath) {
+                link.classList.add("active");
+            } else {
+                link.classList.remove("active");
+            }
+        });
+    }
+
     menuLinks.forEach((link) => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
             const href = link.getAttribute("href");
             safeNavigate(href);
+
+            updateActiveLink();
+
             inputMenu.checked = false;
             mainContainer.style.filter = "none";
             overlay.style.display = "none";
         });
     });
+
+    updateActiveLink();
 
     return nav;
 }
