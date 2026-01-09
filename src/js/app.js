@@ -4,11 +4,8 @@ import {checkAndSetLogin} from "./store.js";
 import '../styles/index.css';
 
 async function initSPA() {
-    const isValid = await checkAndSetLogin();
-    if (isValid) {
-        loadNavbarAndFooter();
-    }
-
+    loadNavbarAndFooter();
+    await checkAndSetLogin();
     initRouter();
 }
 

@@ -1,7 +1,9 @@
+import {showLoader} from "../../utils/helpers.js";
+
 export async function errorPage(mensaje = "Algo ha ido mal", retryCallback = null) {
     const errorContainer = document.createElement("div");
     errorContainer.classList.add("error-container");
-    console.log("error")
+
     errorContainer.innerHTML = `
         <img src="/assets/images/snorlax.png" alt="Imagen de error" class="error-image">
         <h1 class="error-label">${mensaje}</h1>

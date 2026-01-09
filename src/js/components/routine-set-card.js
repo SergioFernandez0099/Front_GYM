@@ -1,6 +1,7 @@
 import {
     clearErrorBorder,
     glowEffect,
+    normalize,
     openConfirmModal,
     shakeEffect,
     showErrorBorder,
@@ -154,7 +155,7 @@ function setUpSetCard(article, set) {
 
             if (article.classList.contains("accordion")) {
                 if (editButton.dataset.editable === "true") {
-                    resetInfoFields(seriesInput, repsInput,textarea, set);
+                    resetInfoFields(seriesInput, repsInput, textarea, set);
                     closeEditableCard(textarea, seriesInput, repsInput);
                     toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
                 }
@@ -223,6 +224,7 @@ function setUpSetCard(article, set) {
     if (textarea) {
         textarea.addEventListener("keydown", async (event) => {
             if (event.key === "Enter") {
+                event.preventDefault();
                 await guardarSet(article, set);
             }
         });
@@ -291,15 +293,28 @@ async function setUpSetNewCard(article) {
     showEditableCard(textarea, seriesInput, repsInput);
 
     titleInput.addEventListener("input", () => {
-        const query = titleInput.value.toLowerCase();
+        const query = normalize(titleInput.value);
+
         suggestionBox.classList.add("visible");
         suggestionBox.innerHTML = "";
 
         if (query.length === 0) return;
 
-        const matches = exercises.filter((exercise) =>
-            exercise.name.toLowerCase().includes(query)
-        );
+        const matches = exercises
+            .map(ex => ({
+                ...ex,
+                normalizedName: normalize(ex.name)
+            }))
+            .filter(ex => ex.normalizedName.includes(query))
+            .sort((a, b) => {
+                const aStarts = a.normalizedName.startsWith(query);
+                const bStarts = b.normalizedName.startsWith(query);
+
+                if (aStarts && !bStarts) return -1;
+                if (!aStarts && bStarts) return 1;
+
+                return a.name.localeCompare(b.name, "es");
+            });
 
         if (matches.length > 0) {
             suggestionBox.textContent = matches[0].name;
@@ -307,7 +322,11 @@ async function setUpSetNewCard(article) {
         }
     });
 
-    suggestionBox.addEventListener("click", () => {
+    suggestionBox.addEventListener("mousedown", (event) => {
+        event.preventDefault();
+
+        console.log("clicked");
+
         if (suggestionBox.textContent.trim() !== "") {
             titleInput.value = suggestionBox.textContent;
             titleInput.style.border = "2px solid green";
@@ -594,7 +613,7 @@ function closeAllOpenedCards(article) {
                     const repsInput = card.querySelector("#reps");
                     const textarea = article.querySelector("#description-text");
 
-                    resetInfoFields(seriesInput, repsInput,textarea, set);
+                    resetInfoFields(seriesInput, repsInput, textarea, set);
                     closeEditableCard(textarea, seriesInput, repsInput);
                     toggleEditIcon("edit", editIcon, editButton, "1.65rem", "2rem");
                 }
@@ -630,7 +649,7 @@ function resetInfoFields(seriesInput, repsInput, textarea, set) {
     if (Number(repsInput.value) !== Number(set.repetitions)) {
         repsInput.value = set.repetitions;
     }
-    if (textarea.value !== set.description){
+    if (textarea.value !== set.description) {
         textarea.value = set.description;
     }
 }

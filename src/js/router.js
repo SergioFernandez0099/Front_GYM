@@ -3,7 +3,7 @@ import Navigo from "navigo";
 import {Home} from "./pages/home.js";
 import {About} from "./pages/about.js";
 import {Exercises} from "./pages/exercises.js";
-import {getLoginStatus} from "./store.js";
+import {checkAndSetLogin, connected, getLoginStatus} from "./store.js";
 import {Routine} from "./pages/routine.js";
 import {RoutineSet} from "./pages/routine-set.js";
 import {adjustAppHeight, hideLoader, removeLoginCss, showLoader,} from "../utils/helpers.js";
@@ -31,14 +31,30 @@ export function initRouter() {
                 render(Home());
             })
         )
-        .on("/error", requireLogin(() => {
-            routeHandlers["/error"] = () => render(errorPage("Error al cargar la página", () => {
-                safeNavigate(previousRoute || "/");
-            }));
-            render(errorPage("Error al cargar la página", () => {
-                safeNavigate(previousRoute || "/");
+        .on("/error", requireLogin(async () => {
+            routeHandlers["/error"] = async () => {
+                console.log(previousRoute)
+                await render(errorPage("Error al cargar la página", async () => {
+                    if (!connected) {
+                        safeNavigate(previousRoute || "/");
+                    } else {
+                        await checkAndSetLogin();
+                        safeNavigate(previousRoute || "/");
+                    }
+                }));
+            };
+            console.log(previousRoute)
+
+            await render(errorPage("Error al cargar la página", async () => {
+                if (!connected) {
+                    safeNavigate(previousRoute || "/");
+                } else {
+                    await checkAndSetLogin();
+                    safeNavigate(previousRoute || "/");
+                }
             }));
         }))
+
         .on("/login", () => {
             routeHandlers["/login"] = () => {
                 const navbarContainer = document.getElementById("navbar");

@@ -64,7 +64,7 @@ async function fetchGet(path) {
         credentials: "include",
     });
 
-    await handleAuthError(result);
+    //await handleAuthError(result);
 
     if (!result.ok) {
         const errorBody = await result.json().catch(() => null);
@@ -85,7 +85,7 @@ async function fetchSend(path, method, body) {
         body: JSON.stringify(body),
     });
 
-    await handleAuthError(result);
+    //await handleAuthError(result);
 
     if (!result.ok) {
         const errorBody = await result.json().catch(() => null);
@@ -278,7 +278,7 @@ async function handleAuthError(res) {
     if (res.status === 401 || res.status === 403) {
         console.warn("Sesión expirada o no autorizada. Redirigiendo al login...");
         clearCurrentUserId();
-        safeNavigate("login");
+        safeNavigate("error");
         throw new Error("No autorizado");
     }
 }

@@ -110,13 +110,26 @@ export async function Exercises() {
 
 function handleFilter(muscleGroup) {
     const exerciseCards = document.querySelectorAll(".exercise-card");
+    let firstVisibleCard = null;
+
     exerciseCards.forEach((card) => {
         const cardMuscleGroup = card.getAttribute("data-muscle-group");
         if (muscleGroup === "Todos" || cardMuscleGroup === muscleGroup) {
             card.style.display = "flex";
+
+            if (!firstVisibleCard) {
+                firstVisibleCard = card;
+            }
         } else {
             card.style.display = "none";
         }
     });
+
+    if (firstVisibleCard) {
+        firstVisibleCard.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    }
     adjustAppHeight();
 }
