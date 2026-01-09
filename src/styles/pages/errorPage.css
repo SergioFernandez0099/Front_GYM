@@ -5,10 +5,15 @@
     margin-top: 3rem;
 }
 
-.error-label{
-font-weight: bold;
+.error-label {
+    font-weight: bold;
     text-align: center;
     color: white;
+}
+
+.error-image {
+    height: 23rem;
+    width: 23rem;
 }
 
 #errorButton {
@@ -17,4 +22,5 @@ font-weight: bold;
     padding: 0.6rem 0.9rem;
     background: red;
     font-size: 1.4rem;
+    cursor: pointer;
 }

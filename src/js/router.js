@@ -19,7 +19,7 @@ export const router = new Navigo("/");
 
 // Guardamos los callbacks de cada ruta
 const routeHandlers = {};
-let previousRoute = null;
+let retryRoute  = null;
 
 // Inicializa el router después de que el DOM cargue
 export function initRouter() {
@@ -33,24 +33,19 @@ export function initRouter() {
         )
         .on("/error", requireLogin(async () => {
             routeHandlers["/error"] = async () => {
-                console.log(previousRoute)
                 await render(errorPage("Error al cargar la página", async () => {
-                    if (!connected) {
-                        safeNavigate(previousRoute || "/");
+                    if (connected) {
+                        safeNavigate(retryRoute || "/");
                     } else {
-                        await checkAndSetLogin();
-                        safeNavigate(previousRoute || "/");
+                        if (await checkAndSetLogin()) safeNavigate(retryRoute || "/");
                     }
                 }));
             };
-            console.log(previousRoute)
-
             await render(errorPage("Error al cargar la página", async () => {
-                if (!connected) {
-                    safeNavigate(previousRoute || "/");
+                if (connected) {
+                    safeNavigate(retryRoute || "/");
                 } else {
-                    await checkAndSetLogin();
-                    safeNavigate(previousRoute || "/");
+                    if (await checkAndSetLogin()) safeNavigate(retryRoute || "/");
                 }
             }));
         }))
@@ -154,14 +149,19 @@ export function initRouter() {
 
 // Función para navegar de manera segura
 export function safeNavigate(path) {
-    // Si ya estamos en la misma ruta, ejecutamos el callback manualmente
-    previousRoute = window.location.pathname;
-    if (previousRoute === path && routeHandlers[path]) {
+    const currentPath = window.location.pathname;
+
+    if (currentPath !== "/error" && path !== "/error") {
+        retryRoute = path;
+    }
+
+    if (currentPath === path && routeHandlers[path]) {
         routeHandlers[path]();
     } else {
         router.navigate(path);
     }
 }
+
 
 function requireLogin(callback) {
     return (params) => {

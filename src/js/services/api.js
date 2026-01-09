@@ -1,6 +1,12 @@
-import {clearCurrentUserId, getCurrentUserId, getForceNoCache, setCurrentUserId, setForceNoCache,} from "../store.js";
+import {
+    clearCurrentUserId,
+    getCurrentUserId,
+    getForceNoCache,
+    setConnected,
+    setCurrentUserId,
+    setForceNoCache,
+} from "../store.js";
 import {safeNavigate} from "../router.js";
-import {showSnackbar} from "../components/snackbar.js";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const CACHE_TTL = 40000; // 40 seg
@@ -32,8 +38,9 @@ export async function logout() {
             method: "POST",
             credentials: "include",
         });
+
     } catch (error) {
-        console.warn("Error en logout: ", err);
+        console.warn("Error en logout: ", error);
         throw error;
     } finally {
         clearCurrentUserId();
@@ -60,42 +67,53 @@ export async function validateToken() {
 
 // Función helper para peticiones GET con cookie
 async function fetchGet(path) {
-    const result = await fetch(`${API_BASE}${path}`, {
-        credentials: "include",
-    });
+    try {
+        const result = await fetch(`${API_BASE}${path}`, {
+            credentials: "include",
+        });
 
-    //await handleAuthError(result);
+        await handleAuthError(result);
 
-    if (!result.ok) {
-        const errorBody = await result.json().catch(() => null);
-        throw {
-            status: result.status,
-            body: errorBody,
+        if (!result.ok) {
+            const errorBody = await result.json().catch(() => null);
+            throw {
+                status: result.status,
+                body: errorBody,
+            }
         }
+        return (await result.json()).message;
+    } catch (error) {
+        // Error de red: servidor caído, ERR_CONNECTION_REFUSED, etc.
+        setConnected(false);
+        throw error;
     }
-    return (await result.json()).message;
 }
 
 // Función helper para POST/PUT/PATCH con cookie
 async function fetchSend(path, method, body) {
-    const result = await fetch(`${API_BASE}${path}`, {
-        method,
-        headers: {"Content-Type": "application/json"},
-        credentials: "include",
-        body: JSON.stringify(body),
-    });
+    try {
+        const result = await fetch(`${API_BASE}${path}`, {
+            method,
+            headers: {"Content-Type": "application/json"},
+            credentials: "include",
+            body: JSON.stringify(body),
+        });
 
-    //await handleAuthError(result);
+        await handleAuthError(result);
 
-    if (!result.ok) {
-        const errorBody = await result.json().catch(() => null);
-        throw {
-            status: result.status,
-            body: errorBody,
+        if (!result.ok) {
+            const errorBody = await result.json().catch(() => null);
+            throw {
+                status: result.status,
+                body: errorBody,
+            }
         }
-    }
 
-    return (await result.json()).message;
+        return (await result.json()).message;
+    }catch(error) {
+        setConnected(false);
+        throw error;
+    }
 }
 
 // ---------------------

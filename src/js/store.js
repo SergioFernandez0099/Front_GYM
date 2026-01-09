@@ -33,25 +33,29 @@ export function getForceNoCache() {
     return forceNoCache;
 }
 
+export function setConnected(value) {
+    connected = value;
+}
+
 export async function checkAndSetLogin(timeout = 9000) {
     if (!getCurrentUserId()) return false;
-    console.log("intento")
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
     try {
         showLoader();
         const data = await validateToken({signal: controller.signal}); // validateToken debe usar fetch
         clearTimeout(timer);
-        if (data?.userId) setCurrentUserId(data.userId);
-        else {
-            connected = false;
+        if (data?.userId) {
+            setCurrentUserId(data.userId);
+            setConnected(true);
+        } else {
+            setConnected(false);
             showSnackbar("error", "Error al conectar con el servidor");
             safeNavigate("error");
         }
-        connected = true;
         return !!data?.userId;
     } catch (error) {
-        connected = false;
+        setConnected(false);
         clearTimeout(timer);
 
         if (error.name === "AbortError") {
