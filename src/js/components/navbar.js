@@ -165,6 +165,12 @@ export function Navbar() {
         });
     });
 
+    overlay.addEventListener("click", () => {
+        inputMenu.checked = false;
+        mainContainer.style.filter = "none";
+        overlay.style.display = "none";
+    });
+
     updateActiveLink();
 
     return nav;

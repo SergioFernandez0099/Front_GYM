@@ -279,7 +279,7 @@ async function setUpSetNewCard(article) {
         exercises = data;
     } catch (error) {
         showSnackbar("error", "Error al cargar los ejercicios del set")
-        safeNavigate("/error")
+        safeNavigate("/error");
         return null;
     }
 

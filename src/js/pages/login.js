@@ -2,25 +2,6 @@ import {login} from "../services/api.js";
 import {showSnackbar} from "../components/snackbar.js";
 
 class FormUtils {
-    // Validación de contraseña
-    static validatePassword(value) {
-        if (!value) {
-            return {isValid: false, message: "Password is required"};
-        }
-        if (value.length < 4) {
-            return {
-                isValid: false,
-                message: "Password must be at least 8 characters long",
-            };
-        }
-        // if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
-        //   return {
-        //     isValid: false,
-        //     message: "Password must contain uppercase, lowercase, and number",
-        //   };
-        // }
-        return {isValid: true};
-    }
 
     // Muestra una notificación temporal dentro del formulario o contenedor dado
     static showNotification(message, type = "info", container = null) {
@@ -94,11 +75,7 @@ class FormUtils {
           25% { transform: translateX(-5px); }
           75% { transform: translateX(5px); }
         }
-        @keyframes checkmarkPop {
-          0% { transform: scale(0); }
-          50% { transform: scale(1.3); }
-          100% { transform: scale(1); }
-        }
+
         @keyframes successPulse {
           0% { transform: scale(0); }
           50% { transform: scale(1.1); }
@@ -155,7 +132,7 @@ class LoginForm {
             <p>Inicio de sesión</p>
           </div>
           <form class="login-form" id="loginForm" novalidate>
-            <div class="form-group">
+            <div class="form-group form-group-user">
               <div class="input-wrapper">
                 <input type="text" id="user" name="user" required autocomplete="given-name">
                 <label for="user">Usuario</label>
@@ -175,13 +152,6 @@ class LoginForm {
               <span class="error-message" id="passwordError"></span>
             </div>
             <div class="form-options">
-              <label class="remember-wrapper">
-                <input type="checkbox" id="remember" name="remember">
-                <span class="checkbox-label">
-                  <span class="checkmark"></span>
-                  Recuérdame
-                </span>
-              </label>
               <a href="#" class="forgot-password">¿Has olvidado la contraseña?</a>
             </div>
             <button type="submit" class="login-btn btn">
@@ -204,8 +174,6 @@ class LoginForm {
             user: form.querySelector("#userError"),
             password: form.querySelector("#passwordError"),
         };
-        this.rememberCheckbox = form.querySelector("#remember");
-        this.checkmark = form.querySelector(".checkmark");
         this.forgotLink = form.querySelector(".forgot-password");
         this.signupLink = this.container.querySelector(".signup-link a");
         const passwordToggle = form.querySelector("#passwordToggle");
@@ -221,7 +189,11 @@ class LoginForm {
                 isValid: !!value,
                 message: value ? "" : "Introduce un usuario",
             }),
-            password: FormUtils.validatePassword,
+            password: (value) => ({
+                isValid: !!value,
+                message: value ? "" : "Introduce la constraseña",
+            }),
+            //password: FormUtils.validatePassword,
         };
 
         // Eventos del formulario
@@ -249,11 +221,6 @@ class LoginForm {
         this.forgotLink.addEventListener("click", (e) => e.preventDefault());
         this.signupLink.addEventListener("click", (e) => e.preventDefault());
 
-        // Animación del checkbox "Recuérdame"
-        this.rememberCheckbox.addEventListener("change", () =>
-            this.animateCheckbox()
-        );
-
         // Atajos de teclado: Enter para enviar, Escape para borrar errores
         document.addEventListener("keydown", (e) => {
             if (e.key === "Enter" && e.target.closest("#loginForm")) {
@@ -268,7 +235,6 @@ class LoginForm {
         return this.container; // Devuelve el nodo contenedor completo
     }
 
-    // Valida un campo específico
     validateField(fieldName) {
         const field = this[fieldName + "Field"];
         const validator = this.validators[fieldName];
@@ -283,11 +249,14 @@ class LoginForm {
         return result.isValid;
     }
 
-    // Valida todo el formulario; retorna false si hay errores
     validateForm() {
-        return Object.keys(this.validators).every((field) =>
-            this.validateField(field)
-        );
+        let isValid = true;
+        Object.keys(this.validators).forEach((field) => {
+            if (!this.validateField(field)) {
+                isValid = false;
+            }
+        });
+        return isValid;
     }
 
     // Manejador de envío del formulario
@@ -296,23 +265,21 @@ class LoginForm {
         if (this.isSubmitting) return;
 
         if (!this.validateForm()) {
-            this.shakeForm(); // Agita si hay errores
+            this.shakeForm();
             return;
         }
 
         this.isSubmitting = true;
-        this.submitBtn.classList.add("loading"); // Muestra loader
+        this.submitBtn.classList.add("loading");
         const user = this.userField.value;
         const pin = this.passwordField.value;
 
         try {
             const data = await login(user, pin);
-            console.log(data)
             showSnackbar("success", `Bienvenido ${data.user.name}`);
-            this.onLogin(); // Llama al callback de éxito
+            this.onLogin();
         } catch (error) {
-            // Muestra mensaje de error y agita
-            FormUtils.showNotification(error.message, "error");
+            FormUtils.showNotification(error, "error");
             this.shakeForm();
         } finally {
             this.isSubmitting = false;
@@ -354,14 +321,6 @@ class LoginForm {
             setTimeout(() => {
                 errorEl.textContent = "";
             }, 300);
-        }
-    }
-
-    // Efecto visual al pulsar el checkbox "Recuérdame"
-    animateCheckbox() {
-        if (this.checkmark) {
-            this.checkmark.style.transform = "scale(0.8)";
-            setTimeout(() => (this.checkmark.style.transform = ""), 150);
         }
     }
 }

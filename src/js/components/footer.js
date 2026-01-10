@@ -12,15 +12,8 @@ export function Footer() {
     </svg>
   </a>
   `;
-    const githubLink = footer.querySelector(".github-link");
-    const githubIcon = footer.querySelector(".github-icon");
-    const date = footer.querySelector("#year");
 
-    githubLink.addEventListener("click", (e) => {
-        if (githubIcon.classList.contains("no-hover")) {
-            e.preventDefault();
-        }
-    })
+    const date = footer.querySelector("#year");
 
     date.innerHTML = new Date().getFullYear();
 
@@ -36,6 +29,8 @@ export function Footer() {
 function surprise() {
     const githubLink = document.querySelector(".github-link");
     const githubIcon = document.querySelector(".github-icon");
+
+    githubLink.href = "https://youtu.be/B3Gnk7nIxFg?t=469"
 
     githubIcon.style.fill = "white";
     githubIcon.style.backgroundColor = "#6E00FF";

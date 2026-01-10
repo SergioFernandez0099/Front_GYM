@@ -10,6 +10,7 @@ import {safeNavigate} from "../router.js";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const CACHE_TTL = 40000; // 40 seg
+const TIMEOUT_MS = 7000; // 7 seg
 
 let exercisesCache = null;
 let exercisesCacheTimestamp = 0;
@@ -17,14 +18,12 @@ let exercisesCacheTimestamp = 0;
 let muscleGroupsCache = null;
 let muscleGroupsCacheTimestamp = 0;
 
-const statsCache = new Map();
-
 export async function login(name, pin) {
     try {
         const result = await fetchSend("/auth/login", "POST", {
             name: name,
             pin: pin,
-        });
+        }, true);
         setCurrentUserId(result.user.id);
 
         return result;
@@ -36,23 +35,19 @@ export async function login(name, pin) {
 
 export async function logout() {
     try {
-        await fetch(`${API_BASE}/auth/logout`, {
-            method: "POST",
-            credentials: "include",
-        });
-
+        await fetchSend(`${API_BASE}/auth/logout`, "POST");
     } catch (error) {
         console.warn("Error en logout: ", error);
         throw error;
     } finally {
         clearCurrentUserId();
-        safeNavigate("login");
+        safeNavigate("/login");
     }
 }
 
 async function fetchGet(path) {
     try {
-        const result = await fetch(`${API_BASE}${path}`, {
+        const result = await fetchWithTimeout(`${API_BASE}${path}`, {
             credentials: "include",
         });
 
@@ -74,29 +69,45 @@ async function fetchGet(path) {
 }
 
 // Función helper para POST/PUT/PATCH con cookie
-async function fetchSend(path, method, body) {
+async function fetchSend(path, method, body, isLogin = false) {
     try {
-        const result = await fetch(`${API_BASE}${path}`, {
+        const result = await fetchWithTimeout(`${API_BASE}${path}`, {
             method,
             headers: {"Content-Type": "application/json"},
             credentials: "include",
             body: JSON.stringify(body),
         });
 
-        await handleAuthError(result);
+        if (!isLogin) await handleAuthError(result);
 
         if (!result.ok) {
             const errorBody = await result.json().catch(() => null);
             throw {
+                type: "http",
                 status: result.status,
-                body: errorBody,
-            }
+                message: errorBody?.message ?? "Error del servidor",
+            };
         }
 
         return (await result.json()).message;
     } catch (error) {
         setConnected(false);
-        throw error;
+
+
+        if (error instanceof TypeError) {
+            throw "No se pudo conectar con el servidor";
+        }
+
+        if (error?.type === "http") {
+            if (error.status === 429) {
+                throw new Error("Límite de solicitudes temporal alcanzado")
+            }
+
+            throw error.message;
+        }
+
+        throw "Error inesperado";
+
     }
 }
 
@@ -125,7 +136,8 @@ export async function fetchExercises() {
         return data;
     } catch (error) {
         console.error(error);
-        return exercisesCache || null;
+        if (!exercisesCache) throw error;
+        return exercisesCache;
     }
 }
 
@@ -154,66 +166,39 @@ export async function fetchMuscleGroups() {
         return data;
     } catch (error) {
         console.error(error);
-        return muscleGroupsCache || null;
+        if (!muscleGroupsCache) throw error;
+        return muscleGroupsCache;
     }
 }
 
 //  GETs SIN CACHÉ
 
 export async function fetchTrainingStats(month, year) {
-    try {
-        return await fetchGet(
-            `/users/${getCurrentUserId()}/stats/training?month=${month}&year=${year}`
-        );
-    } catch (error) {
-        console.error("Error obteniendo estadísticas:", error);
-        return {
-            monthlySessions: 0,
-            totalTrainingDays: 0,
-        };
-    }
+    return await fetchGet(
+        `/users/${getCurrentUserId()}/stats/training?month=${month}&year=${year}`
+    );
 }
 
 export async function fetchTrainingSessions() {
-    try {
-        return await fetchGet(`/users/${getCurrentUserId()}/sessions`);
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
+    return await fetchGet(`/users/${getCurrentUserId()}/sessions`);
 }
 
 export async function fetchTrainingSession(sessionId) {
-    try {
-        return await fetchGet(
-            `/users/${getCurrentUserId()}/sessions/${sessionId}`
-        );
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
+    return await fetchGet(
+        `/users/${getCurrentUserId()}/sessions/${sessionId}`
+    );
 }
 
 export async function fetchRoutineDays() {
-    try {
-        return await fetchGet(
-            `/users/${getCurrentUserId()}/routines`
-        );
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
+    return await fetchGet(
+        `/users/${getCurrentUserId()}/routines`
+    );
 }
 
 export async function fetchRoutineSets(routineId) {
-    try {
-        return await fetchGet(
-            `/users/${getCurrentUserId()}/routines/${routineId}/sets`
-        );
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
+    return await fetchGet(
+        `/users/${getCurrentUserId()}/routines/${routineId}/sets`
+    );
 }
 
 // ---------------------
@@ -260,17 +245,11 @@ export async function deleteRoutineSet(routineId, setId) {
 }
 
 export async function createTrainingSession(setData) {
-    const result = await fetchSend(
+    return await fetchSend(
         `/users/${getCurrentUserId()}/sessions`,
         "POST",
         setData
     );
-
-    console.log(getForceNoCache())
-    setForceNoCache(true)
-    console.log(getForceNoCache())
-
-    return result
 }
 
 export async function deleteTrainingSession(sessionId) {
@@ -349,9 +328,20 @@ async function handleAuthError(res) {
     if (res.status === 401 || res.status === 403) {
         console.warn("Sesión expirada o no autorizada. Redirigiendo al login...");
         clearCurrentUserId();
-        safeNavigate("error");
+        console.log("error")
+        safeNavigate("/error");
         throw new Error("No autorizado");
     }
+}
+
+// Función helper que añade timeout a fetch
+function fetchWithTimeout(url, options = {}, timeout = TIMEOUT_MS) {
+    return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout: La petición tardó demasiado')), timeout)
+        )
+    ]);
 }
 
 

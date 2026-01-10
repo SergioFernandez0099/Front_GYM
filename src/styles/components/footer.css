@@ -30,6 +30,7 @@
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 50%;
+    cursor: pointer;
     transition: fill 0.2s ease-in, background-color 0.3s ease-out;
 }
 

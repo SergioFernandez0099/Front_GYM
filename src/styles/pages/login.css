@@ -15,8 +15,12 @@ body.login {
 
 /* Form Group & Input Styles */
 .form-group {
-    margin-bottom: 24px;
+    margin-bottom: 1rem;
     position: relative;
+}
+
+.form-group-user {
+    margin-bottom: 2rem;
 }
 
 .input-wrapper {
@@ -184,57 +188,6 @@ body.login {
 
 .btn.loading .btn-loader {
     opacity: 1;
-}
-
-/* Checkbox Styles */
-.remember-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 4px;
-    cursor: pointer;
-}
-
-.remember-wrapper input[type="checkbox"] {
-    display: none;
-}
-
-.checkbox-label {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 14px;
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.checkmark {
-    width: 18px;
-    height: 18px;
-    border: 0.5px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-}
-
-.remember-wrapper input[type="checkbox"]:checked ~ .checkbox-label .checkmark {
-    background: #960404;
-    border-color: #ffffff;
-    transform: scale(1.1);
-}
-
-.remember-wrapper input[type="checkbox"]:checked ~ .checkbox-label .checkmark::after {
-    content: '✓';
-    color: white;
-    font-size: 11px;
-    font-weight: bold;
-    animation: checkmarkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .login-card {

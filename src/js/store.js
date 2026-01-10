@@ -51,7 +51,7 @@ export async function checkAndSetLogin(timeout = 9000) {
         } else {
             setConnected(false);
             showSnackbar("error", "Error al conectar con el servidor");
-            safeNavigate("error");
+            safeNavigate("/error");
         }
         return !!data?.userId;
     } catch (error) {
@@ -64,7 +64,7 @@ export async function checkAndSetLogin(timeout = 9000) {
             showSnackbar("error", "Error al conectar con el servidor");
         }
 
-        safeNavigate("error");
+        safeNavigate("/error");
         return false;
     } finally {
         hideLoader();

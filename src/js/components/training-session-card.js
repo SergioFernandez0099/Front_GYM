@@ -25,7 +25,7 @@ export async function trainingSessionCard(sessionId) {
         exercisesData = await fetchExercises();
     } catch (error) {
         showSnackbar("error", "Error al cargar las sesiones de entrenamiento")
-        safeNavigate("/error")
+        safeNavigate("/error");
         return null;
     }
     let originalSeries = new Map();
@@ -185,7 +185,7 @@ export async function trainingSessionCard(sessionId) {
     trainingSessionCardContainer.addEventListener('touchmove', cancelPress, {passive: true});
     trainingSessionCardContainer.addEventListener('touchcancel', cancelPress);
 
-    trainingSessionCardContainer.addEventListener("beforeinput", (e) => {
+    trainingSessionCardContainer.addEventListener("input", (e) => {
         const element = e.target;
 
         if (
@@ -195,20 +195,38 @@ export async function trainingSessionCard(sessionId) {
             return;
         }
 
-        const currentValue = element.value;
+        let value = element.value;
 
-        const newValue =
-            e.inputType === "deleteContentBackward" ||
-            e.inputType === "deleteContentForward"
-                ? currentValue.slice(0, -1)
-                : currentValue + (e.data ?? "");
+        // Permitimos vacío (para borrar)
+        if (value === "") return;
 
-        if (newValue === "") return;
+        // Si es número, lo convertimos a entero
+        const num = parseInt(value, 10);
 
-        if (!/^(10|[0-9])$/.test(newValue)) {
-            e.preventDefault();
+        // Si no es un número válido o fuera de rango, revertimos
+        if (isNaN(num) || num < 0 || num > 10) {
+            // Restauramos el valor previo
+            element.value = element.dataset.lastValid ?? "";
+        } else {
+            // Guardamos el último valor válido
+            element.dataset.lastValid = num;
+            element.value = num; // Esto asegura que "01" se convierta en "1"
         }
     });
+
+
+    trainingSessionCardContainer.addEventListener("focus", (e) => {
+        const element = e.target;
+
+        if (
+            element.classList.contains("train-sess-card-input-intensity") ||
+            element.classList.contains("train-sess-card-input-rir") ||
+            element.classList.contains("train-sess-card-input-weight") ||
+            element.classList.contains("train-sess-card-input-reps")
+        ) {
+            element.select();
+        }
+    }, true);
 
     trainingSessionCardContainer.addEventListener("click", async (event) => {
         const elemento = event.target.closest("[data-action]");
@@ -283,7 +301,6 @@ export async function trainingSessionCard(sessionId) {
             unitId: getUnitIdFromDOM(serieEl)
         };
     }
-
 
     function getSerieDiff(original, current) {
         const diff = {id: current.id};

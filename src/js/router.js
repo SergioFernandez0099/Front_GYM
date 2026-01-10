@@ -40,6 +40,7 @@ export function initRouter() {
                     }
                 }));
             };
+
             await render(errorPage("Error al cargar la página", async () => {
                 if (connected) {
                     safeNavigate(retryRoute || "/");
@@ -143,10 +144,12 @@ export function initRouter() {
 export function safeNavigate(path) {
     const currentPath = window.location.pathname;
 
-    if (currentPath !== "/error" && path !== "/error") {
+    // Limpia retryRoute si el usuario navega manualmente a otra ruta distinta de /error
+    if (path !== "/error") {
         retryRoute = path;
     }
 
+    // Si la ruta es la misma y hay handler, ejecuta el handler directamente
     if (currentPath === path && routeHandlers[path]) {
         routeHandlers[path]();
     } else {
