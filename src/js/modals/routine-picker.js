@@ -32,8 +32,8 @@ export function createRoutinePicker(routines, createSession) {
 
     // ===== Creación de sesión vacía =====
     button.addEventListener('click', () => {
-       createSession(-1);
-       hide();
+        createSession(-1);
+        hide();
     });
 
     // ===== Click en listado de rutinas =====

@@ -163,7 +163,7 @@ export async function trainingSchedule() {
                 routineId: Number(routineId),
                 date: dateSelected,
             }
-            
+
             const result = await createTrainingSession(data);
 
             showSnackbar("success", "Sesión creada correctamente")

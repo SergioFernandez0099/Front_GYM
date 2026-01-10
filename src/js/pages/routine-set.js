@@ -4,6 +4,7 @@ import {showSnackbar} from "../components/snackbar.js";
 import {safeNavigate} from "../router.js";
 
 let setData = []
+
 export async function RoutineSet(routineId) {
     const routineSetContainer = document.createElement("div");
     routineSetContainer.className = "routine-container";

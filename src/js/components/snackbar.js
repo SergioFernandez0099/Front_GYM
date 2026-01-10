@@ -32,14 +32,14 @@ export function showSnackbar(type, message) {
         throw new Error(`Snackbar type "${type}" not supported`);
     }
 
-    queue.push({ type, message });
+    queue.push({type, message});
     processQueue();
 }
 
 function processQueue() {
     if (isShowing || queue.length === 0) return;
 
-    const { type, message } = queue.shift();
+    const {type, message} = queue.shift();
     const config = TYPES[type];
 
     isShowing = true;

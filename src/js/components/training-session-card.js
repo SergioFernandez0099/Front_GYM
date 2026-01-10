@@ -23,7 +23,6 @@ export async function trainingSessionCard(sessionId) {
     try {
         trainingSessionData = await fetchTrainingSession(sessionId);
         exercisesData = await fetchExercises();
-        console.log("trainingSessionData: ", trainingSessionData);
     } catch (error) {
         showSnackbar("error", "Error al cargar las sesiones de entrenamiento")
         safeNavigate("/error")
@@ -102,7 +101,7 @@ export async function trainingSessionCard(sessionId) {
                 <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
             </div>
             <div class="train-sess-card-header">
-                <img src="${getExercise()?.exercise.imageUrl ?? '/assets/images/snorlax.png'}" alt="" class="train-sess-card-image">
+                <img src="${getExercise()?.exercise.imageUrl ?? '/assets/images/snorlax.avif'}" alt="" class="train-sess-card-image">
                 <h2 class="train-sess-card-title">${getExercise()?.exercise.name ?? "Añade un ejercicio"}</h2>
             </div>
             <div class="train-sess-card-description-container">
@@ -360,7 +359,6 @@ export async function trainingSessionCard(sessionId) {
             ...(originalDescription !== currentDescription && {description: currentDescription}),
         };
 
-        console.log(data)
         try {
             await updateTrainingSession(sessionId, exercise.id, data);
             showSnackbar("success", "Datos guardados correctamente");

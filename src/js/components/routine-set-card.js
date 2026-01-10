@@ -48,7 +48,7 @@ export async function RoutineSetCard(set, routineId) {
     <div id="suggestionBox">Press Banca</div>
     <div class="default-card">
       <div class="routine-set-image-container">
-          <img src="/assets/images/snorlax.png" alt="" class="routine-set-image" />
+          <img src="/assets/images/snorlax.avif" alt="" class="routine-set-image" />
       </div>
       <div class="routine-set-info">
           <input id="titleInput" type="text" autocomplete="off" placeholder="Escribe..." enterkeyhint="done" class="routine-set-tittle">
@@ -472,7 +472,7 @@ function cargarEjercicio(exerciseId, image) {
     const exercise = exercises.find(ex => ex.id === Number(exerciseId));
     image.classList.add("fade-out");
     setTimeout(() => {
-        image.src = exercise?.imageUrl ?? "/assets/images/snorlax.png";
+        image.src = exercise?.imageUrl ?? "/assets/images/snorlax.avif";
         image.alt = exercise
             ? `Imagen de ${exercise.name}`
             : "Imagen default";

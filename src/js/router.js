@@ -1,7 +1,6 @@
 import Navigo from "navigo";
 
 import {Home} from "./pages/home.js";
-import {About} from "./pages/about.js";
 import {Exercises} from "./pages/exercises.js";
 import {checkAndSetLogin, connected, getLoginStatus} from "./store.js";
 import {Routine} from "./pages/routine.js";
@@ -19,7 +18,7 @@ export const router = new Navigo("/");
 
 // Guardamos los callbacks de cada ruta
 const routeHandlers = {};
-let retryRoute  = null;
+let retryRoute = null;
 
 // Inicializa el router después de que el DOM cargue
 export function initRouter() {
@@ -91,13 +90,6 @@ export function initRouter() {
             requireLogin(async () => {
                 await logout();
                 router.navigate("/login");
-            })
-        )
-        .on(
-            "/about",
-            requireLogin(() => {
-                routeHandlers["/about"] = () => render(About());
-                render(About());
             })
         )
         .on(

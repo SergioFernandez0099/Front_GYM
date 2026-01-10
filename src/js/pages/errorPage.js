@@ -1,4 +1,4 @@
-import {shakeEffect, showLoader} from "../../utils/helpers.js";
+import {shakeEffect} from "../../utils/helpers.js";
 
 export async function errorPage(mensaje = "Algo ha ido mal", retryCallback = null) {
     const errorContainer = document.createElement("div");

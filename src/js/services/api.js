@@ -17,19 +17,7 @@ let exercisesCacheTimestamp = 0;
 let muscleGroupsCache = null;
 let muscleGroupsCacheTimestamp = 0;
 
-// Cache para sesiones de entrenamiento
-let trainingSessionsCache = null;
-let trainingSessionsCacheTimestamp = 0;
-
-// Cache para sesiones individuales
-const trainingSessionCache = new Map(); // key: sessionId, value: { data, timestamp }
-
-// Cache para rutinas
-let routineDaysCache = null;
-let routineDaysCacheTimestamp = 0;
-
-// Cache para sets de rutinas individuales
-const routineSetsCache = new Map(); // key: routineId, value: { data, timestamp }
+const statsCache = new Map();
 
 export async function login(name, pin) {
     try {
@@ -62,8 +50,6 @@ export async function logout() {
     }
 }
 
-
-// Función helper para peticiones GET con cookie
 async function fetchGet(path) {
     try {
         const result = await fetch(`${API_BASE}${path}`, {
@@ -139,7 +125,7 @@ export async function fetchExercises() {
         return data;
     } catch (error) {
         console.error(error);
-        return exercisesCache || [];
+        return exercisesCache || null;
     }
 }
 
@@ -168,108 +154,65 @@ export async function fetchMuscleGroups() {
         return data;
     } catch (error) {
         console.error(error);
-        throw new Error("")
+        return muscleGroupsCache || null;
+    }
+}
 
-        // return muscleGroupsCache || [];
+//  GETs SIN CACHÉ
+
+export async function fetchTrainingStats(month, year) {
+    try {
+        return await fetchGet(
+            `/users/${getCurrentUserId()}/stats/training?month=${month}&year=${year}`
+        );
+    } catch (error) {
+        console.error("Error obteniendo estadísticas:", error);
+        return {
+            monthlySessions: 0,
+            totalTrainingDays: 0,
+        };
     }
 }
 
 export async function fetchTrainingSessions() {
-    const now = Date.now();
-    const force = getForceNoCache();
-
-    if (force) {
-        trainingSessionsCache = null;
-        trainingSessionsCacheTimestamp = 0;
-    }
-
-    if (!force && trainingSessionsCache && now - trainingSessionsCacheTimestamp < CACHE_TTL) {
-        return trainingSessionsCache;
-    }
-
     try {
-        const data = await fetchGet(`/users/${getCurrentUserId()}/sessions`);
-        trainingSessionsCache = data;
-        trainingSessionsCacheTimestamp = now;
-        setForceNoCache(false);
-        return data;
+        return await fetchGet(`/users/${getCurrentUserId()}/sessions`);
     } catch (error) {
         console.error(error);
-        return trainingSessionsCache || [];
+        return [];
     }
 }
 
-
 export async function fetchTrainingSession(sessionId) {
-    const now = Date.now();
-    const force = getForceNoCache();
-
-    if (force) {
-        trainingSessionCache.delete(sessionId);
-    }
-
-    const cached = trainingSessionCache.get(sessionId);
-    if (!force && cached && now - cached.timestamp < CACHE_TTL) {
-        return cached.data;
-    }
-
     try {
-        const data = await fetchGet(`/users/${getCurrentUserId()}/sessions/${sessionId}`);
-        trainingSessionCache.set(sessionId, {data, timestamp: now});
-        setForceNoCache(false);
-        return data;
+        return await fetchGet(
+            `/users/${getCurrentUserId()}/sessions/${sessionId}`
+        );
     } catch (error) {
         console.error(error);
-        return cached?.data || null;
+        return null;
     }
 }
 
 export async function fetchRoutineDays() {
-    const now = Date.now();
-    const force = getForceNoCache();
-
-    if (force) {
-        routineDaysCache = null;
-        routineDaysCacheTimestamp = 0;
-    }
-
-    if (!force && routineDaysCache && now - routineDaysCacheTimestamp < CACHE_TTL) {
-        return routineDaysCache;
-    }
-
     try {
-        const data = await fetchGet(`/users/${getCurrentUserId()}/routines`);
-        routineDaysCache = data;
-        routineDaysCacheTimestamp = now;
-        setForceNoCache(false);
-        return data;
+        return await fetchGet(
+            `/users/${getCurrentUserId()}/routines`
+        );
     } catch (error) {
         console.error(error);
-        return routineDaysCache || [];
+        return [];
     }
 }
 
 export async function fetchRoutineSets(routineId) {
-    const now = Date.now();
-    const force = getForceNoCache();
-
-    if (force) {
-        routineSetsCache.delete(routineId);
-    }
-
-    const cached = routineSetsCache.get(routineId);
-    if (!force && cached && now - cached.timestamp < CACHE_TTL) {
-        return cached.data;
-    }
-
     try {
-        const data = await fetchGet(`/users/${getCurrentUserId()}/routines/${routineId}/sets`);
-        routineSetsCache.set(routineId, {data, timestamp: now});
-        setForceNoCache(false);
-        return data;
+        return await fetchGet(
+            `/users/${getCurrentUserId()}/routines/${routineId}/sets`
+        );
     } catch (error) {
         console.error(error);
-        return cached?.data || [];
+        return [];
     }
 }
 
@@ -317,11 +260,17 @@ export async function deleteRoutineSet(routineId, setId) {
 }
 
 export async function createTrainingSession(setData) {
-    return await fetchSend(
+    const result = await fetchSend(
         `/users/${getCurrentUserId()}/sessions`,
         "POST",
         setData
     );
+
+    console.log(getForceNoCache())
+    setForceNoCache(true)
+    console.log(getForceNoCache())
+
+    return result
 }
 
 export async function deleteTrainingSession(sessionId) {
