@@ -30,17 +30,17 @@ export function RoutineDayCard(day) {
         article.innerHTML = `
       <div class="routine-day-options">
         <div class="icon-container icon-container-trash fade-toggle">
-          <img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
+          <img src="/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
         </div> 
         <div class="icon-container icon-container-edit" data-editable="false">
-          <img src="/assets/icons/edit.svg" alt="Icono de edición" class="editIcon">
+          <img src="/icons/edit.svg" alt="Icono de edición" class="editIcon">
         </div>
       </div>
       <div class="routine-info">
         <h2 id="titleDayInput" class="routine-day-title" contenteditable="false" spellcheck="false">${day.name}</h2>
       </div>
       <div class="routine-day-image-container">
-        <img src="/assets/images/routine_card2.jpg" alt="Imagen de fondo en un gimnasio" class="routine-image" />
+        <img src="/images/routine_card2.jpg" alt="Imagen de fondo en un gimnasio" class="routine-image" />
       </div>`;
     }
 

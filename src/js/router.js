@@ -6,7 +6,7 @@ import {checkAndSetLogin, connected, getLoginStatus} from "./store.js";
 import {Routine} from "./pages/routine.js";
 import {RoutineSet} from "./pages/routine-set.js";
 import {adjustAppHeight, hideLoader, removeLoginCss, showLoader,} from "../utils/helpers.js";
-import {Navbar, updateReloadButton} from "./components/navbar.js";
+import {Navbar, updateButtonsPosition} from "./components/navbar.js";
 import {logout} from "./services/api.js";
 import {Login} from "./pages/login.js";
 import {Footer} from "./components/footer.js";
@@ -133,9 +133,8 @@ export function initRouter() {
             })
         )
         .notFound(() => {
-            routeHandlers["404"] = () =>
-                render(`<h2>404 - Página no encontrada</h2>`);
-            render(`<h2>404 - Página no encontrada</h2>`);
+            routeHandlers["404"] = () => safeNavigate("/");
+            safeNavigate("/");
         })
         .resolve();
 }
@@ -182,8 +181,7 @@ async function render(content) {
             console.warn("Tipo de contenido no soportado:", resolvedContent);
         }
 
-        const reloadBtn = document.querySelector("#reload");
-        if (reloadBtn) updateReloadButton(reloadBtn);
+        if (!window.location.pathname.includes("login")) updateButtonsPosition();
     } catch (error) {
         console.error("Error al renderizar:", error);
         app.innerHTML = "<h2>Error al cargar la página</h2>";

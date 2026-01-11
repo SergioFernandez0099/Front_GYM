@@ -72,17 +72,17 @@ export async function trainingSessionCard(sessionId) {
             <div class="train-sess-card-general-options">
                 <button class="train-sess-card-general-options-list" ${exercisesSort ? 'enabled' : "disabled"} data-action="list">
                     Ejercicios
-                    <img src="/assets/icons/list.svg" alt="Icono de listado" class="listIcon">
+                    <img src="/icons/list.svg" alt="Icono de listado" class="listIcon">
                 </button>
         
                 <button class="train-sess-card-general-options-add" data-action="exercise">
                     Añadir ejercicio
-                    <img src="/assets/icons/add.svg" alt="Icono de añadir" class="addIcon">
+                    <img src="/icons/add.svg" alt="Icono de añadir" class="addIcon">
                 </button>
         
                 <button class="train-sess-card-general-options-del" data-action="delete-session">
                     Borrar sesión
-                    <img src="/assets/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
+                    <img src="/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
                 </button>
             </div>
 
@@ -91,17 +91,17 @@ export async function trainingSessionCard(sessionId) {
                 <p>${getExercise()?.order ?? ''}</p>
             </div>
             <div data-action="save" class="train-sess-card-icon train-sess-card-save-icon">
-                <img src="/assets/icons/save.svg" alt="Icono de guardado" class="saveIcon">
+                <img src="/icons/save.svg" alt="Icono de guardado" class="saveIcon">
             </div>
             <div class="train-sess-card-info-tooltip hide">
                 Para borrar una serie tan solo manten pulsado el número de esta. 
                 Para cambiar las unidades simplemente pulsa sobre ellas
             </div>
             <div data-action="info" class="train-sess-card-icon train-sess-card-info-icon">
-                <img src="/assets/icons/info.svg" alt="Icono de información" class="infoIcon">
+                <img src="/icons/info.svg" alt="Icono de información" class="infoIcon">
             </div>
             <div class="train-sess-card-header">
-                <img src="${getExercise()?.exercise.imageUrl ?? '/assets/images/snorlax.avif'}" alt="" class="train-sess-card-image">
+                <img src="${getExercise()?.exercise.imageUrl ?? '/images/snorlax.avif'}" alt="" class="train-sess-card-image">
                 <h2 class="train-sess-card-title">${getExercise()?.exercise.name ?? "Añade un ejercicio"}</h2>
             </div>
             <div class="train-sess-card-description-container">
@@ -503,7 +503,7 @@ function renderSerie(serie, index) {
             <span class="train-sess-card-serie-num">${index + 1}</span>
 
             <img class="train-sess-card-serie-weight-image"
-                src="/assets/icons/kettlebell.svg" alt="Imágen de pesa rusa">
+                src="/icons/kettlebell.svg" alt="Imágen de pesa rusa">
       </div>
 
       <input class="train-sess-card-input-weight"

@@ -4,7 +4,7 @@ import {showSnackbar} from "../components/snackbar.js";
 class FormUtils {
 
     // Muestra una notificación temporal dentro del formulario o contenedor dado
-    static showNotification(message, type = "info", container = null) {
+    static showNotification(message, type = "info", timeout = 3000, container = null) {
         const target = container || document.querySelector("form");
         if (!target) return;
 
@@ -53,7 +53,7 @@ class FormUtils {
             // Aplica animación de salida al contenedor interno
             notification.firstElementChild.style.animation = "slideOut 0.3s ease";
             setTimeout(() => notification.remove(), 300);
-        }, 3000);
+        }, timeout);
     }
 
     // Inyecta animaciones compartidas en <head> (solo una vez)
@@ -81,6 +81,7 @@ class FormUtils {
           50% { transform: scale(1.1); }
           100% { transform: scale(1); }
         }
+        
         @keyframes spin {
           0% { transform: translate(-50%, -50%) rotate(0deg); }
           100% { transform: translate(-50%, -50%) rotate(360deg); }
@@ -156,7 +157,7 @@ class LoginForm {
             </div>
             <button type="submit" class="login-btn btn">
               <span class="btn-text">Iniciar sesión</span>
-              <span class="btn-loader"><img src="favicon.png" class="btn-loader" alt="loader"></span>
+              <span class="btn-loader"><img src="/favicon.png" class="btn-loader" alt="loader"></span>
             </button>
           </form>
           <div class="signup-link">
@@ -217,9 +218,15 @@ class LoginForm {
             );
         });
 
-        // Enlaces de "olvidó contraseña" y "registro" (aún sin implementación de navegación)
-        this.forgotLink.addEventListener("click", (e) => e.preventDefault());
-        this.signupLink.addEventListener("click", (e) => e.preventDefault());
+        // Enlaces de "olvidó contraseña" y "registro"
+        this.forgotLink.addEventListener("click", (e) => {
+            e.preventDefault()
+            FormUtils.showNotification("Envia un correo a sergiofernandez0099@gmail.com", "signup", 15000);
+        });
+        this.signupLink.addEventListener("click", (e) => {
+            e.preventDefault()
+            FormUtils.showNotification("Envia un correo a sergiofernandez0099@gmail.com", "signup", 15000);
+        });
 
         // Atajos de teclado: Enter para enviar, Escape para borrar errores
         document.addEventListener("keydown", (e) => {

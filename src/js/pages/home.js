@@ -45,7 +45,7 @@ export async function Home() {
     }
 
     const randomImage =
-        `/assets/images/professionals/${professionalImages[Math.floor(Math.random() * professionalImages.length)]}`;
+        `/images/professionals/${professionalImages[Math.floor(Math.random() * professionalImages.length)]}`;
 
     const container = document.createElement('div');
     container.className = "home-container";

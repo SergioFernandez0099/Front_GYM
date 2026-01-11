@@ -1,5 +1,6 @@
-import {router, safeNavigate} from "../router.js";
+import {safeNavigate} from "../router.js";
 import {setForceNoCache} from "../store.js";
+import {getLastSegment} from "../../utils/helpers.js";
 
 export function Navbar() {
     const nav = document.createElement("nav");
@@ -19,7 +20,7 @@ export function Navbar() {
       </label>
 
       <div class="reload-container">
-          <svg fill="currentColor" height="800px" width="800px" version="1.1" id="reload" xmlns="http://www.w3.org/2000/svg" 
+          <svg fill="currentColor" height="800px" width="800px" id="reload" xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 489.711 489.711" xml:space="preserve" >
             <g>
                 <g>
@@ -35,6 +36,12 @@ export function Navbar() {
                 </g>
             </g>
           </svg>
+      </div>
+      <div class="back-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" id="back" viewBox="0 0 16 16">
+                <path fill="currentColor" 
+                    d="M13.5 8.5a.5.5 0 0 0 0-1H3.803l4.031-3.628a.5.5 0 1 0-.668-.744l-5 4.5a.5.5 0 0 0 0 .744l5 4.5a.5.5 0 1 0 .668-.744L3.803 8.5H13.5Z"/>
+           </svg>
       </div>
 
       <div class="menu-items-container">
@@ -60,10 +67,11 @@ export function Navbar() {
     const inputMenu = nav.querySelector("#menu-toggle");
     const mainContainer = document.querySelector("main");
     const reloadBtn = nav.querySelector("#reload");
+    const backBtn = nav.querySelector("#back");
     const overlay = nav.querySelector(".overlay");
     const logo = nav.querySelector(".container-logo");
 
-    logo.addEventListener("click", (e) => {
+    logo.addEventListener("click", () => {
         safeNavigate("/")
     })
 
@@ -85,6 +93,10 @@ export function Navbar() {
             animationFrame = null;
         }
     }
+
+    backBtn.addEventListener("click", () => {
+        window.history.back();
+    })
 
     reloadBtn.addEventListener("mouseenter", () => {
         spinning = true;
@@ -176,28 +188,35 @@ export function Navbar() {
     return nav;
 }
 
-export function updateReloadButton(reloadBtn) {
-    const last = router.lastResolved();
+export function updateButtonsPosition() {
+    const reloadBtn = document.querySelector("#reload");
+
+    const path = window.location.pathname;
+    const currentRoute = getLastSegment(window.location.pathname);
+
     const reloadContainer = document.querySelector(".reload-container");
+    const backContainer = document.querySelector(".back-container");
 
-    if (!last) {
-        reloadBtn.parentNode.style.display = "none";
-        return;
-    }
-
-    const currentRoute = Array.isArray(last) ? last[last.length - 1]?.url : last?.url;
     if (currentRoute === "login" || currentRoute === "home" || currentRoute === "error" || currentRoute === "" || currentRoute === undefined) {
-        reloadBtn.parentNode.style.display = "none";
+        if (currentRoute === "home") {
+            backContainer.style.top = "4.5rem";
+            backContainer.style.left = "1rem";
+        }
+        reloadContainer.style.display = "none";
     } else {
-        if (currentRoute.includes("sessions") && window.innerWidth < 768) {
+        if (path.includes("sessions") && window.innerWidth < 768) {
             reloadContainer.style.top = "1.5rem";
             reloadContainer.style.left = "4.5rem";
+            backContainer.style.top = "1.5rem";
+            backContainer.style.left = "7.3rem";
         } else {
             reloadContainer.style.top = "4.5rem";
             reloadContainer.style.left = "1rem";
+            backContainer.style.top = "7.1rem";
+            backContainer.style.left = "1rem";
         }
-        reloadBtn.parentNode.style.display = "block";
+        reloadContainer.style.display = "block";
     }
 
-    reloadBtn.dataset.route = "/" + currentRoute;
+    reloadBtn.dataset.route = path;
 }

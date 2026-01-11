@@ -5,7 +5,7 @@ export async function errorPage(mensaje = "Algo ha ido mal", retryCallback = nul
     errorContainer.classList.add("error-container");
 
     errorContainer.innerHTML = `
-        <img src="/assets/images/connection_error.avif" alt="Imagen de error" class="error-image">
+        <img src="/images/connection_error.avif" alt="Imagen de error" class="error-image">
         <h1 class="error-label">${mensaje}</h1>
         <button id="errorButton">Reintentar</button>
     `

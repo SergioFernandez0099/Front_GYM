@@ -1,8 +1,3 @@
-const images = import.meta.glob(
-    "/assets/images/exercises/**/*.{png,jpg,jpeg,webp,svg,avif}",
-    {eager: false}
-);
-
 export function removeLoginCss() {
     const links = document.querySelectorAll('link[rel="stylesheet"]');
 
@@ -15,13 +10,13 @@ export function removeLoginCss() {
 
 export function toggleEditIcon(icon, editIcon, editButton, minSize, maxSize) {
     if (icon === "edit") {
-        editIcon.src = "/assets/icons/edit.svg";
+        editIcon.src = "/icons/edit.svg";
         editIcon.alt = "Icono de edición";
         editIcon.style.width = minSize;
         editIcon.style.height = minSize;
         editButton.dataset.editable = false;
     } else {
-        editIcon.src = "/assets/icons/tick.svg";
+        editIcon.src = "/icons/tick.svg";
         editIcon.alt = "Icono de guardado";
         editIcon.style.width = maxSize;
         editIcon.style.height = maxSize;
@@ -128,4 +123,12 @@ export function normalize(text) {
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase();
+}
+
+export function getLastSegment(pathname) {
+    // Convierte la ruta en array, eliminando strings vacíos
+    const segments = pathname.split('/').filter(Boolean);
+
+    // Si hay segmentos, devuelve el último; si no, devuelve "home"
+    return segments.length > 0 ? segments.pop() : 'home';
 }
