@@ -11,6 +11,7 @@ import {createRoutineSet, deleteRoutineSet, fetchExercises, updateRoutineSet} fr
 import {showSnackbar} from "./snackbar.js";
 import {safeNavigate} from "../router.js";
 import {getSet} from "../pages/routine-set.js";
+import editIcon from '/icons/edit.svg';
 
 let exercises = [];
 let routineIdGlobal;
@@ -36,7 +37,7 @@ export async function RoutineSetCard(set, routineId) {
         article.innerHTML = `
     <div class="routine-set-options">
       <div class="icon-container icon-container-edit fade-toggle" data-editable="false">
-        <img src="/icons/edit.svg" alt="Icono de edición" class="editIcon">
+        <img src="${editIcon}" alt="Icono de edición" class="editIcon">
       </div>
       <div class="icon-container icon-container-trash fade-toggle">
         <img src="/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
