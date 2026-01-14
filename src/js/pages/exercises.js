@@ -1,4 +1,3 @@
-import {adjustAppHeight} from "../../utils/helpers";
 import {ExerciseCard} from "../components/exercise-card";
 import {fetchExercises, fetchMuscleGroups} from "../services/api";
 import {showSnackbar} from "../components/snackbar.js";
@@ -131,5 +130,4 @@ function handleFilter(muscleGroup) {
             block: "center"
         });
     }
-    adjustAppHeight();
 }

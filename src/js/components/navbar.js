@@ -98,6 +98,10 @@ export function Navbar() {
         window.history.back();
     })
 
+    window.addEventListener("popstate", () => {
+        updateActiveLink();
+    });
+
     reloadBtn.addEventListener("mouseenter", () => {
         spinning = true;
         if (!animationFrame) rotate();
@@ -154,6 +158,8 @@ export function Navbar() {
     function updateActiveLink() {
         const currentPath = window.location.pathname;
 
+        console.log(currentPath);
+
         menuLinks.forEach(link => {
             if (link.getAttribute("href") === currentPath) {
                 link.classList.add("active");
@@ -187,6 +193,11 @@ export function Navbar() {
 
     return nav;
 }
+
+
+window.visualViewport.addEventListener("resize", () => {
+    if (!window.location.pathname.includes("login")) updateButtonsPosition();
+});
 
 export function updateButtonsPosition() {
     const reloadBtn = document.querySelector("#reload");

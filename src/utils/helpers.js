@@ -102,21 +102,6 @@ export function openConfirmModal(title) {
     });
 }
 
-
-export function adjustAppHeight() {
-    requestAnimationFrame(() => {
-        const main = document.querySelector("main");
-        const contentHeight = app.scrollHeight;
-        const viewportHeight = window.innerHeight;
-
-        if (contentHeight <= viewportHeight) {
-            main.style.minHeight = "84vh";
-        } else {
-            main.style.minHeight = "100vh";
-        }
-    });
-}
-
 // para ignorar acentos
 export function normalize(text) {
     return text

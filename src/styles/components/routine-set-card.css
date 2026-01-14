@@ -129,24 +129,27 @@
 
 #suggestionBox {
     position: absolute;
-    width: 9.3rem;
+    width: 9.2rem;
     top: 3.9rem;
     padding-left: 0.4rem;
     border-radius: 0.5rem;
-    left: 9.2rem;
-    height: 1.4rem;
+    left: 9.3rem;
+    height: auto;
+    min-height: 1.4rem;
     z-index: 10;
     color: white;
     background: rgb(105, 105, 105);
     pointer-events: none;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     opacity: 0;
     cursor: pointer;
-    transition: opacity 0.3s ease;
+    transform: translateY(-5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 #suggestionBox.visible {
     opacity: 1;
+    transform: translateY(0);
     pointer-events: auto;
 }
 

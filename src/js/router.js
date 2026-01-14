@@ -5,7 +5,7 @@ import {Exercises} from "./pages/exercises.js";
 import {checkAndSetLogin, connected, getLoginStatus} from "./store.js";
 import {Routine} from "./pages/routine.js";
 import {RoutineSet} from "./pages/routine-set.js";
-import {adjustAppHeight, hideLoader, removeLoginCss, showLoader,} from "../utils/helpers.js";
+import {hideLoader, removeLoginCss, showLoader,} from "../utils/helpers.js";
 import {Navbar, updateButtonsPosition} from "./components/navbar.js";
 import {logout} from "./services/api.js";
 import {Login} from "./pages/login.js";
@@ -187,7 +187,6 @@ async function render(content) {
         app.innerHTML = "<h2>Error al cargar la página</h2>";
     } finally {
         // Esto para colocar el footer correctamente
-        adjustAppHeight();
         hideLoader();
     }
 }
