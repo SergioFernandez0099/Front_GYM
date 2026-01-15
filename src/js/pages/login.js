@@ -1,5 +1,6 @@
 import {login} from "../services/api.js";
 import {showSnackbar} from "../components/snackbar.js";
+import {capitalize} from "../../utils/helpers.js";
 
 class FormUtils {
 
@@ -278,12 +279,14 @@ class LoginForm {
 
         this.isSubmitting = true;
         this.submitBtn.classList.add("loading");
-        const user = this.userField.value;
-        const pin = this.passwordField.value;
+        const user = this.userField.value.trim();
+        const pin = this.passwordField.value.trim();
 
         try {
             const data = await login(user, pin);
-            showSnackbar("success", `Bienvenido ${data.user.name}`);
+            const isFemale = data.user.name.toLowerCase().endsWith("a");
+            const greeting = isFemale ? "Bienvenida" : "Bienvenido";
+            showSnackbar("success", `${greeting} ${capitalize(data.user.name)}`);
             this.onLogin();
         } catch (error) {
             FormUtils.showNotification(error, "error");

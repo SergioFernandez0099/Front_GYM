@@ -1,6 +1,7 @@
 import {fetchTrainingStats} from "../services/api.js";
 import {showSnackbar} from "../components/snackbar.js";
 import {safeNavigate} from "../router.js";
+import {capitalize} from "../../utils/helpers.js";
 
 const professionalImages = [
     "arnold_1.avif",
@@ -61,7 +62,7 @@ export async function Home() {
             <h1 class="wave">G Y M</h1>
         </div>
         <div class="home-header">
-            <h1 class="home-title">${greeting} ${username}</h1>
+            <h1 class="home-title">${greeting} ${capitalize(username)}</h1>
             <img class="home-image" src="${randomImage}" alt="Imagen de un culturista aleatorio">
         </div>
         <p class="home-stats">Total de entrenos: ${stats.totalTrainingDays ?? ""}</p>

@@ -72,12 +72,12 @@
     font-family: "Saira Stencil One", sans-serif;
 }
 
-.container-logo h1 .border {
-    color: white;
-    text-shadow: -1px -1px 0 white,
-    1px -1px 0 white,
-    -1px 1px 0 white,
-    1px 1px 0 white;
+.container-logo .border {
+    color: black;
+    /*text-shadow: -1px -1px 0 white,*/
+    /*1px -1px 0 white,*/
+    /*-1px 1px 0 white,*/
+    /*1px 1px 0 white;*/
 }
 
 .wave {
