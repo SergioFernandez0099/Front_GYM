@@ -1,7 +1,6 @@
 .footer {
     width: 100vw;
     height: 2.5rem;
-    border-top: 1px solid #ccc;
     display: flex;
     flex-direction: row;
     justify-content: center;

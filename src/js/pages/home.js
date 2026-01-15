@@ -56,6 +56,10 @@ export async function Home() {
     const greeting = isFemale ? "Bienvenida" : "Bienvenido";
 
     container.innerHTML = `
+        <div class="home-container-logo">
+            <h1 class="border">G Y M</h1>
+            <h1 class="wave">G Y M</h1>
+        </div>
         <div class="home-header">
             <h1 class="home-title">${greeting} ${username}</h1>
             <img class="home-image" src="${randomImage}" alt="Imagen de un culturista aleatorio">

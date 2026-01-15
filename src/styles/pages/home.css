@@ -43,6 +43,28 @@
     text-align: center;
 }
 
+.home-container-logo {
+    min-width: 200px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.home-container-logo h1 {
+    cursor: pointer;
+    margin: 0 auto;
+    position: absolute;
+    border: 1px solid transparent;
+    font-size: 2.6em;
+    font-family: "Saira Stencil One", sans-serif;
+}
+
+.home-container-logo .border {
+    color: white;
+}
+
 @media (min-width: 768px) {
 
     .home-header {

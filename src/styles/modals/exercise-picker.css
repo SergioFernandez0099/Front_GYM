@@ -46,7 +46,6 @@
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    background: white;
     z-index: 10;
     opacity: 0;
     transform: translateY(-10px);
@@ -65,7 +64,7 @@
 }
 
 .exercise-suggestion {
-    border: 1px solid #ddd;
+    border: 1px solid #000000;
     border-radius: 0.9rem;
     padding: 0.3rem;
     cursor: pointer;
@@ -81,4 +80,25 @@
 
 .exercise-picker-label {
     text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    .exercise-picker-container {
+        background: #1c1c1c;
+
+    }
+
+    .exercise-picker-label {
+        color: #e9e9e9;
+    }
+
+    .exercise-span {
+        color: #e9e9e9;
+    }
+
+    .exercise-suggestion {
+        background: #e9e9e9;
+        color: black;
+    }
 }

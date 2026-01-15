@@ -21,7 +21,7 @@
 
 
 .routine-picker-container {
-    background: white;
+    background: #1c1c1c;
     padding: 20px;
     width: 18rem;
     border-radius: 8px;
@@ -33,6 +33,7 @@
 
 .routine-picker-label {
     text-align: center;
+    color: #a7a7a7;
 }
 
 .routine-picker-list {
@@ -52,10 +53,29 @@
     width: 100%;
     text-align: center;
     font-size: 1rem;
+    color: #a7a7a7;
 }
 
 .routine-picker-button {
     padding: 0.5rem;
     border-radius: 0.9rem;
     cursor: pointer;
+    color: #8a0b0b;
+    font-weight: bold;
+}
+
+@media (prefers-color-scheme: light) {
+    .routine-picker-container {
+        background: #e9e9e9;
+    }
+
+    .routine-picker-label {
+        color: black;
+    }
+
+    .routine-picker-list-item {
+        color: black;
+        border: 1px solid black;
+
+    }
 }

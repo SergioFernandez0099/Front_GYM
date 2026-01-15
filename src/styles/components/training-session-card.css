@@ -44,7 +44,7 @@
     flex-direction: column;
     border-radius: 1.2rem;
     padding: 0.8rem 0.6rem;
-    background-color: #aeabab;
+    background-color: #383838;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
     width: 100%;
@@ -83,33 +83,33 @@
 .train-sess-card-save-icon {
     top: 0.5rem;
     right: 2.8rem;
-    background: lightgreen;
+    background: #ffffff;
     padding: 0.45rem;
 }
 
 .train-sess-card-info-icon {
     top: 0.5rem;
     right: 0.5rem;
-    background: deepskyblue;
+    background: #ffffff;
 }
 
 .infoIcon {
     height: 1.8rem;
     width: 1.8rem;
-    color: white;
+    color: #2071ff;
 }
 
 .saveIcon {
     height: 0.9rem;
     width: 0.9rem;
-    color: white;
+    color: #4CAF50;
 }
 
 .train-sess-card-info-tooltip {
     position: absolute;
-    top: -3.6rem;
+    top: -2.9rem;
     right: 0.1rem;
-    background-color: #cc1313;
+    background-color: #dbdbdb;
     border-radius: 0.6rem;
     padding: 0.2rem 0.4rem;
     font-size: 0.8rem;
@@ -119,10 +119,11 @@
 }
 
 .train-sess-card-header {
-    margin-top: 0.5rem;
+    margin-top: 0.8rem;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    gap: 0.2rem;
+    justify-content: center;
     align-items: center;
 }
 
@@ -175,6 +176,9 @@
 
 .train-sess-card-title {
     font-size: 1.6rem;
+    flex: 0 0 55%;
+    text-align: center;
+    color: #e9eef0;
 }
 
 .train-sess-card-serie {
@@ -203,6 +207,7 @@
     font-size: 0.9rem;
     margin: 0 0.15rem;
     font-weight: 600;
+    color: white;
 }
 
 .train-sess-card-series-list {
@@ -297,7 +302,7 @@
     display: block;
     border-radius: 1rem;
     padding: 0.2rem 0.5rem;
-    background-color: lightcyan;
+    background-color: #ffffff;
     width: 100%;
 }
 
@@ -314,7 +319,7 @@
     border: 1px solid black;
     border-radius: 0.4rem;
     font-size: 0.7rem;
-    font-weight: 600;
+    font-weight: bold;
     padding: 0.3rem 0.5rem;
     text-align: center;
     width: 30%;
@@ -322,15 +327,15 @@
 }
 
 .train-sess-card-buttons .train-sess-card-buttons-previous {
-    background: darkorange;
+    background: #f3d989;
 }
 
 .train-sess-card-buttons .train-sess-card-buttons-next {
-    background: lawngreen;
+    background: #c7edaa;
 }
 
-.train-sess-card-buttons .train-sess-card-buttons-previous {
-    background: darkorange;
+.train-sess-card-buttons .train-sess-card-buttons-delete {
+    background: red;
 }
 
 .train-sess-card hr {
