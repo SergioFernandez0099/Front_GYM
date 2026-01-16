@@ -85,12 +85,24 @@
     right: 2.8rem;
     background: #ffffff;
     padding: 0.45rem;
+
+    transition: transform 0.01s ease, border 0.2s ease;
+}
+
+.train-sess-card-save-icon:active {
+    transform: scale(1.2);
+    border: 1px solid #4CAF50;
 }
 
 .train-sess-card-info-icon {
     top: 0.5rem;
     right: 0.5rem;
     background: #ffffff;
+}
+
+.train-sess-card-info-icon:active {
+    transform: scale(1.2);
+    border: 1px solid #2071ff;
 }
 
 .infoIcon {
@@ -100,6 +112,12 @@
 }
 
 .saveIcon {
+    height: 0.9rem;
+    width: 0.9rem;
+    color: #4CAF50;
+}
+
+#loadingSaveIcon {
     height: 0.9rem;
     width: 0.9rem;
     color: #4CAF50;
@@ -119,7 +137,7 @@
 }
 
 .train-sess-card-header {
-    margin-top: 0.8rem;
+    margin-top: 1.5rem;
     display: flex;
     flex-direction: row;
     gap: 0.2rem;

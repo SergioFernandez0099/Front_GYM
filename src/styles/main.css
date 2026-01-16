@@ -202,6 +202,11 @@ section {
     display: none !important;;
 }
 
+.disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
 @media (min-width: 768px) {
     main {
         margin-top: 3rem;

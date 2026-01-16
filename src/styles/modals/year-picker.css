@@ -22,7 +22,7 @@
 }
 
 .year-picker-container {
-    background: #fff;
+    background: #e9e9e9;
     border-radius: 8px;
     max-height: 300px;
     width: 140px;
@@ -34,11 +34,14 @@
 .year-picker-items {
     padding: 5px;
     cursor: pointer;
+    color: black;
+    margin: 0.5rem;
+
 }
 
 .year-picker-items.current {
     background: #ff0000;
-    color: #fff;
+    color: #e9e9e9;
     font-weight: bold;
     border-radius: 4rem;
     margin: 0.5rem;
@@ -51,6 +54,21 @@
 
 .year-picker-items:hover {
     border-radius: 4rem;
-    background: #eee;
+    background: #dadada;
     color: #ff0000;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    .year-picker-container {
+        background: #1c1c1c;
+    }
+
+    .year-picker-items {
+        color: #e9e9e9;
+    }
+
+    .year-picker-items:hover {
+        background: #e9e9e9;
+    }
 }
