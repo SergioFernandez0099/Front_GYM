@@ -158,8 +158,6 @@ export function Navbar() {
     function updateActiveLink() {
         const currentPath = window.location.pathname;
 
-        console.log(currentPath);
-
         menuLinks.forEach(link => {
             if (link.getAttribute("href") === currentPath) {
                 link.classList.add("active");

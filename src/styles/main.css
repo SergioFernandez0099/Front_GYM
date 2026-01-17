@@ -202,6 +202,10 @@ section {
     display: none !important;;
 }
 
+.hideOpacity {
+    opacity: 0 !important;;
+}
+
 .disabled {
     pointer-events: none;
     cursor: default;

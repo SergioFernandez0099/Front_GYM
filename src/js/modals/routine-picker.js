@@ -1,5 +1,10 @@
 export function createRoutinePicker(routines, createSession) {
 
+    const existingModal = document.querySelector('.routine-picker-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
     // ===== Modal =====
     const modal = document.createElement('div');
     modal.className = 'routine-picker-modal';

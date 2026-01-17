@@ -3,6 +3,12 @@ import {safeNavigate} from "../router.js";
 import {showSnackbar} from "../components/snackbar.js";
 
 export function createExerciseSort(exercises, sessionId, moveToExercise) {
+
+    const existingModal = document.querySelector('.exercise-sort-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
     const modal = document.createElement('div');
     modal.className = 'exercise-sort-modal';
 
@@ -60,7 +66,7 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     });
 
     // Activar / desactivar drag
-    checkbox.addEventListener('change', (event) => {
+    checkbox.addEventListener('change', () => {
         if (exercises.length === 1) {
             checkbox.checked = false;
             showSnackbar("warning", "Añade más ejercicios para cambiar el orden")

@@ -1,5 +1,11 @@
 export function createExercisePicker(exercises, addExercise) {
 
+    // ===== Eliminar modal existente si lo hay =====
+    const existingModal = document.querySelector('.exercise-picker-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
     // ===== Modal =====
     const modal = document.createElement('div');
     modal.className = 'exercise-picker-modal';

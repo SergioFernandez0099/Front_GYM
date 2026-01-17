@@ -10,7 +10,7 @@ import {
 } from "../services/api.js";
 import {createExerciseSort} from "../modals/exercise-sort.js";
 import {createExercisePicker} from "../modals/exercise-picker.js";
-import {capitalize, openConfirmModal, shakeEffect} from "../../utils/helpers.js";
+import {capitalize, glowEffect, openConfirmModal, shakeEffect} from "../../utils/helpers.js";
 import {safeNavigate} from "../router.js";
 import {showSnackbar} from "./snackbar.js";
 
@@ -46,7 +46,6 @@ export async function trainingSessionCard(sessionId) {
 
     let exercisesSort = null;
     let pressTimer;
-
 
     if (trainingSessionData.sessionExercises.length !== 0) {
         exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, sessionId, moveToExercise)
@@ -96,6 +95,23 @@ export async function trainingSessionCard(sessionId) {
                         d="M18.1716 1C18.702 1 19.2107 1.21071 19.5858 1.58579L22.4142 4.41421C22.7893 4.78929 23 5.29799 23 5.82843V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V4C1 2.34315 2.34315 1 4 1H18.1716ZM4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21L5 21L5 15C5 13.3431 6.34315 12 8 12L16 12C17.6569 12 19 13.3431 19 15V21H20C20.5523 21 21 20.5523 21 20V6.82843C21 6.29799 20.7893 5.78929 20.4142 5.41421L18.5858 3.58579C18.2107 3.21071 17.702 3 17.1716 3H17V5C17 6.65685 15.6569 8 14 8H10C8.34315 8 7 6.65685 7 5V3H4ZM17 21V15C17 14.4477 16.5523 14 16 14L8 14C7.44772 14 7 14.4477 7 15L7 21L17 21ZM9 3H15V5C15 5.55228 14.5523 6 14 6H10C9.44772 6 9 5.55228 9 5V3Z"
                         fill="currentColor"/>
                 </svg>
+              <span class="save-loader">
+                  <svg fill="currentColor" height="800px" width="800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 489.711 489.711" xml:space="preserve">
+                        <g>
+                            <g>
+                                <path d="M112.156,97.111c72.3-65.4,180.5-66.4,253.8-6.7l-58.1,2.2c-7.5,0.3-13.3,6.5-13,14c0.3,7.3,6.3,13,13.5,13
+                            c0.2,0,0.3,0,0.5,0l89.2-3.3c7.3-0.3,13-6.2,13-13.5v-1c0-0.2,0-0.3,0-0.5v-0.1l0,0l-3.3-88.2c-0.3-7.5-6.6-13.3-14-13
+                            c-7.5,0.3-13.3,6.5-13,14l2.1,55.3c-36.3-29.7-81-46.9-128.8-49.3c-59.2-3-116.1,17.3-160,57.1c-60.4,54.7-86,137.9-66.8,217.1
+                            c1.5,6.2,7,10.3,13.1,10.3c1.1,0,2.1-0.1,3.2-0.4c7.2-1.8,11.7-9.1,9.9-16.3C36.656,218.211,59.056,145.111,112.156,97.111z"></path>
+                                <path d="M462.456,195.511c-1.8-7.2-9.1-11.7-16.3-9.9c-7.2,1.8-11.7,9.1-9.9,16.3c16.9,69.6-5.6,142.7-58.7,190.7
+                            c-37.3,33.7-84.1,50.3-130.7,50.3c-44.5,0-88.9-15.1-124.7-44.9l58.8-5.3c7.4-0.7,12.9-7.2,12.2-14.7s-7.2-12.9-14.7-12.2l-88.9,8
+                            c-7.4,0.7-12.9,7.2-12.2,14.7l8,88.9c0.6,7,6.5,12.3,13.4,12.3c0.4,0,0.8,0,1.2-0.1c7.4-0.7,12.9-7.2,12.2-14.7l-4.8-54.1
+                            c36.3,29.4,80.8,46.5,128.3,48.9c3.8,0.2,7.6,0.3,11.3,0.3c55.1,0,107.5-20.2,148.7-57.4
+                            C456.056,357.911,481.656,274.811,462.456,195.511z"></path>
+                            </g>
+                        </g>
+                  </svg>
+              </span>
             </div>
             <div class="train-sess-card-info-tooltip hide">
                 Para borrar una serie tan solo manten pulsado el número de esta. 
@@ -264,7 +280,6 @@ export async function trainingSessionCard(sessionId) {
             case "save": {
                 elemento.classList.add('disabled');
                 await guardarSeriesYDescripcion(elemento);
-                await reloadData()
                 elemento.classList.remove('disabled');
                 break;
             }
@@ -374,42 +389,22 @@ export async function trainingSessionCard(sessionId) {
     }
 
     async function guardarSeriesYDescripcion(saveIcon) {
+        const card = document.querySelector(".train-sess-card");
+
         const modifiedSeries = collectModifiedSeries()
 
         const currentDescription = document.querySelector(".train-sess-card-description").value;
         if (modifiedSeries.length === 0 && originalDescription === currentDescription) {
             showSnackbar("warning", "Realiza alguna modificación antes de guardar")
+            shakeEffect(card)
             return;
         }
         const exercise = getExercise();
 
         if (!exercise) return;
 
-        console.log(saveIcon)
-
-        const arrow = `<svg fill="currentColor" id='loadingSaveIcon' height="800px" width="800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 489.711 489.711" xml:space="preserve">
-            <g>
-                <g>
-                    <path d="M112.156,97.111c72.3-65.4,180.5-66.4,253.8-6.7l-58.1,2.2c-7.5,0.3-13.3,6.5-13,14c0.3,7.3,6.3,13,13.5,13
-                        c0.2,0,0.3,0,0.5,0l89.2-3.3c7.3-0.3,13-6.2,13-13.5v-1c0-0.2,0-0.3,0-0.5v-0.1l0,0l-3.3-88.2c-0.3-7.5-6.6-13.3-14-13
-                        c-7.5,0.3-13.3,6.5-13,14l2.1,55.3c-36.3-29.7-81-46.9-128.8-49.3c-59.2-3-116.1,17.3-160,57.1c-60.4,54.7-86,137.9-66.8,217.1
-                        c1.5,6.2,7,10.3,13.1,10.3c1.1,0,2.1-0.1,3.2-0.4c7.2-1.8,11.7-9.1,9.9-16.3C36.656,218.211,59.056,145.111,112.156,97.111z"></path>
-                    <path d="M462.456,195.511c-1.8-7.2-9.1-11.7-16.3-9.9c-7.2,1.8-11.7,9.1-9.9,16.3c16.9,69.6-5.6,142.7-58.7,190.7
-                        c-37.3,33.7-84.1,50.3-130.7,50.3c-44.5,0-88.9-15.1-124.7-44.9l58.8-5.3c7.4-0.7,12.9-7.2,12.2-14.7s-7.2-12.9-14.7-12.2l-88.9,8
-                        c-7.4,0.7-12.9,7.2-12.2,14.7l8,88.9c0.6,7,6.5,12.3,13.4,12.3c0.4,0,0.8,0,1.2-0.1c7.4-0.7,12.9-7.2,12.2-14.7l-4.8-54.1
-                        c36.3,29.4,80.8,46.5,128.3,48.9c3.8,0.2,7.6,0.3,11.3,0.3c55.1,0,107.5-20.2,148.7-57.4
-                        C456.056,357.911,481.656,274.811,462.456,195.511z"></path>
-                </g>
-            </g>
-          </svg>
-        `;
-
-        const save = `<svg width="800px" class="saveIcon" height="800px" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M18.1716 1C18.702 1 19.2107 1.21071 19.5858 1.58579L22.4142 4.41421C22.7893 4.78929 23 5.29799 23 5.82843V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V4C1 2.34315 2.34315 1 4 1H18.1716ZM4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21L5 21L5 15C5 13.3431 6.34315 12 8 12L16 12C17.6569 12 19 13.3431 19 15V21H20C20.5523 21 21 20.5523 21 20V6.82843C21 6.29799 20.7893 5.78929 20.4142 5.41421L18.5858 3.58579C18.2107 3.21071 17.702 3 17.1716 3H17V5C17 6.65685 15.6569 8 14 8H10C8.34315 8 7 6.65685 7 5V3H4ZM17 21V15C17 14.4477 16.5523 14 16 14L8 14C7.44772 14 7 14.4477 7 15L7 21L17 21ZM9 3H15V5C15 5.55228 14.5523 6 14 6H10C9.44772 6 9 5.55228 9 5V3Z" fill="currentColor"></path>
-                </svg>
-        `;
-
-        saveIcon.innerHTML = arrow;
+        saveIcon.classList.add("loading");
+        saveIcon.children[0].classList.add("hideOpacity");
 
         const data = {
             ...(modifiedSeries.length !== 0 && {series: modifiedSeries}),
@@ -418,10 +413,36 @@ export async function trainingSessionCard(sessionId) {
 
         try {
             await updateTrainingSession(sessionId, exercise.id, data);
-            saveIcon.innerHTML = save;
+
+            // Actualización en local
+            if (modifiedSeries.length !== 0) {
+                modifiedSeries.forEach(mod => {
+                    const original = originalSeries.get(mod.id);
+                    if (original) {
+                        Object.assign(original, mod);
+                    }
+
+                    // Actualizamos la serie dentro del objeto trainingSessionData
+                    const serieToUpdate = exercise.series.find(s => s.id === mod.id);
+                    if (serieToUpdate) {
+                        Object.assign(serieToUpdate, mod);
+                    }
+                });
+            }
+
+            if (originalDescription !== currentDescription) {
+                exercise.description = currentDescription;
+                originalDescription = currentDescription;
+            }
+
+            saveIcon.classList.remove("loading");
+            saveIcon.children[0].classList.remove("hideOpacity");
+            glowEffect(card)
             showSnackbar("success", "Datos guardados correctamente");
         } catch (error) {
-            saveIcon.innerHTML = save;
+            shakeEffect(card)
+            saveIcon.classList.remove("loading");
+            saveIcon.children[0].classList.remove("hideOpacity");
             console.error("No se pudo guardar los datos: ", error);
             const message = "No se pudo guardar los datos";
             showSnackbar("error", message);
@@ -437,8 +458,18 @@ export async function trainingSessionCard(sessionId) {
 
         try {
             await deleteTrainingSessionSerie(sessionId, exercise.id, Number(id));
+
+            originalSeries.delete(Number(id));
+            exercise.series = exercise.series.filter(s => s.id !== Number(id));
+
+            const serieEl = document.querySelector(`.train-sess-card-serie[data-id='${id}']`);
+            if (serieEl) {
+                serieEl.remove();
+            }
+
+            updateSerieNumbers();
+
             showSnackbar("success", "Serie eliminada correctamente");
-            await reloadData()
         } catch (error) {
             console.error("No se pudo borrar la serie: ", error);
             const message = "No se pudo borrar la serie";
@@ -446,13 +477,43 @@ export async function trainingSessionCard(sessionId) {
         }
     }
 
+    function updateSerieNumbers() {
+        const seriesEls = document.querySelectorAll(".train-sess-card-serie");
+        seriesEls.forEach((serieEl, index) => {
+            const numEl = serieEl.querySelector(".train-sess-card-serie-num");
+            if (numEl) numEl.textContent = index + 1;
+        });
+    }
+
     async function addSerie() {
         const exercise = getExercise();
         if (!exercise) return;
 
         try {
-            await createTrainingSessionSerie(sessionId, exercise.id);
-            await reloadData()
+            const newSerie = await createTrainingSessionSerie(sessionId, exercise.id);
+
+            if (!newSerie || !newSerie.id) throw new Error("No se puedo crear la serie, error del servidor.");
+
+            exercise.series.push(newSerie);
+
+            originalSeries.set(newSerie.id, {
+                reps: newSerie.reps,
+                weight: newSerie.weight,
+                intensity: newSerie.intensity,
+                rir: newSerie.rir,
+                unitId: newSerie.unit ? newSerie.unit.id : null
+            });
+
+            const seriesList = document.querySelector(".train-sess-card-series-list");
+            const serieIndex = seriesList.children.length; // índice para renderSerie
+            const serieHTML = renderSerie(newSerie, serieIndex);
+
+            // Convertimos el string HTML a elemento DOM
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = serieHTML.trim(); // trim por seguridad
+            const serieEl = tempDiv.firstChild;
+
+            seriesList.appendChild(serieEl);
             focusLastWeightInput()
         } catch (error) {
             console.error("No se pudo crear la serie", error);

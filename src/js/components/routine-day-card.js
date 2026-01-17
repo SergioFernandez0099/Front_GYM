@@ -7,13 +7,13 @@ import {
     showErrorBorder,
     toggleEditIcon,
 } from "../../utils/helpers";
-import {validaYSanitiza} from "../../utils/validators";
 import {createRoutine, deleteRoutine, updateRoutine} from "../services/api";
 import {showSnackbar} from "./snackbar.js";
+import {getRoutineDay, getRoutineDays} from "../pages/routine.js";
 
 export function RoutineDayCard(day) {
     const article = document.createElement("article");
-
+    article.dataset.id = day.id;
     if (day === "add") {
         article.className = "routine-day-add-card";
         article.innerHTML = `
@@ -81,7 +81,7 @@ export function attachRoutineDayCardEvents(article, day) {
     });
 
     elements.inputTitle.addEventListener("input", () => {
-        const {valid} = validaYSanitiza(elements.inputTitle.textContent);
+        const valid = elements.inputTitle.textContent !== "" && elements.inputTitle.textContent !== ". . .";
         valid ? clearErrorBorder(elements.inputTitle) : showErrorBorder(elements.inputTitle);
     });
 
@@ -109,7 +109,6 @@ export function attachRoutineDayCardEvents(article, day) {
         const confirmed = await openConfirmModal("¿Eliminar set?");
         if (!confirmed) return;
         try {
-            console.log(day)
             if (!day.id) {
                 article.classList.add("fade-out-inward");
                 setTimeout(() => article.remove(), 300);
@@ -144,16 +143,23 @@ export function attachRoutineDayCardEvents(article, day) {
 
 async function saveDay(article, day, isNew = false) {
     const inputTitle = article.querySelector("#titleDayInput");
-    const {valid, sanitized} = validaYSanitiza(inputTitle.textContent, {allowSpecial: false, maxLength: 50});
-    if (!valid) {
+    let titleValue = inputTitle.textContent.trim();
+
+    if (titleValue === "" || titleValue === ". . .") {
         showErrorBorder(inputTitle);
         shakeEffect(article);
         return false;
     }
 
-    const routineData = {name: sanitized};
-    let result;
+    if (titleValue === day.name) {
+        showSnackbar("warning", "Realiza alguna modificación antes de guardar")
+        shakeEffect(article);
+        return false;
+    }
 
+    const routineData = {name: titleValue};
+
+    let result;
     try {
         result = isNew ? await createRoutine(routineData) : await updateRoutine(day.id, routineData);
     } catch (err) {
@@ -164,12 +170,19 @@ async function saveDay(article, day, isNew = false) {
 
     if (result) {
         isNew ? showSnackbar("success", "Rutina creada correctamente") : showSnackbar("success", "Rutina actualizada correctamente")
-        inputTitle.textContent = sanitized;
-        article.removeAttribute("data-new-day");
-        closeEditableRoutineCard(article);
+
         glowEffect(article);
         Object.assign(day, result);
         delete day.isNew;
+
+        if (isNew) {
+            getRoutineDays().push(day);
+            article.dataset.id = result.id;
+            article.removeAttribute("data-new-day");
+        }
+
+        inputTitle.textContent = titleValue;
+        closeEditableRoutineCard(article);
         return true;
     }
 
@@ -204,6 +217,12 @@ export function closeEditableRoutineCard(article) {
     const editIcon = article.querySelector(".editIcon");
     const inputTitle = article.querySelector("#titleDayInput");
     const trashButton = article.querySelector(".icon-container-trash");
+
+    const day = getRoutineDay(article.dataset.id);
+
+    if (inputTitle.textContent !== day.name) {
+        inputTitle.textContent = day.name;
+    }
 
     inputTitle.setAttribute("contenteditable", "false");
     editButton.dataset.editable = "false";

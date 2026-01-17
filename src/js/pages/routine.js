@@ -3,6 +3,8 @@ import {fetchRoutineDays} from "../services/api";
 import {showSnackbar} from "../components/snackbar.js";
 import {safeNavigate} from "../router.js";
 
+let routineDays;
+
 export async function Routine() {
 
     const routineContainer = document.createElement("div");
@@ -17,7 +19,6 @@ export async function Routine() {
     section.appendChild(routineList);
     routineContainer.appendChild(section);
 
-    let routineDays;
     try {
         routineDays = await fetchRoutineDays();
         const fragment = document.createDocumentFragment();
@@ -40,4 +41,12 @@ export async function Routine() {
     routineList.appendChild(addCard);
 
     return routineContainer;
+}
+
+export function getRoutineDays() {
+    return routineDays
+}
+
+export function getRoutineDay(id) {
+    return routineDays.find(day => day.id === Number(id));
 }
