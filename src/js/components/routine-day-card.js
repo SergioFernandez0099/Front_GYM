@@ -69,14 +69,7 @@ export function attachRoutineDayCardEvents(article, day) {
     elements.inputTitle.addEventListener("keydown", async (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            const saved = await saveDay(article, day, article.hasAttribute("data-new-day"));
-            if (saved) {
-                shakeEffect(article);
-                article.scrollIntoView({behavior: "smooth", block: "center"});
-            } else {
-                elements.inputTitle.blur();
-                elements.inputTitle.setAttribute("contenteditable", "false");
-            }
+            await saveDay(article, day, article.hasAttribute("data-new-day"));
         }
     });
 
