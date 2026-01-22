@@ -90,6 +90,14 @@
     transition: transform 0.01s ease, border 0.2s ease;
 }
 
+.train-sess-card-history-icon {
+    top: 0.5rem;
+    right: 5.1rem;
+    background: #ffffff;
+    padding: 0.3rem;
+    transition: transform 0.01s ease, border 0.2s ease;
+}
+
 .save-loader {
     position: absolute;
     top: 0.25rem;
@@ -111,7 +119,6 @@
     width: 100%;
 }
 
-
 .train-sess-card-save-icon.loading .save-loader {
     opacity: 1;
 }
@@ -130,6 +137,17 @@
 .train-sess-card-info-icon:active {
     transform: scale(1.2);
     border: 1px solid #2071ff;
+}
+
+.train-sess-card-history-icon:active {
+    transform: scale(1.2);
+    border: 1px solid #d05600;
+}
+
+.historyIcon {
+    height: 1.2rem;
+    width: 1.2rem;
+    color: #d05600;
 }
 
 .infoIcon {
@@ -180,8 +198,8 @@
 
 .train-sess-card-image {
     position: relative;
-    width: 5rem;
-    height: 5rem;
+    width: 5.6rem;
+    height: 5.6rem;
     object-fit: cover;
     overflow: visible;
 }
