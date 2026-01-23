@@ -13,6 +13,7 @@ import {createExercisePicker} from "../modals/exercise-picker.js";
 import {capitalize, glowEffect, openConfirmModal, shakeEffect} from "../../utils/helpers.js";
 import {safeNavigate} from "../router.js";
 import {showSnackbar} from "./snackbar.js";
+import {createSessionHistory} from "../modals/session-history.js";
 
 
 export async function trainingSessionCard(sessionId) {
@@ -22,6 +23,7 @@ export async function trainingSessionCard(sessionId) {
 
     try {
         trainingSessionData = await fetchTrainingSession(sessionId);
+        console.log(trainingSessionData);
         exercisesData = await fetchExercises();
     } catch (error) {
         showSnackbar("error", "Error al cargar las sesiones de entrenamiento")
@@ -51,6 +53,9 @@ export async function trainingSessionCard(sessionId) {
         exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, sessionId, moveToExercise)
     }
 
+    let sessionHistory = createSessionHistory(trainingSessionData.sessionExercises[indiceEjercicio].history,
+        trainingSessionData.sessionExercises[indiceEjercicio].exercise.name);
+
     const exercisePicker = createExercisePicker(exercisesData, addExercise);
 
     const trainingSessionCardContainer = document.createElement("div");
@@ -66,6 +71,9 @@ export async function trainingSessionCard(sessionId) {
                 .map((serie, index) => renderSerie(serie, index))
                 .join("");
         }
+
+        sessionHistory = createSessionHistory(trainingSessionData.sessionExercises[indiceEjercicio].history,
+            trainingSessionData.sessionExercises[indiceEjercicio].exercise.name);
 
         trainingSessionCardContainer.innerHTML = `
             <div class="train-sess-card-general-options">
@@ -280,6 +288,10 @@ export async function trainingSessionCard(sessionId) {
             }
             case "exercise": {
                 exercisePicker.show();
+                break;
+            }
+            case "history": {
+                sessionHistory.show();
                 break;
             }
             case "info": {

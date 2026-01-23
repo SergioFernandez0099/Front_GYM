@@ -1,0 +1,135 @@
+.session-history-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.session-history-modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.session-history-container {
+    background: #1c1c1c;
+    padding: 10px;
+    width: 18.5rem;
+    border-radius: 8px;
+    height: 40rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-rows: auto 1fr auto;
+}
+
+.session-date {
+    text-align: center;
+    color: white;
+    margin: 0.6rem;
+    font-size: 1rem;
+}
+
+.session-history-label {
+    text-align: center;
+    color: #e2e2e2;
+}
+
+.session-history-exercise{
+    text-align: center;
+    color: #e2e2e2;
+    font-style: italic;
+}
+
+.session-history-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.session-history-list-item {
+    color: black;
+    border: 1px solid black;
+    font-size: 0.8rem;
+    border-radius: 1rem;
+    background-color: #7c1010;
+}
+
+.session-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 1rem;
+}
+
+.session-history-table thead {
+    border-bottom: 3px solid #5c5c5c;
+
+}
+
+.session-history-table th {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.th-weight {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.session-history-table tbody tr {
+    border-bottom: 0.1px solid #7c4b4b;
+    color: #ffffff;
+}
+
+.session-history-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.session-history-table tbody tr:hover {
+    background-color: #d41f1f;
+}
+
+.session-history-table th,
+.session-history-table td {
+    padding: 10px 12px;
+    text-align: center;
+}
+
+.session-history-dumbbell{
+    height: 1rem;
+    width: 1rem;
+    color: white;
+}
+
+@media (prefers-color-scheme: light) {
+    .session-history-container {
+        background: #e9e9e9;
+    }
+
+    .session-history-label {
+        color: black;
+    }
+
+    .session-history-list-item {
+        color: black;
+        border: 1px solid black;
+    }
+}
+
+@media (min-width: 768px) {
+    .session-history-container {
+        width: 20rem;
+        height: 30rem;
+    }
+}
