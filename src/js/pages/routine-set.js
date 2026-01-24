@@ -2,12 +2,24 @@ import {getEditingCard, RoutineSetCard,} from "../components/routine-set-card";
 import {fetchRoutineSets} from "../services/api";
 import {showSnackbar} from "../components/snackbar.js";
 import {safeNavigate} from "../router.js";
+import {createExerciseSort} from "../modals/exercise-sort.js";
+import {shakeEffect} from "../../utils/helpers.js";
 
 let setData = []
 
 export async function RoutineSet(routineId) {
     const routineSetContainer = document.createElement("div");
     routineSetContainer.className = "routine-container";
+
+    const orderButton = document.createElement("button");
+    orderButton.className = "train-sess-card-general-options-list";
+    orderButton.innerHTML = `
+        <img src="/icons/list.svg" alt="Icono de listado" class="orderIcon">
+        Ordenar ejercicios
+    `;
+
+    routineSetContainer.appendChild(orderButton);
+
 
     const section = document.createElement("section");
     section.className = "routine-list-container";
@@ -19,8 +31,13 @@ export async function RoutineSet(routineId) {
 
     routineSetContainer.appendChild(section);
 
+    let exercisesSort;
     try {
         setData = await fetchRoutineSets(routineId);
+        const exercisesData = setData.map(item => item.exercise)
+        if (exercisesData.length !== 0) {
+            exercisesSort = createExerciseSort(exercisesData, routineId)
+        }
     } catch (error) {
         showSnackbar("error", "Error al cargar los sets");
         safeNavigate("/error");
@@ -62,13 +79,18 @@ export async function RoutineSet(routineId) {
             exerciseId: null,
             series: null,
             repetitions: null,
-            description: ""
+            description: null
         };
         const newArticle = await RoutineSetCard(newSet, routineId);
         routineList.insertBefore(newArticle, addArticle);
 
         newArticle.scrollIntoView({behavior: "smooth", block: "center"});
     });
+
+    orderButton.addEventListener("click", () => {
+        if (exercisesSort) exercisesSort.show();
+        else shakeEffect(orderButton)
+    })
 
     return routineSetContainer;
 }

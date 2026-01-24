@@ -99,7 +99,7 @@
 
 .routine-set-image {
     object-fit: cover;
-    height: 8rem;
+    height: 7.5rem;
     transition: opacity 0.4s ease;
     opacity: 1;
 }
@@ -126,32 +126,6 @@
     background-color: rgb(168, 168, 168);
     width: 100%;
     padding-left: 0.2rem;
-}
-
-#suggestionBox {
-    position: absolute;
-    width: 9.2rem;
-    top: 3.9rem;
-    padding-left: 0.4rem;
-    border-radius: 0.5rem;
-    left: 9.3rem;
-    height: auto;
-    min-height: 1.4rem;
-    z-index: 10;
-    color: white;
-    background: rgb(105, 105, 105);
-    pointer-events: none;
-    font-size: 0.9rem;
-    opacity: 0;
-    cursor: pointer;
-    transform: translateY(-5px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-#suggestionBox.visible {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
 }
 
 .routine-set-info {

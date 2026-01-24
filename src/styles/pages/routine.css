@@ -33,6 +33,7 @@
     z-index: 12;
     overflow-y: auto;
     overflow-x: hidden;
+    margin-top: 1rem;
 }
 
 .fade-toggle {
@@ -46,6 +47,11 @@
     pointer-events: auto;
 }
 
+.orderIcon {
+    height: 1.2rem;
+    width: 1.2rem;
+}
+
 @media (max-width: 768px) {
     .routine-container {
         padding-top: 0.5rem;
@@ -57,12 +63,8 @@
 }
 
 @media (min-width: 768px) {
-
     .routine-container {
         padding-top: 0.5rem;
-    }
-    .routine-list {
-        margin-top: 2rem;
     }
 }
 

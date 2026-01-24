@@ -2,7 +2,9 @@ import {updateTrainingSessionExerciseOrder} from "../services/api.js";
 import {safeNavigate} from "../router.js";
 import {showSnackbar} from "../components/snackbar.js";
 
-export function createExerciseSort(exercises, sessionId, moveToExercise) {
+// Para indicar que el modal es solo para guardar y no permite seleccionar se usa
+// la variable moveToExercise = null
+export function createExerciseSort(exercises, entityId, moveToExercise = null) {
 
     const existingModal = document.querySelector('.exercise-sort-modal');
     if (existingModal) {
@@ -16,28 +18,39 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     container.className = 'exercise-sort-container';
     modal.appendChild(container);
 
-    // Checkbox para activar ordenación
-    const reorderLabel = document.createElement('label');
-    reorderLabel.className = 'reorder-label';
+    let reorderLabel;
+    let labelContainer;
+    let checkbox;
 
-    const labelContainer = document.createElement('div');
-    labelContainer.className = 'label-container';
+    if (moveToExercise) {
+        // Checkbox para activar ordenación
+        reorderLabel = document.createElement('label');
+        reorderLabel.className = 'reorder-label';
 
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.id = 'enable-reorder';
+        labelContainer = document.createElement('div');
+        labelContainer.className = 'label-container';
 
-    reorderLabel.appendChild(checkbox);
-    reorderLabel.append('Ordenar');
+        checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = 'enable-reorder';
+
+        reorderLabel.appendChild(checkbox);
+        reorderLabel.append('Ordenar');
+        labelContainer.appendChild(reorderLabel);
+    }
 
     const saveButton = document.createElement('button');
-    saveButton.className = 'exercise-sort-save hide ';
+
     saveButton.textContent = 'Guardar';
 
-    labelContainer.appendChild(reorderLabel);
-    labelContainer.appendChild(saveButton);
-
-    container.appendChild(labelContainer);
+    if (moveToExercise) {
+        saveButton.className = 'exercise-sort-save hide ';
+        labelContainer.appendChild(saveButton);
+        container.appendChild(labelContainer);
+    } else {
+        saveButton.className = 'exercise-sort-save show ';
+        container.appendChild(saveButton);
+    }
 
     // Lista de ejercicios
     const list = document.createElement('div');
@@ -48,6 +61,7 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
         id: e.id,
         order: e.order
     }));
+    console.log(exercises)
 
     exercises.forEach(exercise => {
         const itemContainer = document.createElement('div');
@@ -55,36 +69,39 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
         itemContainer.setAttribute('data-id', exercise.id);
         const item = document.createElement('div');
         const span = document.createElement('span');
-        span.className = 'exercise-span';
+        span.className = moveToExercise ? 'exercise-span' : 'exercise-span show';
         span.textContent = "☰";
         item.className = 'exercise-item';
-        item.textContent = exercise.exercise.name;
+        item.textContent = moveToExercise ? exercise.exercise.name : exercise.name;
         item.draggable = false;
         itemContainer.appendChild(span);
         itemContainer.appendChild(item);
+
         list.appendChild(itemContainer);
     });
 
-    // Activar / desactivar drag
-    checkbox.addEventListener('change', () => {
-        if (exercises.length === 1) {
-            checkbox.checked = false;
-            showSnackbar("warning", "Añade más ejercicios para cambiar el orden")
-            return;
-        }
-        if (checkbox.checked) {
-            showSaveButton()
-            showItemsSpan()
-        } else {
-            const currentOrder = getCurrentOrderFromDOM();
-            const diff = getOrderDiff(originalOrder, currentOrder);
+    if (moveToExercise) {
+        // Activar / desactivar drag
+        checkbox.addEventListener('change', () => {
+            if (exercises.length === 1) {
+                checkbox.checked = false;
+                showSnackbar("warning", "Añade más ejercicios para cambiar el orden")
+                return;
+            }
+            if (checkbox.checked) {
+                showSaveButton()
+                showItemsSpan()
+            } else {
+                const currentOrder = getCurrentOrderFromDOM();
+                const diff = getOrderDiff(originalOrder, currentOrder);
 
-            if (diff.length !== 0) restoreOriginalOrder()
+                if (diff.length !== 0) restoreOriginalOrder()
 
-            hideSaveButton()
-            hideItemsSpan()
-        }
-    });
+                hideSaveButton()
+                hideItemsSpan()
+            }
+        });
+    }
 
     function showItemsSpan() {
         const items = list.querySelectorAll('.exercise-item-container');
@@ -112,6 +129,7 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     }
 
     function getOrderDiff(original, current) {
+
         const originalMap = new Map(
             original.map(item => [item.id, item.order])
         );
@@ -141,7 +159,9 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     let dragged = null;
 
     list.addEventListener('dragstart', e => {
-        if (!checkbox.checked) return;
+        if (moveToExercise) {
+            if (!checkbox.checked) return;
+        }
 
         dragged = e.target;
         e.dataTransfer.setData('text/plain', '');
@@ -158,7 +178,11 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     });
 
     list.addEventListener('dragover', e => {
-        if (!checkbox.checked || !dragged) return;
+        if (moveToExercise) {
+            if (!checkbox.checked || !dragged) return;
+        } else {
+            if (!dragged) return;
+        }
 
         e.preventDefault();
         const after = getDragAfterElement(list, e.clientY);
@@ -170,20 +194,22 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
         }
     });
 
-    list.addEventListener('click', (e) => {
-        // Solo actuar si no estamos en modo ordenar
-        if (checkbox.checked) return;
+    if (moveToExercise) {
+        list.addEventListener('click', (e) => {
+            // Solo actuar si no estamos en modo ordenar
+            if (checkbox.checked) return;
 
-        // Buscar el contenedor del ejercicio clicado
-        const itemContainer = e.target.closest('.exercise-item-container');
-        if (!itemContainer) return;
+            // Buscar el contenedor del ejercicio clicado
+            const itemContainer = e.target.closest('.exercise-item-container');
+            if (!itemContainer) return;
 
-        const exercise = exercises.find(e => e.id === Number(itemContainer.dataset.id));
-        if (exercise) {
-            moveToExercise(exercise.id); // tu función para seleccionar ejercicio
-            hide()
-        }
-    });
+            const exercise = exercises.find(e => e.id === Number(itemContainer.dataset.id));
+            if (exercise) {
+                moveToExercise(exercise.id); // tu función para seleccionar ejercicio
+                hide()
+            }
+        });
+    }
 
     saveButton.addEventListener('click', async () => {
         const currentOrder = getCurrentOrderFromDOM();
@@ -191,8 +217,6 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
 
         if (diff.length === 0) {
             showSnackbar("warning", "No hay cambios de orden")
-            checkbox.checked = false;
-            hideSaveButton();
             return;
         }
 
@@ -217,22 +241,28 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     async function actualizarOrden(currentOrder) {
         const data = currentOrder.map(e => e.id);
         try {
-            await updateTrainingSessionExerciseOrder(sessionId, data);
+            moveToExercise
+                ? await updateTrainingSessionExerciseOrder(entityId, data)
+                : console.log("");
             originalOrder.length = 0;
             currentOrder.forEach(o => originalOrder.push(o));
             showSnackbar("success", "Orden actualizado correctamente");
 
             hide()
+            moveToExercise
+                ? safeNavigate(`/sessions/${entityId}`)
+                : safeNavigate(`/routine/set/${entityId}`);
 
-            safeNavigate(`/sessions/${sessionId}`)
         } catch (error) {
             console.warn("No se pudo actualizar el orden", error);
             showSnackbar("error", "No se pudo actualizar el orden");
 
             restoreOriginalOrder();
             checkbox.checked = false;
-            hideSaveButton();
-            hideItemsSpan();
+            if (moveToExercise) {
+                hideSaveButton();
+                hideItemsSpan();
+            }
         }
     }
 
@@ -260,10 +290,12 @@ export function createExerciseSort(exercises, sessionId, moveToExercise) {
     }
 
     function hide() {
-        if (checkbox.checked) {
-            checkbox.checked = false;
-            hideItemsSpan();
-            hideSaveButton();
+        if (moveToExercise) {
+            if (checkbox.checked) {
+                checkbox.checked = false;
+                hideItemsSpan();
+                hideSaveButton();
+            }
         }
         modal.classList.remove('show');
         document.body.style.overflow = '';

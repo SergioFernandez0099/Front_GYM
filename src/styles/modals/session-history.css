@@ -69,11 +69,11 @@
     width: 100%;
     border-collapse: collapse;
     border-radius: 1rem;
+    overflow: hidden;
 }
 
 .session-history-table thead {
     border-bottom: 3px solid #5c5c5c;
-
 }
 
 .session-history-table th {

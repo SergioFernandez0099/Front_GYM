@@ -23,7 +23,6 @@ export async function trainingSessionCard(sessionId) {
 
     try {
         trainingSessionData = await fetchTrainingSession(sessionId);
-        console.log(trainingSessionData);
         exercisesData = await fetchExercises();
     } catch (error) {
         showSnackbar("error", "Error al cargar las sesiones de entrenamiento")
@@ -415,8 +414,10 @@ export async function trainingSessionCard(sessionId) {
 
         const modifiedSeries = collectModifiedSeries()
 
-        const currentDescription = document.querySelector(".train-sess-card-description").value;
+        const inputDescription = document.querySelector(".train-sess-card-description");
+        let currentDescription = inputDescription.value.trim();
         if (modifiedSeries.length === 0 && originalDescription === currentDescription) {
+            inputDescription.value = currentDescription;
             showSnackbar("warning", "Realiza alguna modificación antes de guardar")
             shakeEffect(card)
             return;
@@ -453,12 +454,14 @@ export async function trainingSessionCard(sessionId) {
             }
 
             if (originalDescription !== currentDescription) {
-                exercise.description = currentDescription;
-                originalDescription = currentDescription;
+                inputDescription.value = inputDescription.value.trim();
+                exercise.description = inputDescription.value;
+                originalDescription = inputDescription.value;
             }
 
             saveIcon.classList.remove("loading");
             saveIcon.children[0].classList.remove("hideOpacity");
+
             glowEffect(card)
             showSnackbar("success", "Datos guardados correctamente");
         } catch (error) {

@@ -12,6 +12,7 @@ import {showSnackbar} from "./snackbar.js";
 import {safeNavigate} from "../router.js";
 import {getSet} from "../pages/routine-set.js";
 import editIcon from '/icons/edit.svg';
+import {createExercisePicker} from "../modals/exercise-picker.js";
 
 let exercises = [];
 let routineIdGlobal;
@@ -46,13 +47,12 @@ export async function RoutineSetCard(set, routineId) {
         <img src="/icons/arrowDown.svg" alt="Icono de desplegable" class="arrowIcon">
       </div>
     </div>
-    <div id="suggestionBox">Press Banca</div>
     <div class="default-card">
       <div class="routine-set-image-container">
           <img src="/images/snorlax.avif" alt="" class="routine-set-image" />
       </div>
       <div class="routine-set-info">
-          <input id="titleInput" type="text" autocomplete="off" placeholder="Escribe..." enterkeyhint="done" class="routine-set-tittle">
+          <input id="titleInput" type="text" readonly autocomplete="off" placeholder="Press banca..." class="routine-set-tittle">
                 <div class="routine-details">
               <p class="routine-set-text">Series: 
               <input id="series" type="number" min="1" max="99" readonly placeholder="3" enterkeyhint="done"></p>
@@ -263,7 +263,6 @@ function setUpSetCard(article, set) {
 }
 
 async function setUpSetNewCard(article) {
-    const suggestionBox = article.querySelector("#suggestionBox");
     const description = article.querySelector(".description");
     const arrowIcon = article.querySelector(".arrowIcon");
     const editButton = article.querySelector(".icon-container-edit");
@@ -274,10 +273,18 @@ async function setUpSetNewCard(article) {
     const trashButton = article.querySelector(".icon-container-trash");
     const editIcon = article.querySelector(".editIcon");
 
+    let exercisePicker;
     let data;
     try {
         data = await fetchExercises();
         exercises = data;
+
+        exercisePicker = createExercisePicker(exercises, (exerciseId) => {
+            titleInput.value = exercises.find((ej) => ej.id === Number(exerciseId)).name;
+            titleInput.style.border = "2px solid green";
+            titleInput.dataset.exerciseId = exerciseId;
+            seriesInput.focus();
+        });
     } catch (error) {
         showSnackbar("error", "Error al cargar los ejercicios del set")
         safeNavigate("/error");
@@ -293,69 +300,9 @@ async function setUpSetNewCard(article) {
     toggleEditIcon("tick", editIcon, editButton, "1.65rem", "2rem");
     showEditableCard(textarea, seriesInput, repsInput);
 
-    titleInput.addEventListener("input", () => {
-        const query = normalize(titleInput.value);
-
-        suggestionBox.classList.add("visible");
-        suggestionBox.innerHTML = "";
-
-        if (query.length === 0) return;
-
-        const matches = exercises
-            .map(ex => ({
-                ...ex,
-                normalizedName: normalize(ex.name)
-            }))
-            .filter(ex => ex.normalizedName.includes(query))
-            .sort((a, b) => {
-                const aStarts = a.normalizedName.startsWith(query);
-                const bStarts = b.normalizedName.startsWith(query);
-
-                if (aStarts && !bStarts) return -1;
-                if (!aStarts && bStarts) return 1;
-
-                return a.name.localeCompare(b.name, "es");
-            });
-
-        if (matches.length > 0) {
-            suggestionBox.textContent = matches[0].name;
-            suggestionBox.setAttribute("data-exercise", `${matches[0].id}`);
-        }
-    });
-
-    suggestionBox.addEventListener("mousedown", (event) => {
-        event.preventDefault();
-
-        console.log("clicked");
-
-        if (suggestionBox.textContent.trim() !== "") {
-            titleInput.value = suggestionBox.textContent;
-            titleInput.style.border = "2px solid green";
-            suggestionBox.classList.remove("visible");
-            suggestionBox.innerHTML = "";
-            seriesInput.focus();
-        }
-    });
-
-    titleInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            if (suggestionBox.textContent.trim() !== "") {
-                titleInput.value = suggestionBox.textContent;
-                titleInput.style.border = "2px solid green";
-                suggestionBox.classList.remove("visible");
-                suggestionBox.innerHTML = "";
-                seriesInput.focus();
-            }
-        }
-    });
-
-    titleInput.addEventListener("blur", () => {
-        if (suggestionBox.classList.contains("visible")) {
-            setTimeout(() => {
-                suggestionBox.classList.remove("visible");
-            }, 100);
-        }
-    });
+    titleInput.addEventListener("focus", () => {
+        exercisePicker.show();
+    })
 
     article.scrollIntoView({behavior: "smooth", block: "center"});
     setTimeout(() => {
@@ -504,7 +451,6 @@ export async function guardarSet(article, set) {
     const repsInput = article.querySelector("#reps");
     const textarea = article.querySelector("#description-text");
     const editIcon = article.querySelector(".editIcon");
-    const suggestionBox = article.querySelector("#suggestionBox");
 
     if (!validarSet(article)) {
         shakeEffect(article);
@@ -514,16 +460,17 @@ export async function guardarSet(article, set) {
 
     if (article.hasAttribute("data-new-set")) {
         const setData = {
-            exerciseId: parseInt(suggestionBox.dataset.exercise),
+            exerciseId: parseInt(titleInput.dataset.exerciseId),
             series: parseInt(seriesInput.value),
             repetitions: parseInt(repsInput.value),
-            description: textarea.value,
+            description: textarea.value.trim(),
         };
         try {
             const result = await createRoutineSet(routineIdGlobal, setData);
-            cargarEjercicio(suggestionBox.dataset.exercise, image);
+            cargarEjercicio(titleInput.dataset.exerciseId, image);
             article.removeAttribute("data-new-set");
             Object.assign(set, result);
+            textarea.value = textarea.value.trim();
             delete set.isNew;
             showSnackbar("success", "Set creado correctamente")
         } catch (error) {
@@ -536,13 +483,14 @@ export async function guardarSet(article, set) {
             exerciseId: set.exerciseId,
             series: parseInt(seriesInput.value),
             repetitions: parseInt(repsInput.value),
-            description: textarea.value,
+            description: textarea.value.trim(),
         };
         try {
             await updateRoutineSet(routineIdGlobal, parseInt(set.id), setData);
             set.series = parseInt(seriesInput.value);
             set.repetitions = parseInt(repsInput.value);
-            set.description = textarea.value;
+            set.description = textarea.value.trim();
+            textarea.value = textarea.value.trim();
             showSnackbar("success", "Set actualizado correctamente")
         } catch (error) {
             showSnackbar("error", "Error al actualizar el set")

@@ -33,7 +33,7 @@ export function createSessionHistory(history, exerciseName) {
             ${e.series.map(s => `
               <tr>
                 <td>${s.order}</td>
-                <td>${s.weight ?? "-"} ${s.unit?.symbol ?? ""}</td>
+                <td>${s.weight != null ? `${s.weight} ${s.unit?.symbol ?? ""}` : "-"}</td>
                 <td>${s.reps}</td>
                 <td>${s.rir ?? "-"}</td>
                 <td>${s.intensity ?? "-"}</td>

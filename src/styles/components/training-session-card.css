@@ -18,6 +18,7 @@
     margin-top: 3rem;
 }
 
+.routine-container button,
 .train-sess-card-general-options button {
     all: unset;
     display: inline-flex;
@@ -105,7 +106,7 @@
     width: 1.3rem;
     height: 1.3rem;
     display: flex;
-    align-items: center;    /* centra vertical */
+    align-items: center; /* centra vertical */
     justify-content: center;
     opacity: 0;
     animation: spin 1s linear infinite;
@@ -174,7 +175,7 @@
     position: absolute;
     top: 3rem;
     right: 0.1rem;
-    background-color: rgba(256,256,256,0.9);
+    background-color: rgba(256, 256, 256, 0.9);
     border-radius: 0.6rem;
     padding: 0.2rem 0.4rem;
     font-size: 0.8rem;
