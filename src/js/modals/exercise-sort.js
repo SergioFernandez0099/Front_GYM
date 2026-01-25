@@ -1,4 +1,4 @@
-import {updateTrainingSessionExerciseOrder} from "../services/api.js";
+import {updateRoutineSetsOrder, updateTrainingSessionExerciseOrder} from "../services/api.js";
 import {safeNavigate} from "../router.js";
 import {showSnackbar} from "../components/snackbar.js";
 
@@ -58,15 +58,14 @@ export function createExerciseSort(exercises, entityId, moveToExercise = null) {
     container.appendChild(list);
 
     const originalOrder = exercises.map(e => ({
-        id: e.id,
+        id: moveToExercise ? e.id : e.setId,
         order: e.order
     }));
-    console.log(exercises)
 
     exercises.forEach(exercise => {
         const itemContainer = document.createElement('div');
         itemContainer.className = 'exercise-item-container';
-        itemContainer.setAttribute('data-id', exercise.id);
+        itemContainer.setAttribute('data-id', moveToExercise ? exercise.id : exercise.setId);
         const item = document.createElement('div');
         const span = document.createElement('span');
         span.className = moveToExercise ? 'exercise-span' : 'exercise-span show';
@@ -74,6 +73,7 @@ export function createExerciseSort(exercises, entityId, moveToExercise = null) {
         item.className = 'exercise-item';
         item.textContent = moveToExercise ? exercise.exercise.name : exercise.name;
         item.draggable = false;
+        itemContainer.draggable = !moveToExercise;
         itemContainer.appendChild(span);
         itemContainer.appendChild(item);
 
@@ -234,16 +234,17 @@ export function createExerciseSort(exercises, entityId, moveToExercise = null) {
             }
         });
 
-        list.innerHTML = ''; // Limpiar la lista
-        list.appendChild(fragment); // Agregar todos en el orden correcto
+        list.innerHTML = '';
+        list.appendChild(fragment);
     }
 
     async function actualizarOrden(currentOrder) {
         const data = currentOrder.map(e => e.id);
+
         try {
             moveToExercise
                 ? await updateTrainingSessionExerciseOrder(entityId, data)
-                : console.log("");
+                : await updateRoutineSetsOrder(entityId, {order: data});
             originalOrder.length = 0;
             currentOrder.forEach(o => originalOrder.push(o));
             showSnackbar("success", "Orden actualizado correctamente");
@@ -297,6 +298,7 @@ export function createExerciseSort(exercises, entityId, moveToExercise = null) {
                 hideSaveButton();
             }
         }
+        restoreOriginalOrder();
         modal.classList.remove('show');
         document.body.style.overflow = '';
         document.body.style.pointerEvents = '';

@@ -34,7 +34,11 @@ export async function RoutineSet(routineId) {
     let exercisesSort;
     try {
         setData = await fetchRoutineSets(routineId);
-        const exercisesData = setData.map(item => item.exercise)
+        const exercisesData = setData.map(item => ({
+            ...item.exercise,
+            order: item.order,
+            setId: item.id
+        }))
         if (exercisesData.length !== 0) {
             exercisesSort = createExerciseSort(exercisesData, routineId)
         }

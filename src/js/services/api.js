@@ -233,6 +233,14 @@ export async function updateRoutineSet(routineId, setId, updatedData) {
     );
 }
 
+export async function updateRoutineSetsOrder(routineId, updatedData) {
+    return await fetchSend(
+        `/users/${getCurrentUserId()}/routines/${routineId}/sets/order`,
+        "PUT",
+        updatedData
+    );
+}
+
 export async function deleteRoutine(routineId) {
     return await fetchSend(`/users/${getCurrentUserId()}/routines/${routineId}`, "DELETE");
 }
