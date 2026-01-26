@@ -19,6 +19,7 @@ Esta aplicación permite a los usuarios gestionar sus rutinas de entrenamiento, 
     - Serie 1: 100 kg, 2 repeticiones
     - Serie 2: 90 kg, 8 repeticiones
     - Serie 3: 90 kg, 8 repeticiones
+- Consultar historial de sesiones 
 
 ---
 
@@ -33,44 +34,40 @@ Esta aplicación permite a los usuarios gestionar sus rutinas de entrenamiento, 
 
 ## 🌐 Integración con Backend
 
-Esta aplicación consume una API de backend para la gestión de usuarios, rutinas y sets de entrenamiento.  
-Repositorio del backend (código abierto): [Backend GitHub](https://github.com/tu-usuario/tu-backend-repo)  
+Esta aplicación consume una API para la gestión de usuarios, rutinas y sets de entrenamiento.  
+Repositorio del backend (código abierto): [Backend GitHub](https://github.com/SergioFernandez0099/Back_GYM)  
 
 ---
 
 ## 🛠 Instalación y Ejecución
 
 ### Requisitos
-- Node.js (v14 o superior)
-- npm (v6 o superior)
+- Node.js
+- npm
+- pnpm
 
 ### Pasos
 1. Clonar el repositorio:
 
 ```bash
-git clone https://github.com/tu-usuario/tu-repo-frontend.git
+git clone https://github.com/SergioFernandez0099/Front_GYM.git
 cd tu-repo-frontend
 ```
 2. Instalar dependencias:
 ```bash
-npm install
+pnpm install
 ```
-3. Ejecutar la apliación
-```bash
-npm run dev
+3. Configurar la dirección de la API en la variable de entorno en un archivo .env:
 ```
-4. Abrir en tu navegador
-`http://localhost:5173`
-
-## 🗂 Estructura del Proyecto
-
+VITE_API_BASE=/api
+```
+4. Hacer el build de la aplicación
 ```bash
-src/             # Código fuente principal
-  components/    # Componentes UI reutilizables
-  pages/         # Vistas de la aplicación
-  api/           # Funciones para consumir la API
-index.html       # Entrada principal
-vite.config.js   # Configuración de Vite
+pnpm run build
+```
+5. Puedes mostrar una preview de al app con este comando
+```bash
+pnpm run preview
 ```
 
 ## 📖 Licencia
@@ -78,5 +75,5 @@ Este proyecto es open source. Revisa el archivo `LICENSE` para más detalles.
 
 ## 🔗 Enlaces Útiles
 
-- [Repositorio del Backend](https://github.com/tu-usuario/tu-backend-repo)
+- [Repositorio del Backend](https://github.com/SergioFernandez0099/Back_GYM)
 
