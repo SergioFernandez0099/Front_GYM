@@ -44,7 +44,6 @@ function processQueue() {
 
     isShowing = true;
 
-    // Limpiar clases anteriores
     snackbar.el.classList.remove("success", "warning", "error");
 
     snackbar.el.classList.add("show", config.className);

@@ -5,7 +5,7 @@ import {Exercises} from "./pages/exercises.js";
 import {checkAndSetLogin, connected, getLoginStatus} from "./store.js";
 import {Routine} from "./pages/routine.js";
 import {RoutineSet} from "./pages/routine-set.js";
-import {hideLoader, removeLoginCss, showLoader,} from "../utils/helpers.js";
+import {hideLoader, showLoader,} from "../utils/helpers.js";
 import {Navbar, updateButtonsPosition} from "./components/navbar.js";
 import {logout} from "./services/api.js";
 import {Login} from "./pages/login.js";
@@ -64,7 +64,6 @@ export function initRouter() {
                         onLogin: () => {
                             router.navigate("/");
                             loadNavbarAndFooter();
-                            removeLoginCss();
                         },
                     })
                 );
@@ -81,7 +80,6 @@ export function initRouter() {
                     onLogin: () => {
                         router.navigate("/");
                         loadNavbarAndFooter();
-                        removeLoginCss();
                     },
                 })
             );

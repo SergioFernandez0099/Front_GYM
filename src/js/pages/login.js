@@ -230,7 +230,7 @@ class LoginForm {
         });
 
         // Atajos de teclado: Enter para enviar, Escape para borrar errores
-        document.addEventListener("keydown", (e) => {
+        this.passwordField.addEventListener("keydown", (e) => {
             if (e.key === "Enter" && e.target.closest("#loginForm")) {
                 e.preventDefault();
                 this.handleSubmit(e);

@@ -35,7 +35,7 @@ export async function login(name, pin) {
 
 export async function logout() {
     try {
-        await fetchSend(`${API_BASE}/auth/logout`, "POST");
+        await fetchSend(`/auth/logout`, "POST");
     } catch (error) {
         console.warn("Error en logout: ", error);
         throw error;

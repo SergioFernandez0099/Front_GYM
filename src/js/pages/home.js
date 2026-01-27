@@ -2,6 +2,7 @@ import {fetchTrainingStats} from "../services/api.js";
 import {showSnackbar} from "../components/snackbar.js";
 import {safeNavigate} from "../router.js";
 import {capitalize} from "../../utils/helpers.js";
+import {getCurrentUserId} from "../store.js";
 
 const professionalImages = [
     "arnold_1.avif",
@@ -37,7 +38,6 @@ export async function Home() {
 
     try {
         stats = await fetchTrainingStats(month, year);
-
     } catch (error) {
         showSnackbar("error", "Error al cargar las estadísticas");
         safeNavigate("/error");
@@ -45,8 +45,9 @@ export async function Home() {
         return null;
     }
 
-    const randomImage =
-        `/images/professionals/${professionalImages[Math.floor(Math.random() * professionalImages.length)]}`;
+    const randomImage = (Number(getCurrentUserId()) !== 1)
+        ? `/images/professionals/${professionalImages[Math.floor(Math.random() * professionalImages.length)]}`
+        : '/images/logo.webp';
 
     const container = document.createElement('div');
     container.className = "home-container";
@@ -68,10 +69,10 @@ export async function Home() {
         <div class="home-container-stats">
             <div class="home-stats-bg">
                 <div class="home-stats-header">
-                    <svg fill="currentColor" version="1.1" class="home-stats-dumbbell" xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 500.04 500.04" xml:space="preserve" transform="rotate(45)" stroke="currentColor" stroke-width="13.501161000000002">
-                        <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#FF0000FF" stroke-width="4.000344"/>
-                        <g id="SVGRepo_iconCarrier">
+                    <svg fill="currentColor" class="home-stats-dumbbell" xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 500.04 500.04" xml:space="preserve" stroke="currentColor" stroke-width="13.501161000000002">
+                        <g  stroke-width="0"/>
+                        <g  stroke-linecap="round" stroke-linejoin="round" stroke="#FF0000FF" stroke-width="4.000344"/>
+                        <g>
                             <g> 
                                 <g> 
                                     <path d="M491.445,206.857c-4.752,0-8.605,4.857-8.605,10.834c0,16.582,0,48.1,0,64.672c0,5.977,3.854,10.824,8.615,10.824 c4.752,0,8.588-4.848,8.588-10.824c0-16.562,0-48.081,0-64.682C500.043,211.714,496.197,206.857,491.445,206.857z"/>

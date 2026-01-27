@@ -1,13 +1,3 @@
-export function removeLoginCss() {
-    const links = document.querySelectorAll('link[rel="stylesheet"]');
-
-    links.forEach((link) => {
-        if (link.href.includes("login.css")) {
-            link.remove();
-        }
-    });
-}
-
 export function toggleEditIcon(icon, editIcon, editButton, minSize, maxSize) {
     if (icon === "edit") {
         editIcon.src = "/icons/edit.svg";
@@ -100,14 +90,6 @@ export function openConfirmModal(title) {
             resolve(true);
         };
     });
-}
-
-// para ignorar acentos
-export function normalize(text) {
-    return text
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase();
 }
 
 export function getLastSegment(pathname) {
