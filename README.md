@@ -27,6 +27,7 @@ Esta aplicación permite a los usuarios gestionar sus rutinas de entrenamiento, 
 
 - **Frontend**: Vite, Vanilla JS
 - **Routing**: [Navigo](https://github.com/krasimir/navigo)
+- **Calendario**: [FullCalendar](https://github.com/fullcalendar/fullcalendar)
 - **Autenticación**: JWT
 - **Backend**: API propia (ver enlace más abajo)
 
