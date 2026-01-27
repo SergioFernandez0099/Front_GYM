@@ -70,6 +70,22 @@ pnpm run build
 pnpm run preview
 ```
 
+## 🚀 Pruébala tú mismo
+
+¿Quieres ver la aplicación en acción?  
+Puedes acceder a la Web App y probar todas sus características.
+
+👉 **Accede aquí:**  
+🌐 https://sergiof.es/
+
+### 🔑 Credenciales de prueba
+Para facilitar el acceso, puedes usar las siguientes credenciales genéricas:
+
+- **Usuario:** carlos
+- **Contraseña:** 1234
+
+> Estas credenciales son solo para pruebas y no contienen información real.
+
 ## 📖 Licencia
 Este proyecto es open source. Revisa el archivo `LICENSE` para más detalles.
 
