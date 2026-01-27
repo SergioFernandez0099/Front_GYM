@@ -199,7 +199,7 @@
 
 .train-sess-card-image {
     position: relative;
-    width: 7rem;
+    width: 5.6rem;
     height: 5.6rem;
     object-fit: cover;
 }
@@ -444,7 +444,7 @@
 
     .train-sess-card-serie-weight-image {
         height: 2.2rem;
-        width: 2.7rem;
+        width: 2.2rem;
     }
 
     .train-sess-card-units-container {
