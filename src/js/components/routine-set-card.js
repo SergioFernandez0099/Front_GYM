@@ -1,7 +1,6 @@
 import {
     clearErrorBorder,
     glowEffect,
-    normalize,
     openConfirmModal,
     shakeEffect,
     showErrorBorder,
@@ -10,7 +9,7 @@ import {
 import {createRoutineSet, deleteRoutineSet, fetchExercises, updateRoutineSet} from "../services/api.js";
 import {showSnackbar} from "./snackbar.js";
 import {safeNavigate} from "../router.js";
-import {getSet} from "../pages/routine-set.js";
+import {addSet, getSet, reassignSortModal, removeSet} from "../pages/routine-set.js";
 import editIcon from '/icons/edit.svg';
 import {createExercisePicker} from "../modals/exercise-picker.js";
 
@@ -237,27 +236,30 @@ function setUpSetCard(article, set) {
             trashButton.disabled = true;
 
             const confirmed = await openConfirmModal("¿Eliminar ejercicio?");
-            if (confirmed) {
-                try {
-                    const setId = set.id; // Suponiendo que tus cards existentes tengan un data-id
-                    if (!setId) {
-                        article.classList.add("fade-out-inward");
-                        setTimeout(() => article.remove(), 300);
-                        return;
-                    }
-
-                    await deleteRoutineSet(routineIdGlobal, setId)
-
-                    showSnackbar("success", "Set borrado correctamente");
+            if (!confirmed) {
+                trashButton.disabled = false;
+                return;
+            }
+            try {
+                const setId = set.id; // Suponiendo que tus cards existentes tengan un data-id
+                if (!setId) {
                     article.classList.add("fade-out-inward");
                     setTimeout(() => article.remove(), 300);
-                } catch (error) {
-                    showSnackbar("error", "Error al borrar el set");
-                    shakeEffect(article);
-                    trashButton.disabled = false;
+                    return;
                 }
+
+                await deleteRoutineSet(routineIdGlobal, setId)
+                removeSet(setId);
+
+                showSnackbar("success", "Set borrado correctamente");
+                article.classList.add("fade-out-inward");
+                setTimeout(() => article.remove(), 300);
+            } catch (error) {
+                showSnackbar("error", "Error al borrar el set");
+                shakeEffect(article);
+            } finally {
+                trashButton.disabled = false;
             }
-            trashButton.disabled = false;
         });
     }
 }
@@ -472,6 +474,8 @@ export async function guardarSet(article, set) {
             Object.assign(set, result);
             textarea.value = textarea.value.trim();
             delete set.isNew;
+            addSet(set);
+
             showSnackbar("success", "Set creado correctamente")
         } catch (error) {
             shakeEffect(article);
@@ -491,6 +495,7 @@ export async function guardarSet(article, set) {
             set.repetitions = parseInt(repsInput.value);
             set.description = textarea.value.trim();
             textarea.value = textarea.value.trim();
+            reassignSortModal();
             showSnackbar("success", "Set actualizado correctamente")
         } catch (error) {
             showSnackbar("error", "Error al actualizar el set")

@@ -5,9 +5,13 @@ import {safeNavigate} from "../router.js";
 import {createExerciseSort} from "../modals/exercise-sort.js";
 import {shakeEffect} from "../../utils/helpers.js";
 
-let setData = []
+let setData = [];
+let globalRoutineId;
+let exercisesSort;
 
 export async function RoutineSet(routineId) {
+    globalRoutineId = routineId;
+
     const routineSetContainer = document.createElement("div");
     routineSetContainer.className = "routine-container";
 
@@ -20,7 +24,6 @@ export async function RoutineSet(routineId) {
 
     routineSetContainer.appendChild(orderButton);
 
-
     const section = document.createElement("section");
     section.className = "routine-list-container";
 
@@ -31,7 +34,6 @@ export async function RoutineSet(routineId) {
 
     routineSetContainer.appendChild(section);
 
-    let exercisesSort;
     try {
         setData = await fetchRoutineSets(routineId);
         const exercisesData = setData.map(item => ({
@@ -103,3 +105,22 @@ export function getSet(setId) {
     return setData.find(set => Number(set.id) === Number(setId));
 }
 
+export function reassignSortModal() {
+    if (setData.length <= 0) return;
+    const exercisesData = setData.map(item => ({
+        ...item.exercise,
+        order: item.order,
+        setId: item.id
+    }))
+    exercisesSort = createExerciseSort(exercisesData, globalRoutineId)
+}
+
+export function removeSet(setId) {
+    setData = setData.filter(set => Number(set.id) !== Number(setId));
+    reassignSortModal()
+}
+
+export function addSet(set) {
+    setData.push(set);
+    reassignSortModal();
+}
