@@ -124,15 +124,15 @@ section {
     transition: opacity 0.4s ease;
 }
 
+/* Confirm modal */
 .modal-overlay {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.4);
     display: none;
-    /* oculto por defecto */
     justify-content: center;
     align-items: center;
-    z-index: 9998;
+    z-index: 10000000000000;
 }
 
 .modal {

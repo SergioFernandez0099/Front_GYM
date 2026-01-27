@@ -46,14 +46,14 @@ export async function trainingSessionCard(sessionId) {
     });
 
     let exercisesSort = null;
+    let sessionHistory = null;
     let pressTimer;
 
     if (trainingSessionData.sessionExercises.length !== 0) {
         exercisesSort = createExerciseSort(trainingSessionData.sessionExercises, sessionId, moveToExercise)
+        sessionHistory = createSessionHistory(trainingSessionData.sessionExercises[indiceEjercicio].history,
+            trainingSessionData.sessionExercises[indiceEjercicio].exercise.name);
     }
-
-    let sessionHistory = createSessionHistory(trainingSessionData.sessionExercises[indiceEjercicio].history,
-        trainingSessionData.sessionExercises[indiceEjercicio].exercise.name);
 
     const exercisePicker = createExercisePicker(exercisesData, addExercise);
 
@@ -71,12 +71,9 @@ export async function trainingSessionCard(sessionId) {
                 .join("");
         }
 
-        sessionHistory = createSessionHistory(trainingSessionData.sessionExercises[indiceEjercicio].history,
-            trainingSessionData.sessionExercises[indiceEjercicio].exercise.name);
-
         trainingSessionCardContainer.innerHTML = `
             <div class="train-sess-card-general-options">
-                <button class="train-sess-card-general-options-list" ${exercisesSort ? 'enabled' : "disabled"} data-action="list">
+                <button class="train-sess-card-general-options-list" data-action="list">
                     Ejercicios
                     <img src="/icons/list.svg" alt="Icono de listado" class="listIcon">
                 </button>
@@ -192,6 +189,9 @@ export async function trainingSessionCard(sessionId) {
             exercisesSort = trainingSessionData.sessionExercises.length !== 0
                 ? createExerciseSort(trainingSessionData.sessionExercises, sessionId, moveToExercise)
                 : null;
+            sessionHistory = trainingSessionData.sessionExercises.length !== 0
+                ? createSessionHistory(trainingSessionData.sessionExercises[indiceEjercicio].history, trainingSessionData.sessionExercises[indiceEjercicio].exercise.name)
+                : null;
             renderCard()
         } catch (error) {
             showSnackbar("error", "Error al cargar las sesiones de entrenamiento");
@@ -273,7 +273,7 @@ export async function trainingSessionCard(sessionId) {
     trainingSessionCardContainer.addEventListener("click", async (event) => {
         const elemento = event.target.closest("[data-action]");
         if (elemento?.classList.contains('disabled')) return;
-        if (!getExercise() && elemento?.dataset.action !== "exercise") {
+        if (!getExercise() && elemento?.dataset.action !== "exercise" && elemento?.dataset.action !== "delete-session") {
             event.stopPropagation();
             const addButton = trainingSessionCardContainer.querySelector('.train-sess-card-general-options-add');
             shakeEffect(addButton);
@@ -282,6 +282,7 @@ export async function trainingSessionCard(sessionId) {
         if (!elemento) return;
         switch (elemento.dataset.action) {
             case "list": {
+                if (!exercisesSort) return;
                 exercisesSort.show();
                 break;
             }
@@ -290,6 +291,7 @@ export async function trainingSessionCard(sessionId) {
                 break;
             }
             case "history": {
+                if (!sessionHistory) return;
                 sessionHistory.show();
                 break;
             }
