@@ -71,6 +71,11 @@ export async function trainingSessionCard(sessionId) {
                 .join("");
         }
 
+        if (trainingSessionData.sessionExercises.length !== 0) {
+            sessionHistory = createSessionHistory(trainingSessionData.sessionExercises[indiceEjercicio].history,
+                trainingSessionData.sessionExercises[indiceEjercicio].exercise.name);
+        }
+
         trainingSessionCardContainer.innerHTML = `
             <div class="train-sess-card-general-options">
                 <button class="train-sess-card-general-options-list" data-action="list">
