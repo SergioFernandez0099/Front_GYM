@@ -77,7 +77,7 @@ pnpm run preview
 Puedes acceder a la Web App y probar todas sus características.
 
 👉 **Accede aquí:**  
-🌐 https://sergiof.es/
+🌐 https://gym.sergiof.es/
 
 ### 🔑 Credenciales de prueba
 Para facilitar el acceso, puedes usar las siguientes credenciales genéricas:
