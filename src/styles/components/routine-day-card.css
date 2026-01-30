@@ -39,12 +39,21 @@
     gap: 0.6rem;
 }
 
-.routine-day-options img {
+.routine-day-options .trashIcon,
+.routine-day-options .editIcon {
     height: 1.45rem;
     width: 1.45rem;
     padding: 0.25rem;
     outline: none;
 }
+
+.routine-day-options .closeIcon {
+    height: 1.45rem;
+    width: 1.45rem;
+    padding: 0.1rem;
+    outline: none;
+}
+
 
 .routine-day-options .editIcon {
     transition: height 0.3s ease, width 0.3s ease;

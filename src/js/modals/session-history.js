@@ -16,6 +16,10 @@ export function createSessionHistory(history, exerciseName) {
                 <p class="session-date">
                   ${new Date(e.sessionDate).toLocaleDateString("es-ES")}
                 </p>
+                
+                 <p class="session-description">
+                  ${e.description ?? ""}
+                 </p>
             
                 <table class="session-history-table">
                   <thead>

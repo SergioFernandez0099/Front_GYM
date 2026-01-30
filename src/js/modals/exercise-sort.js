@@ -11,6 +11,10 @@ export function createExerciseSort(exercises, entityId, moveToExercise = null) {
         existingModal.remove();
     }
 
+    let autoScrollInterval = null;
+    const SCROLL_ZONE = 50; // píxeles desde el borde para activar scroll
+    const SCROLL_SPEED = 5; // píxeles por frame
+
     const modal = document.createElement('div');
     modal.className = 'exercise-sort-modal';
 
@@ -168,6 +172,23 @@ export function createExerciseSort(exercises, entityId, moveToExercise = null) {
         e.dataTransfer.effectAllowed = 'move';
 
         dragged.classList.add('dragging');
+        // Crear imagen personalizada para el drag
+        const dragImage = dragged.cloneNode(true);
+        dragImage.style.position = 'absolute';
+        dragImage.style.top = '-9999px';
+        dragImage.style.background = 'transparent'; // fondo transparente
+        dragImage.style.opacity = '0.8'; // semi-transparente
+        dragImage.style.width = dragged.offsetWidth + 'px';
+
+        document.body.appendChild(dragImage);
+
+        // Establecer la imagen personalizada
+        e.dataTransfer.setDragImage(dragImage, e.offsetX, e.offsetY);
+
+        // Eliminar el clon después de un momento
+        setTimeout(() => {
+            document.body.removeChild(dragImage);
+        }, 0);
     });
 
     list.addEventListener('dragend', () => {
@@ -175,6 +196,12 @@ export function createExerciseSort(exercises, entityId, moveToExercise = null) {
 
         dragged.classList.remove('dragging');
         dragged = null;
+
+        // Limpiar auto-scroll
+        if (autoScrollInterval) {
+            clearInterval(autoScrollInterval);
+            autoScrollInterval = null;
+        }
     });
 
     list.addEventListener('dragover', e => {
@@ -185,6 +212,31 @@ export function createExerciseSort(exercises, entityId, moveToExercise = null) {
         }
 
         e.preventDefault();
+
+        // Auto-scroll cuando el cursor está cerca de los bordes
+        const rect = list.getBoundingClientRect();
+        const y = e.clientY - rect.top;
+
+        // Limpiar intervalo previo
+        if (autoScrollInterval) {
+            clearInterval(autoScrollInterval);
+            autoScrollInterval = null;
+        }
+
+        // Scroll hacia arriba
+        if (y < SCROLL_ZONE && list.scrollTop > 0) {
+            autoScrollInterval = setInterval(() => {
+                list.scrollTop -= SCROLL_SPEED;
+            }, 16); // ~60fps
+        }
+        // Scroll hacia abajo
+        else if (y > rect.height - SCROLL_ZONE &&
+            list.scrollTop < list.scrollHeight - list.clientHeight) {
+            autoScrollInterval = setInterval(() => {
+                list.scrollTop += SCROLL_SPEED;
+            }, 16);
+        }
+
         const after = getDragAfterElement(list, e.clientY);
 
         if (after == null) {

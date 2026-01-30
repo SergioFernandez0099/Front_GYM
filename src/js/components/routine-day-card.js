@@ -32,6 +32,9 @@ export function RoutineDayCard(day) {
         <div class="icon-container icon-container-trash fade-toggle">
           <img src="/icons/trash.svg" alt="Icono de borrar" class="trashIcon">
         </div> 
+        <div class="icon-container icon-container-cancel fade-toggle">
+          <img src="/icons/cross.svg" alt="Icono de cancelar" class="closeIcon">
+        </div> 
         <div class="icon-container icon-container-edit" data-editable="false">
           <img src="/icons/edit.svg" alt="Icono de edición" class="editIcon">
         </div>
@@ -56,6 +59,7 @@ export function attachRoutineDayCardEvents(article, day) {
 
     const elements = {
         inputTitle: article.querySelector("#titleDayInput"),
+        cancelButton: article.querySelector(".icon-container-cancel"),
         editButton: article.querySelector(".icon-container-edit"),
         trashButton: article.querySelector(".icon-container-trash"),
     };
@@ -117,6 +121,15 @@ export function attachRoutineDayCardEvents(article, day) {
         }
 
     });
+
+    elements.cancelButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!day.id) {
+            shakeEffect(article);
+            return;
+        }
+        closeEditableRoutineCard(article);
+    })
 
     if (day.isNew) {
         article.setAttribute("data-new-day", "true");
@@ -189,9 +202,11 @@ export function openEditableRoutineCard(article) {
     const editIcon = article.querySelector(".editIcon");
     const inputTitle = article.querySelector("#titleDayInput");
     const trashButton = article.querySelector(".icon-container-trash");
+    const cancelButton = article.querySelector(".icon-container-cancel");
 
     editButton.dataset.editable = "true";
     trashButton.classList.add("visible");
+    cancelButton.classList.add("visible");
     toggleEditIcon("tick", editIcon, editButton, "1.45rem", "1.85rem");
     inputTitle.setAttribute("contenteditable", "true");
     inputTitle.focus();
@@ -210,6 +225,7 @@ export function closeEditableRoutineCard(article) {
     const editIcon = article.querySelector(".editIcon");
     const inputTitle = article.querySelector("#titleDayInput");
     const trashButton = article.querySelector(".icon-container-trash");
+    const cancelButton = article.querySelector(".icon-container-cancel");
 
     const day = getRoutineDay(article.dataset.id);
 
@@ -220,7 +236,10 @@ export function closeEditableRoutineCard(article) {
     inputTitle.setAttribute("contenteditable", "false");
     editButton.dataset.editable = "false";
     trashButton.classList.remove("visible");
+    cancelButton.classList.remove("visible");
     toggleEditIcon("edit", editIcon, editButton, "1.45rem", "1.85rem");
+    window.getSelection().removeAllRanges();
+    document.activeElement.blur();
 }
 
 function closeAllEditingCards(currentArticle) {

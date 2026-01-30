@@ -60,6 +60,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    background: transparent;
     justify-content: center;
 }
 
@@ -70,6 +71,7 @@
     transition: opacity 0.3s ease, transform 0.3s ease;
     width: 0;
     color: black;
+    background: transparent;
 }
 
 .exercise-span.show {

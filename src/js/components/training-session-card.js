@@ -23,6 +23,7 @@ export async function trainingSessionCard(sessionId) {
 
     try {
         trainingSessionData = await fetchTrainingSession(sessionId);
+        console.log(trainingSessionData)
         exercisesData = await fetchExercises();
     } catch (error) {
         showSnackbar("error", "Error al cargar las sesiones de entrenamiento")
@@ -75,6 +76,8 @@ export async function trainingSessionCard(sessionId) {
             sessionHistory = createSessionHistory(trainingSessionData.sessionExercises[indiceEjercicio].history,
                 trainingSessionData.sessionExercises[indiceEjercicio].exercise.name);
         }
+
+        originalDescription = getExercise()?.description ?? "";
 
         trainingSessionCardContainer.innerHTML = `
             <div class="train-sess-card-general-options">
@@ -151,6 +154,14 @@ export async function trainingSessionCard(sessionId) {
             <div class="train-sess-card-description-container">
                 <textarea maxlength="100" placeholder="Escribe algún detalle..." ${exercisesSort ? '' : 'readonly'} class="train-sess-card-description">${getExercise()?.description ?? ""}</textarea>
             </div>
+            ${ getExercise()?.targetreps
+                ? `
+                    <div class="train-sess-card-targetReps-container">
+                        <p class="train-sess-card-targetReps">Objetivo: <span class="targetReps">${getExercise()?.targetreps}</span><span class="targetReps-reps"> repeticiones</span> </p>
+                    </div>
+                     `
+                : ""
+            }
             <div class="train-sess-card-series-list">
                 ${seriesHTML ?? ""}
             </div>
