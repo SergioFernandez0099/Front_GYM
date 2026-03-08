@@ -92,7 +92,6 @@ export async function Stats() {
                         <path d="M1 4L4.5 7.5L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </span>
-                <span class="exercise-checklist-item__id">#${exercise.id}</span>
                 <span class="exercise-checklist-item__name">${exercise.name}</span>
             `;
 

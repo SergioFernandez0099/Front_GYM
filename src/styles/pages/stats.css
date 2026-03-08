@@ -146,7 +146,7 @@
 .checklist-content {
     max-width: 900px;
     margin: 0 auto;
-    margin-top: 4rem;
+    margin-top: 5rem;
     padding: 1.5rem 1.5rem 2rem;
     display: flex;
     flex-direction: column;
@@ -440,7 +440,7 @@
     .checklist-content {
         padding: 1rem;
         gap: 1.25rem;
-        margin-top: 2rem;
+        margin-top: 4rem;
     }
 
     .exercise-checklist-grid {
