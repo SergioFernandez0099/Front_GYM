@@ -216,7 +216,7 @@ export function updateButtonsPosition() {
     } else {
         if (path.includes("sessions") && window.innerWidth < 768) {
             reloadContainer.style.top = "1.5rem";
-            reloadContainer.style.left = "4.5rem";
+            reloadContainer.style.left = "4.75rem";
             backContainer.style.top = "1.5rem";
             backContainer.style.left = "7.3rem";
         } else {
