@@ -13,6 +13,7 @@ import {Footer} from "./components/footer.js";
 import {trainingSessionCard} from "./components/training-session-card.js";
 import {trainingSchedule} from "./pages/calendar.js";
 import {errorPage} from "./pages/errorPage.js";
+import {Stats} from "./pages/stats.js";
 
 export const router = new Navigo("/");
 
@@ -128,6 +129,13 @@ export function initRouter() {
             requireLogin(async () => {
                 routeHandlers["/sessions"] = () => render(trainingSchedule());
                 render(trainingSchedule());
+            })
+        )
+        .on(
+            "/stats",
+            requireLogin(() => {
+                routeHandlers["/stats"] = () => render(Stats());
+                render(Stats());
             })
         )
         .notFound(() => {

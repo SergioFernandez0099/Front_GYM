@@ -23,7 +23,6 @@ export async function trainingSessionCard(sessionId) {
 
     try {
         trainingSessionData = await fetchTrainingSession(sessionId);
-        console.log(trainingSessionData)
         exercisesData = await fetchExercises();
     } catch (error) {
         showSnackbar("error", "Error al cargar las sesiones de entrenamiento")
@@ -149,7 +148,7 @@ export async function trainingSessionCard(sessionId) {
             </div>
             <div class="train-sess-card-header">
                 <img src="${getExercise()?.exercise.imageUrl ?? '/images/snorlax.avif'}" alt="" class="train-sess-card-image">
-                <h2 class="train-sess-card-title">${getExercise()?.exercise.name ?? "Añade un ejercicio"}</h2>
+                <h2 class="train-sess-card-title" style="font-size: ${getTitleFontSize(getExercise()?.exercise.name)}">${getExercise()?.exercise.name ?? "Añade un ejercicio"}</h2>
             </div>
             <div class="train-sess-card-description-container">
                 <textarea maxlength="100" placeholder="Escribe algún detalle..." ${exercisesSort ? '' : 'readonly'} class="train-sess-card-description">${getExercise()?.description ?? ""}</textarea>
@@ -686,4 +685,10 @@ function toogleUnit(elemento) {
         elemento.dataset.unitId = "1";
         elemento.textContent = "Kg"
     }
+}
+
+function getTitleFontSize(text) {
+    const length = text?.length ?? 0;
+    if (length >= 25) return "1.2rem";
+    return "1.6rem";
 }

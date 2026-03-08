@@ -9,6 +9,8 @@
 @import './pages/exercises-set.css';
 @import './pages/routine.css';
 @import './pages/errorPage.css';
+@import './pages/stats.css';
+
 
 /* Estilos de componentes */
 @import './components/exercise-card.css';

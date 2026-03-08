@@ -179,6 +179,34 @@ export async function fetchTrainingStats(month, year) {
     );
 }
 
+/**
+ * Genera un PDF con las estadísticas de los ejercicios seleccionados.
+ * Realiza una petición POST al servidor con los IDs de ejercicios y
+ * devuelve la respuesta como un Blob binario listo para abrir en el navegador.
+ *
+ * @param {number[]} exerciseIds - Array de IDs de ejercicios a incluir en el PDF.
+ * @returns {Promise<Blob>} Blob con el contenido del PDF generado.
+ * @throws {Error} Si la respuesta del servidor no es exitosa.
+ *
+ * @example
+ * const blob = await generateStatsPdf([1, 83, 37, 63]);
+ */
+export async function generateStatsPdf(exerciseIds) {
+    const result = await fetchWithTimeout(`${API_BASE}/users/${getCurrentUserId()}/stats/pdf`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ exerciseIds }),
+    });
+
+    await handleAuthError(result);
+
+    if (!result.ok) throw new Error("Error al generar el PDF");
+
+    const blob = await result.blob();
+    return blob;
+}
+
 export async function fetchTrainingSessions() {
     return await fetchGet(`/users/${getCurrentUserId()}/sessions`);
 }
@@ -336,7 +364,6 @@ async function handleAuthError(res) {
     if (res.status === 401 || res.status === 403) {
         console.warn("Sesión expirada o no autorizada. Redirigiendo al login...");
         clearCurrentUserId();
-        console.log("error")
         safeNavigate("/error");
         throw new Error("No autorizado");
     }

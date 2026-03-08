@@ -50,6 +50,7 @@ export function Navbar() {
           <li><a href="/routine">Rutina</a></li>
           <li><a href="/sessions">Sesiones</a></li>
           <li><a href="/exercises">Ejercicios</a></li>
+          <li><a href="/stats">Estadísticas</a></li>
           <li><a href="/logout">Salir</a></li>
         
         </ul>
@@ -209,7 +210,7 @@ export function updateButtonsPosition() {
     if (currentRoute === "login" || currentRoute === "home" || currentRoute === "error" || currentRoute === "" || currentRoute === undefined) {
         if (currentRoute === "home") {
             backContainer.style.top = "4.5rem";
-            backContainer.style.left = "1rem";
+            backContainer.style.left = "1.7rem";
         }
         reloadContainer.style.display = "none";
     } else {
@@ -220,9 +221,9 @@ export function updateButtonsPosition() {
             backContainer.style.left = "7.3rem";
         } else {
             reloadContainer.style.top = "4.5rem";
-            reloadContainer.style.left = "1rem";
+            reloadContainer.style.left = "1.7rem";
             backContainer.style.top = "7.1rem";
-            backContainer.style.left = "1rem";
+            backContainer.style.left = "1.7rem";
         }
         reloadContainer.style.display = "block";
     }
